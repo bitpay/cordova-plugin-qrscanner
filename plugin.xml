@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        id="cordova-plugin-qrscanner"
+        version="0.0.1">
+
+  <name>QRScanner</name>
+
+  <engines>
+    <engine name="cordova" version=">=3.4.0"/>
+  </engines>
+
+  <asset src="www/QRScanner.js" target="js/QRScanner.js"/>
+
+  <js-module src="www/QRScanner.js" name="QRScanner">
+    <clobbers target="QRScanner" />
+  </js-module>
+
+  <platform name="ios">
+    <config-file target="config.xml" parent="/*">
+      <feature name="QRScanner">
+        <param name="ios-package" value="QRScanner"/>
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/QRScanner-Bridging-Header.h" />
+    <source-file src="src/ios/QRScanner.swift"/>
+  </platform>
+
+</plugin>

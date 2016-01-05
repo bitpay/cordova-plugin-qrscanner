@@ -1,0 +1,14 @@
+{
+  "browser": true,
+  "curly": true,
+  "devel": true,
+  "eqeqeq": true,
+  "jasmine": true,
+  "latedef": true,
+  "noarg": true,
+  "unused": true,
+  "undef": true,
+  "globals": {
+    "exports": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "cordova-plugin-qrscanner",
+  "description": "Cordova QR Scanner Plugin",
+  "cordova": {
+    "id": "cordova-plugin-qrscanner",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitjson/cordova-plugin-qrscanner"
+  },
+  "keywords": [
+    "cordova",
+    "qr",
+    "scanner",
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "Jason Dreyzehner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bitjson/cordova-plugin-qrscanner/issues"
+  },
+  "homepage": "https://github.com/bitjson/cordova-plugin-qrscanner",
+  "dependencies": {
+    "xcode": "^0.8.2"
+  }
+}
