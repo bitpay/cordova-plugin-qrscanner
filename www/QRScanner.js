@@ -41,13 +41,13 @@ function clearBackground(domNode) {
 
 function errorCallback(callback){
   return function(error){
-    callback(error);
+    callback(new Error(error));
   };
 }
 
 function successCallback(callback){
   if(!callback){
-    throw new Error('No callback provided.');
+    return null;
   }
   return function(statusDict){
     callback(null, convertStatus(statusDict));
@@ -74,8 +74,11 @@ var QRScanner = {
     cordova.exec(doneCallback(callback, true), null, 'QRScanner', 'destroy');
   },
   scan: function(callback){
-    var success = function(status) {
-      callback(null, status);
+    if(!callback){
+      throw new Error('No callback provided to scan method.');
+    }
+    var success = function(result) {
+      callback(null, result);
     };
     cordova.exec(success, errorCallback(callback), 'QRScanner', 'scan');
   },
@@ -127,6 +130,9 @@ var QRScanner = {
     }
   },
   getStatus: function(callback){
+    if(!callback){
+      throw new Error('No callback provided to getStatus method.');
+    }
     cordova.exec(doneCallback(callback), null, 'QRScanner', 'getStatus');
   }
 };

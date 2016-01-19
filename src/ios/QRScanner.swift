@@ -311,8 +311,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     func openSettings(command: CDVInvokedUrlCommand) {
         if #available(iOS 8.0, *) {
             UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
-            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: "Opening application settings in iOS device Settings.")
-            commandDelegate!.sendPluginResult(pluginResult, callbackId:command.callbackId)
+            self.getStatus(command)
         } else {
             let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: "QRScanner.openSettings() is not supported on this version of iOS (requires >iOS 8.0).")
             commandDelegate!.sendPluginResult(pluginResult, callbackId:command.callbackId)

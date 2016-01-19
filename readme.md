@@ -49,6 +49,9 @@ function displayContents(text){
 ```
 
 ## API
+
+Unless otherwise noted, all functions accept an optional callback which gets the QRScanner status object.
+
 ### Prepare
 
 ```js
@@ -65,7 +68,10 @@ Request permission to access the camera (if not already granted), prepare the vi
 ### Scan
 
 ```js
-var callback = function(contents){
+var callback = function(err, contents){
+  if(err){
+    console.error(err);
+  }
   alert('The QR Code contains: ' + contents);
 };
 
@@ -160,6 +166,7 @@ QRScanner.getStatus(function(status){
   console.dir(status);
 });
 ```
+Retrieve the status of QRScanner and provide it to the callback function.
 
 #### authorized
 On iOS, camera access is granted to an app by the user (by clicking "Allow" at the dialog). The `authorized` property is a boolean value which is true only when the user has allowed camera access to your app (`AVAuthorizationStatus.Authorized`). The `NotDetermined`, `Restricted` (e.g.: parental controls), and `Denied` AVAuthorizationStatus states all cause this value to be false. If the user has denied access to your app, consider asking nicely and offering a link via `QRScanner.openSettings()`.
@@ -195,6 +202,10 @@ QRScanner.destroy();
 ```
 
 Stops scanning, video capture, and the preview, and deallocates as much as possible. (E.g. to improve performance/battery life when the scanner is not likely to be used for a while.) Basically reverts the plugin to it's startup-state.
+
+## Typescript
+
+Type definitions for cordova-plugin-qrscanner are [available in the DefinitelyTyped project](https://github.com/bitjson/DefinitelyTyped/blob/master/cordova-plugin-qrscanner/cordova-plugin-qrscanner.d.ts).
 
 ## Contributing &amp; Testing
 
