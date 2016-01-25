@@ -54,6 +54,8 @@ exports.defineAutoTests = function() {
       it('Should be valid', function(done) {
         window.QRScanner.getStatus(function(status) {
           expect(typeof status.authorized).toBe('boolean');
+          expect(typeof status.denied).toBe('boolean');
+          expect(typeof status.restricted).toBe('boolean');
           expect(typeof status.prepared).toBe('boolean');
           expect(typeof status.scanning).toBe('boolean');
           expect(typeof status.previewing).toBe('boolean');
@@ -71,13 +73,17 @@ exports.defineAutoTests = function() {
 
 exports.defineManualTests = function(contentEl, createActionButton) {
 
-  function log(button, err, status) {
+  function log(button, err, status, focusProp) {
     if (err) {
-      console.log(button + ' callback returned. Error:');
-      console.error(err);
+      console.log(button + ' callback returned. QRScannerError:');
+      console.error(JSON.stringify(err));
     } else {
-      console.log(button + ' callback returned. Status:');
-      console.log(JSON.stringify(status, null, 2));
+      console.log(button + ' callback returned.');
+      if(focusProp){
+        console.log('status.' + focusProp + ': ' + status[focusProp]);
+      } else {
+        console.log('status: ' + JSON.stringify(status, null, 2));
+      }
     }
   }
 
@@ -88,7 +94,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     'Expected result: Will request Camera access (if needed) and prepare the video preview UI layer. Runs callback(err, status), even if already prepared.';
   var prepare = function() {
     window.QRScanner.prepare(function(err, status) {
-      log(prepareBtn, err, status);
+      log(prepareBtn, err, status, 'prepared');
     });
   };
 
@@ -99,7 +105,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     'Expected result: Should clear background of provided html element and all parents (making the QRScanner layer visible through this webview).';
   var show = function() {
     window.QRScanner.show(function(status) {
-      log(showBtn, null, status);
+      log(showBtn, null, status, 'webviewBackgroundIsTransparent');
     });
   };
 
@@ -110,24 +116,36 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     'Expected result: Should reset the native webview background to white and opaque.';
   var hide = function() {
     window.QRScanner.hide(function(status) {
-      log(hideBtn, null, status);
+      log(hideBtn, null, status, 'webviewBackgroundIsTransparent');
     });
   };
 
 
   var scanBtn = 'QRScanner.scan()';
+  var scanWithPauseBtn = 'QRScanner.scan() (with pause)';
   var stopScanBtn = 'QRScanner.stopScan()';
   qrscanner_tests += '<h2>Scan</h2>' +
-    '<div id="scanBtn"></div><div id="stopScanBtn"></div>' +
+    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="stopScanBtn"></div>' +
     'Expected result: Should scan QR codes and log the contents. Scanning can also be stopped. If QRScanner.prepare() has not yet been run, scan also performs any native actions needed.';
   var scan = function() {
+    startScan(false);
+  };
+  var scanWithPause = function(){
+    startScan(true);
+  };
+  var startScan = function(pause){
     console.log('scanning...');
     window.QRScanner.scan(function(err, result) {
+      console.error('QRScanner.scan() callback returned.');
       if(err){
         console.error(err);
+      } else {
+        console.log('Scan result:');
+        console.log(result);
+        if(pause){
+          window.QRScanner.pausePreview();
+        }
       }
-      console.log('Scan result:');
-      console.log(result);
     });
   };
   var stopScan = function() {
@@ -143,12 +161,12 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     'Expected result: Should pause and resume the preview, respectively.';
   var pausePreview = function() {
     window.QRScanner.pausePreview(function(status) {
-      log(pausePreviewBtn, null, status);
+      log(pausePreviewBtn, null, status, 'previewing');
     });
   };
   var resumePreview = function() {
     window.QRScanner.resumePreview(function(status) {
-      log(resumePreviewBtn, null, status);
+      log(resumePreviewBtn, null, status, 'previewing');
     });
   };
 
@@ -158,13 +176,13 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     '<div id="enableLightBtn"></div><div id="disableLightBtn"></div>' +
     'Expected result: Should enable and disable the light, respectively.';
   var enableLight = function() {
-    window.QRScanner.getStatus(function(status) {
-      log(enableLightBtn, null, status);
+    window.QRScanner.enableLight(function(err, status) {
+      log(enableLightBtn, err, status, 'lightEnabled');
     });
   };
   var disableLight = function() {
-    window.QRScanner.getStatus(function(status) {
-      log(disableLightBtn, null, status);
+    window.QRScanner.disableLight(function(err, status) {
+      log(disableLightBtn, err, status, 'lightEnabled');
     });
   };
 
@@ -174,13 +192,13 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     '<div id="useFrontCameraBtn"></div><div id="useBackCameraBtn"></div>' +
     'Expected result: Should switch the direction of the camera. The plugin should default to the back camera.';
   var useFrontCamera = function() {
-    window.QRScanner.useFrontCamera(function(status) {
-      log(useFrontCameraBtn, null, status);
+    window.QRScanner.useFrontCamera(function(err, status) {
+      log(useFrontCameraBtn, err, status, 'currentCamera');
     });
   };
   var useBackCamera = function() {
-    window.QRScanner.useBackCamera(function(status) {
-      log(useBackCameraBtn, null, status);
+    window.QRScanner.useBackCamera(function(err, status) {
+      log(useBackCameraBtn, err, status, 'currentCamera');
     });
   };
 
@@ -190,7 +208,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     'Expected result: Should open app-specific permission settings on iOS 8.0+.';
   var openSettings = function() {
     window.QRScanner.openSettings(function(err, status) {
-      log(openSettingsBtn, err, status);
+      log(openSettingsBtn, err, status, 'canOpenSettings');
     });
   };
 
@@ -209,8 +227,8 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     '<div id="destroyBtn"></div>' +
     'Expected result: Should "unprepare" and clean up all native functionality prepared by QRScanner.';
   var destroy = function() {
-    window.QRScanner.getStatus(function(status) {
-      log(destroyBtn, null, status);
+    window.QRScanner.destroy(function(status) {
+      log(destroyBtn, null, status, 'prepared');
     });
   };
 
@@ -220,6 +238,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   createActionButton(showBtn, show, 'showBtn');
   createActionButton(hideBtn, hide, 'hideBtn');
   createActionButton(scanBtn, scan, 'scanBtn');
+  createActionButton(scanWithPauseBtn, scanWithPause, 'scanWithPauseBtn');
   createActionButton(stopScanBtn, stopScan, 'stopScanBtn');
   createActionButton(pausePreviewBtn, pausePreview, 'pausePreviewBtn');
   createActionButton(resumePreviewBtn, resumePreview, 'resumePreviewBtn');
