@@ -52,7 +52,7 @@ function displayContents(text){
 ```
 
 ## API
-Unless otherwise noted, all functions accept an optional callback which gets the QRScanner status object.
+With the exception of `QRScanner.scan()`, all callbacks are optional.
 
 ### Prepare
 
@@ -92,7 +92,7 @@ QRScanner.cancelScan(function(status){
 });
 ```
 
-Cancels the current scan. The current scan() callback will not return. If `QRScanner.prepare()` has not been called, this method performs that setup as well.
+Cancels the current scan. If `QRScanner.prepare()` has not been called, this method performs that setup as well.
 
 ### Show
 
@@ -187,7 +187,9 @@ QRScanner.getStatus(function(status){
 });
 ```
 
-Open the app-specific permission settings in the user's device settings. Here the user can enable/disable camera (and other) access for your app. Note: iOS immediately kills all apps affected by permissions changes. If the user changes a permission settings, your app will restart when they return.
+Open the app-specific permission settings in the user's device settings. Here the user can enable/disable camera (and other) access for your app.
+
+Note: iOS immediately kills all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
 
 ### Get QRScanner Status
 
@@ -215,43 +217,28 @@ QRScanner.getStatus(function(status){
 
 Retrieve the status of QRScanner and provide it to the callback function.
 
-#### authorized
-On iOS and Android 6.0+, camera access is granted at runtime by the user (by clicking "Allow" at the dialog). The `authorized` property is a boolean value which is true only when the user has allowed camera access to your app (`AVAuthorizationStatus.Authorized`). On platforms with permissions granted at install (Android pre-6.0, Windows Phone) this property is always true.
+### Status Object Properties
 
-#### denied
-A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`).
-
-#### restricted
-A boolean value which is true if the user is unable to grant permissions due to parental controls, organization security configuration profiles, or similar reasons.
-
-#### prepared
-A boolean value which is true if QRScanner is prepared to capture video and render it to the view.
-
-#### scanning
-A boolean value which is true if QRScanner is actively scanning for a QR code.
-
-#### previewing
-A boolean value which is true if QRScanner is displaying a live preview from the device's camera. Set to false when the preview is paused.
-
-#### webviewBackgroundIsTransparent
-A boolean value which is true when the native webview background is transparent.
-
-#### lightEnabled
-A boolean value which is true if the light is enabled.
-
-#### canOpenSettings
-A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
-
-#### canEnableLight
-A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
-
-#### currentCamera
-A number. `0` is the back camera, `1` is the front.
+Name                             | Description
+:------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`authorized`                     | On iOS and Android 6.0+, camera access is granted at runtime by the user (by clicking "Allow" at the dialog). The `authorized` property is a boolean value which is true only when the user has allowed camera access to your app (`AVAuthorizationStatus.Authorized`). On platforms with permissions granted at install (Android pre-6.0, Windows Phone) this property is always true.
+`denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`).
+`restricted`                     | A boolean value which is true if the user is unable to grant permissions due to parental controls, organization security configuration profiles, or similar reasons.
+`prepared`                       | A boolean value which is true if QRScanner is prepared to capture video and render it to the view.
+`scanning`                       | A boolean value which is true if QRScanner is actively scanning for a QR code.
+`previewing`                     | A boolean value which is true if QRScanner is displaying a live preview from the device's camera. Set to false when the preview is paused.
+`webviewBackgroundIsTransparent` | A boolean value which is true when the native webview background is transparent.
+`lightEnabled`                   | A boolean value which is true if the light is enabled.
+`canOpenSettings`                | A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
+`canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
+`currentCamera`                  | A number representing the index of the currentCamera. `0` is the back camera, `1` is the front.
 
 ### Destroy
 
 ```js
-QRScanner.destroy();
+QRScanner.destroy(function(status){
+  console.log(status);
+});
 ```
 
 Runs hide(), stops scanning, video capture, and the preview, and deallocates as much as possible. (E.g. to improve performance/battery life when the scanner is not likely to be used for a while.) Basically reverts the plugin to it's startup-state.
@@ -274,49 +261,22 @@ QRScanner.scan(function(err, contents){
 
 ### Possible Error Types
 
-Code | Name
----: | :--------------------------
-   0 | `UNEXPECTED_ERROR`
-   1 | `CAMERA_ACCESS_DENIED`
-   2 | `CAMERA_ACCESS_RESTRICTED`
-   3 | `BACK_CAMERA_UNAVAILABLE`
-   4 | `FRONT_CAMERA_UNAVAILABLE`
-   5 | `CAMERA_UNAVAILABLE`
-   6 | `SCAN_CANCELED`
-   7 | `LIGHT_UNAVAILABLE`
-   8 | `OPEN_SETTINGS_UNAVAILABLE`
-
-#### UNEXPECTED_ERROR
-An unexpected error. Returned only by bugs in QRScanner.
-
-#### CAMERA_ACCESS_DENIED
-The user denied camera access.
-
-#### CAMERA_ACCESS_RESTRICTED
-Camera access is restricted.
-
-#### BACK_CAMERA_UNAVAILABLE
-The back camera is unavailable.
-
-#### FRONT_CAMERA_UNAVAILABLE
-The front camera is unavailable.
-
-#### CAMERA_UNAVAILABLE
-The camera is unavailable because it doesn't exist or is otherwise unable to be configured. (Thrown if QRScanner cannot throw one of the more specific `BACK_CAMERA_UNAVAILABLE` or `FRONT_CAMERA_UNAVAILABLE` errors.)
-
-#### SCAN_CANCELED
-Scan was canceled by the `cancelScan()` method.
-
-#### LIGHT_UNAVAILABLE
-The device light is unavailable because it doesn't exist or is otherwise unable to be configured.
-
-#### OPEN_SETTINGS_UNAVAILABLE
-The device is unable to open settings (becuase the functionality is not supported on the current platform).
+Code | Name                        | Description
+---: | :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   0 | `UNEXPECTED_ERROR`          | An unexpected error. Returned only by bugs in QRScanner.
+   1 | `CAMERA_ACCESS_DENIED`      | The user denied camera access.
+   2 | `CAMERA_ACCESS_RESTRICTED`  | Camera access is restricted (due to parental controls, organization security configuration profiles, or similar reasons).
+   3 | `BACK_CAMERA_UNAVAILABLE`   | The back camera is unavailable.
+   4 | `FRONT_CAMERA_UNAVAILABLE`  | The front camera is unavailable.
+   5 | `CAMERA_UNAVAILABLE`        | The camera is unavailable because it doesn't exist or is otherwise unable to be configured. (Returned if QRScanner cannot return one of the more specific `BACK_CAMERA_UNAVAILABLE` or `FRONT_CAMERA_UNAVAILABLE` errors.)
+   6 | `SCAN_CANCELED`             | Scan was canceled by the `cancelScan()` method. (Returned exclusively to the `QRScanner.scan()` method.)
+   7 | `LIGHT_UNAVAILABLE`         | The device light is unavailable because it doesn't exist or is otherwise unable to be configured.
+   8 | `OPEN_SETTINGS_UNAVAILABLE` | The device is unable to open settings.
 
 ## Typescript
 Type definitions for cordova-plugin-qrscanner are [available in the DefinitelyTyped project](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/cordova-plugin-qrscanner/cordova-plugin-qrscanner.d.ts).
 
 ## Contributing &amp; Testing
-To setup the tests, run the `tests/setupTests.sh` script. This will create a new cordova project in the same directory as this repo, install cordova-plugin-qrscanner, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework).
+To setup the tests, run `npm test`. This will create a new cordova project in the same directory as this repo, install cordova-plugin-qrscanner, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework).
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
