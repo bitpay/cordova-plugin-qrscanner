@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         id="cordova-plugin-qrscanner"
-        version="0.1.0">
+        version="1.0.0">
 
   <name>QRScanner</name>
 
