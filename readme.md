@@ -5,7 +5,7 @@ A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. 
 
 QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an interface to be built inside the webview to control the scanner.
 
-## Install
+## Get Started
 
 ```bash
 cordova plugin add cordova-plugin-qrscanner
@@ -19,7 +19,12 @@ The iOS component of the plugin is written in Swift 2. To enable it, add the fol
 </platform>
 ```
 
-Remove and re-add the ios platform to trigger the hook:
+This script requires the `xcode` npm module:
+
+```bash
+npm install --save xcode
+```
+Once installed, remove and re-add the ios platform to trigger the hook:
 
 ```bash
 cordova platform remove ios
@@ -50,6 +55,27 @@ function displayContents(text){
   alert(text);
 }
 ```
+
+### Using multiple Cordova plugins written in Swift
+
+Because Cordova is written in Objective-C, Cordova plugins written in Swift [require a `bridging header` to interact with Cordova](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html).
+
+A project can only have one bridging header. If your app uses plugins other than `cordova-plugin-qrscanner` which are also written in Swift, you will need to create a master bridging header to import each. Create a new bridging header and import each of the plugins' bridging headers, for example:
+
+```c
+//  MyProject-Bridging-Header.h
+//  Use this file to import your target's public headers that you would like to expose to Swift.
+
+//cordova-plugin-apple-watch
+#import "Watch-Bridge.h"
+
+//com.eface2face.iosrtc
+#import "iosrtc-Bridging-Header.h"
+
+//cordova-plugin-qrscanner
+#import "QRScanner-Bridging-Header.h"
+```
+Copy the script from `cordova-plugin-qrscanner/scripts/swift-support.js` into your project (eg. into the `hooks` folder), and modify the `BRIDGING_HEADER_END` variable to point to your new bridging header. Finally, remove and re-add the ios platform to trigger the hook. See [this issue](https://github.com/eface2face/cordova-plugin-iosrtc/issues/9) for more information.
 
 ## API
 With the exception of `QRScanner.scan()`, all callbacks are optional.
