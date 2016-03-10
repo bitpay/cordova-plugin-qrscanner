@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
   "dependencies": {
-    "xcode": "^0.8.2"
+    "xcode": "^0.8.4"
   }
 }
