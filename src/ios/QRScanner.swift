@@ -4,7 +4,7 @@ import AVFoundation
 @objc(QRScanner)
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
-    var cameraView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
+    var cameraView: UIView!
     var captureSession:AVCaptureSession?
     var captureVideoPreviewLayer:AVCaptureVideoPreviewLayer?
     var metaOutput: AVCaptureMetadataOutput?
@@ -36,6 +36,12 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     enum LightError: ErrorType {
         case torchUnavailable
+    }
+
+    override func pluginInitialize() {
+      super.pluginInitialize()
+      NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(pageDidLoad), name: CDVPageDidLoadNotification, object: nil)
+      self.cameraView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
     }
 
     func sendErrorCode(command: CDVInvokedUrlCommand, error: QRScannerError){
@@ -190,6 +196,11 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             commandDelegate!.sendPluginResult(pluginResult, callbackId: nextScanningCommand?.callbackId!)
             nextScanningCommand = nil
         }
+    }
+
+    func pageDidLoad() {
+      self.webView?.opaque = false
+      self.webView?.backgroundColor = UIColor.clearColor()
     }
 
     // ---- BEGIN EXTERNAL API ----
