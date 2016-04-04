@@ -9,7 +9,7 @@
     ]
   },
   "scripts": {
-    "test": "npm install; tests/setupTests.sh"
+    "test:ios": "npm install; tests/setupTestsiOS.sh"
   },
   "repository": {
     "type": "git",

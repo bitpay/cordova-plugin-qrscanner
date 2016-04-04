@@ -102,7 +102,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var showBtn = 'QRScanner.show()';
   qrscanner_tests += '<h3>Show QRScanner</h3>' +
     '<div id="showBtn"></div>' +
-    'Expected result: Should clear background of provided html element and all parents (making the QRScanner layer visible through this webview).';
+    'Expected result: Should clear background of the body and html elements (making the QRScanner layer visible through this webview).';
   var show = function() {
     window.QRScanner.show(function(status) {
       log(showBtn, null, status, 'webviewBackgroundIsTransparent');
@@ -136,7 +136,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var startScan = function(pause){
     console.log('scanning...');
     window.QRScanner.scan(function(err, result) {
-      console.error('QRScanner.scan() callback returned.');
+      console.log('QRScanner.scan() callback returned.');
       if(err){
         console.error(err);
       } else {

@@ -19,6 +19,8 @@ sed 's/index\.html/cdvtests\/index\.html/' config.xml.tmp > config.xml.tmp2
 sed 's/<platform name="ios">/<platform name="ios"><hook type="after_platform_add" src="plugins\/cordova-plugin-qrscanner\/scripts\/swift-support\.js" \/>/' config.xml.tmp2 > config.xml
 rm config.xml.tmp config.xml.tmp2
 
+npm install xcode
+
 cordova platform add ios
 cordova build ios
 
