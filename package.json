@@ -32,5 +32,21 @@
   "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
   "dependencies": {
     "xcode": "^0.8.4"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^1.1.5",
+    "ghooks": "^1.2.0",
+    "validate-commit-msg": "^2.5.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "ghooks": {
+      "commit-msg": "validate-commit-msg"
+    },
+    "validate-commit-msg": {
+      "helpMessage": "\nThis project uses commitizen to document changes. Please try:\nnpm install commitizen -g && git cz\n"
+    }
   }
 }
