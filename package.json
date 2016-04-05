@@ -9,7 +9,9 @@
     ]
   },
   "scripts": {
-    "test:ios": "npm install; tests/setupTestsiOS.sh"
+    "test": "npm run jshint",
+    "jshint": "jshint www && jshint src && jshint tests",
+    "manual-test:ios": "npm install; tests/setupTestsiOS.sh"
   },
   "repository": {
     "type": "git",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "cz-conventional-changelog": "^1.1.5",
     "ghooks": "^1.2.0",
+    "jshint": "^2.9.1",
     "validate-commit-msg": "^2.5.0"
   },
   "config": {

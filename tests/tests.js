@@ -127,12 +127,6 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   qrscanner_tests += '<h2>Scan</h2>' +
     '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="stopScanBtn"></div>' +
     'Expected result: Should scan QR codes and log the contents. Scanning can also be stopped. If QRScanner.prepare() has not yet been run, scan also performs any native actions needed.';
-  var scan = function() {
-    startScan(false);
-  };
-  var scanWithPause = function(){
-    startScan(true);
-  };
   var startScan = function(pause){
     console.log('scanning...');
     window.QRScanner.scan(function(err, result) {
@@ -152,7 +146,12 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     window.QRScanner.cancelScan();
     console.log('Canceled scanning.');
   };
-
+  var scan = function() {
+    startScan(false);
+  };
+  var scanWithPause = function(){
+    startScan(true);
+  };
 
   var pausePreviewBtn = 'QRScanner.pausePreview()';
   var resumePreviewBtn = 'QRScanner.resumePreview()';
