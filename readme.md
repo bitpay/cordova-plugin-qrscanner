@@ -2,7 +2,7 @@
 [![Dependency Status](https://david-dm.org/bitpay/cordova-plugin-qrscanner.svg)](https://david-dm.org/bitpay/cordova-plugin-qrscanner)
 
 # cordova-plugin-qrscanner
-A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. Currently iOS only.
+A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. Currently iOS and browser only.
 
 QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an interface to be built inside the webview to control the scanner.
 
@@ -16,7 +16,7 @@ The iOS component of the plugin is written in Swift 2. To enable it, add the fol
 
 ```xml
 <platform name="ios">
-    <hook type="after_platform_add" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
+    <hook type="before_build" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
 </platform>
 ```
 
@@ -258,6 +258,7 @@ Name                             | Description
 `lightEnabled`                   | A boolean value which is true if the light is enabled.
 `canOpenSettings`                | A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
 `canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
+`canChangeCamera` (TODO)         | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted.
 `currentCamera`                  | A number representing the index of the currentCamera. `0` is the back camera, `1` is the front.
 
 ### Destroy
@@ -295,16 +296,68 @@ Code | Name                        | Description
    2 | `CAMERA_ACCESS_RESTRICTED`  | Camera access is restricted (due to parental controls, organization security configuration profiles, or similar reasons).
    3 | `BACK_CAMERA_UNAVAILABLE`   | The back camera is unavailable.
    4 | `FRONT_CAMERA_UNAVAILABLE`  | The front camera is unavailable.
-   5 | `CAMERA_UNAVAILABLE`        | The camera is unavailable because it doesn't exist or is otherwise unable to be configured. (Returned if QRScanner cannot return one of the more specific `BACK_CAMERA_UNAVAILABLE` or `FRONT_CAMERA_UNAVAILABLE` errors.)
+   5 | `CAMERA_UNAVAILABLE`        | The camera is unavailable because it doesn't exist or is otherwise unable to be configured. (Also returned if QRScanner cannot return one of the more specific `BACK_CAMERA_UNAVAILABLE` or `FRONT_CAMERA_UNAVAILABLE` errors.)
    6 | `SCAN_CANCELED`             | Scan was canceled by the `cancelScan()` method. (Returned exclusively to the `QRScanner.scan()` method.)
    7 | `LIGHT_UNAVAILABLE`         | The device light is unavailable because it doesn't exist or is otherwise unable to be configured.
    8 | `OPEN_SETTINGS_UNAVAILABLE` | The device is unable to open settings.
+
+## Platform Specific Details
+
+This plugin attempts to properly abstract all the necessary functions of a well-designed, native QR code scanner. Here are some platform specific details it may be helpful to know.
+
+## Browser
+
+While the browser implementation matches the native mobile implementations very closely, the platform itself does not. Notably:
+
+- **multiple cameras** – most laptops/desktops do not have access to multiple cameras – so there is no concept of a "front" or "back" camera
+- **light** – we are not aware of any devices for the `browser` platform which have a "light" (aka. "torch") – should a device like this be produced, and if [this spec](http://w3c.github.io/mediacapture-image/#filllightmode) is [implemented by Chromium](https://bugs.chromium.org/p/chromium/issues/detail?id=485972), this plugin will attempt to support it.
+
+The browser implementation of this plugin is designed to abstract these platform differences very thoroughly. It's recommended that you focus your development efforts on implementing this plugin well for one of the mobile platform, and the browser platform implementation will degrade gracefully from there.
+
+### Video Preview DOM Element
+
+Unlike the other platforms, it's not possible to spawn the `<video>` preview behind the `<html>` and `<body>` using only Javascript. Trying to mimick the effect by making the element a sibling to either the `<html>` or `<body>` elements also produces inconsistent results (ie: no rendering on Chromium). Instead, this plugin appends the `<video>` element as the final child of the `<body>` element, and applies styling to cover the entire background.
+
+As a consequence, you should assume that your `<body>` element will be completely obscured from view as soon as the plugin is `prepare()`ed. When building your application, apply styling you might otherwise apply to the `<body>` element to a child "container" `<div>` or other element. To show the video preview, call the `show()` method and make this container transparent.
+
+### Privacy Lights
+
+Most devices now include a hardware-level "privacy light", which is enabled when the camera is being used. To prevent this light from being "always on" when the app is running, the browser platform disables/enables use of the camera with the `hide` and `show` methods. If your implementation works well on a mobile platform, you'll find that this addition provides a great head start for a solid `browser` implementation.
+
+### Camera Selection
+
+The browser platform attempts to select the best camera as the "back" camera (the default camera). If a "next-best" camera is available, that camera will be selected as the "front" camera. Camera switching is intended to be "togglable", so this plugin has no plans to support access to more than 2 cameras.
+
+The "back" camera is selected by the following criteria:
+1. [**facingMode**](http://w3c.github.io/mediacapture-main/#dfn-facingmode) – if a camera with a facingMode of `environment` exists, we use this one.
+2. **resolution** – If multiple `environment` cameras are available, the highest resolution camera is selected. If no back-facing cameras exist, we default to the highest resolution camera available.
+
+If more cameras are available, the "front" camera is then chosen from the highest resolution camera remaining.
+
+### Light
+
+The browser platform always returns the boolean `status.canEnableLight` as `false`, and the enableLight/disableLight methods throw the `LIGHT_UNAVAILABLE` error code.
+
+### Using with Electron or NW.js
+
+This plugin should work out-of-the box with the Cordova browser platform. As of now, there is no clear "best-way" of using the cordova browser build inside an Electron or NW.js application. This plugin attempts to provide an as-clean-as-possible source such that implementations can choose to either:
+ - fully implement the cordova platform (please [let us know](https://github.com/bitpay/cordova-plugin-qrscanner/issues/new) how you do it so we can add documentation!), or
+ - import this plugin's source into the Electron or NW.js project and re-bundle it manually.
+
+#### Using Status.authorized
+
+Both Electron and NW.js automatically provide authorization to access the camera (without user confirmation) to bundled applications. This difference can't be detected via an API this plugin can implement, so the `authorized` property on any returned Status objects will be `false` on startup, even when it should be `true`. You should adjust your code to assume that these platforms are always authorized. (ie: Skip "permission priming" on these platforms.)
+
+On the `browser` platform, the `authorized` field is set to `true` if at least one camera is available **and** the user has granted the application access to at least one camera. On Electron and NW.js, this field can reliably be used to determine if a camera is available to the device.
 
 ## Typescript
 Type definitions for cordova-plugin-qrscanner are [available in the DefinitelyTyped project](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/cordova-plugin-qrscanner/cordova-plugin-qrscanner.d.ts).
 
 ## Contributing &amp; Testing
-To setup the manual device tests, run `npm manual-test:ios`. This will create a new cordova project in the same directory as this repo, install cordova-plugin-qrscanner, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework).
+To setup the platform tests, run `npm run gen-tests`. This will create a new cordova project in the `cordova-plugin-test-projects` directory next to this repo, install `cordova-plugin-qrscanner`, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework). Once the platform tests are generated, the following commands are available:
+
+- `npm run test:ios`
+- `npm run test:browser`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 
