@@ -123,9 +123,9 @@ exports.defineManualTests = function(contentEl, createActionButton) {
 
   var scanBtn = 'QRScanner.scan()';
   var scanWithPauseBtn = 'QRScanner.scan() (with pause)';
-  var stopScanBtn = 'QRScanner.stopScan()';
+  var cancelScanBtn = 'QRScanner.cancelScan()';
   qrscanner_tests += '<h2>Scan</h2>' +
-    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="stopScanBtn"></div>' +
+    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="cancelScanBtn"></div>' +
     'Expected result: Should scan QR codes and log the contents. Scanning can also be stopped. If QRScanner.prepare() has not yet been run, scan also performs any native actions needed.';
   var startScan = function(pause){
     console.log('scanning...');
@@ -142,7 +142,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
       }
     });
   };
-  var stopScan = function() {
+  var cancelScan = function() {
     window.QRScanner.cancelScan();
     console.log('Canceled scanning.');
   };
@@ -238,7 +238,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   createActionButton(hideBtn, hide, 'hideBtn');
   createActionButton(scanBtn, scan, 'scanBtn');
   createActionButton(scanWithPauseBtn, scanWithPause, 'scanWithPauseBtn');
-  createActionButton(stopScanBtn, stopScan, 'stopScanBtn');
+  createActionButton(cancelScanBtn, cancelScan, 'cancelScanBtn');
   createActionButton(pausePreviewBtn, pausePreview, 'pausePreviewBtn');
   createActionButton(resumePreviewBtn, resumePreview, 'resumePreviewBtn');
   createActionButton(enableLightBtn, enableLight, 'enableLightBtn');

@@ -7,7 +7,7 @@ function stringToBool(string) {
     case '0':
       return false;
     default:
-      throw new Error('QRScanner plugin returned an invalid boolean value.');
+    throw new Error('QRScanner plugin returned an invalid boolean number-string.');
   }
 }
 

@@ -8,6 +8,7 @@
   "undef": true,
   "globals": {
     "cordova": false,
-    "module": false
+    "module": false,
+    "require": true
   }
 }

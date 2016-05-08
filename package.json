@@ -11,7 +11,17 @@
   "scripts": {
     "test": "npm run jshint",
     "jshint": "jshint www && jshint src && jshint tests",
-    "manual-test:ios": "npm install; tests/setupTestsiOS.sh"
+    "update": "npm install && npm run update:qrcode-reader && npm run update:adapter.js",
+    "update:adapter.js": "ncp node_modules/qrcode-reader/dist/index.js src/browser/qrcode-reader.js",
+    "update:qrcode-reader": "ncp node_modules/webrtc-adapter/out/adapter_no_edge.js src/browser/adapter.js",
+    "gen-tests": "npm run clean-platform-tests && npm run mkdirp-platform-tests && npm run copy-platform-tests && npm run timestamp-platform-tests && npm run install-platform-tests",
+    "clean-platform-tests": "trash ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
+    "mkdirp-platform-tests": "mkdirp ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
+    "copy-platform-tests": "ncp tests/project ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
+    "timestamp-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && replace '{{TIMESTAMP}}' `timestamp`",
+    "install-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm install",
+    "test:ios": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:ios",
+    "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser"
   },
   "repository": {
     "type": "git",
@@ -33,12 +43,19 @@
   },
   "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
   "dependencies": {
+    "qrcode-reader": "^0.1.1",
+    "webrtc-adapter": "^1.1.0",
     "xcode": "^0.8.4"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^1.1.5",
     "ghooks": "^1.2.0",
     "jshint": "^2.9.1",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "replace": "^0.3.0",
+    "timestamp-cli": "0.0.1",
+    "trash-cli": "^1.3.0",
     "validate-commit-msg": "^2.5.0"
   },
   "config": {
