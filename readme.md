@@ -4,7 +4,7 @@
 # cordova-plugin-qrscanner
 A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. Currently iOS and browser only.
 
-QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an interface to be built inside the webview to control the scanner.
+QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an HTML/CSS/JS interface to be built inside the webview to control the scanner.
 
 ## Get Started
 
@@ -12,7 +12,7 @@ QRScanner's live video preview is rendered behind the Cordova app's native webvi
 cordova plugin add cordova-plugin-qrscanner
 ```
 
-The iOS component of the plugin is written in Swift 2. To enable it, add the following hook to the iOS platform in your Cordova app's `config.xml`:
+The iOS component of the plugin is written in Swift 2. To enable it, be sure you're running the lastest version of Xcode, then add the following hook to the iOS platform in your Cordova app's `config.xml`:
 
 ```xml
 <platform name="ios">
@@ -25,14 +25,8 @@ This script requires the `xcode` npm module:
 ```bash
 npm install --save xcode
 ```
-Once installed, remove and re-add the ios platform to trigger the hook:
 
-```bash
-cordova platform remove ios
-cordova platform add ios
-```
-
-The `QRScanner` plugin is now available in your app:
+Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app:
 
 ```js
 // Make sure the user will give your app camera access when prompted, then:
@@ -304,6 +298,13 @@ Code | Name                        | Description
 ## Platform Specific Details
 
 This plugin attempts to properly abstract all the necessary functions of a well-designed, native QR code scanner. Here are some platform specific details it may be helpful to know.
+
+## iOS
+
+This plugin is always tested with the latest version of Xcode. Please be sure you have updated Xcode before installing.
+
+If you run into issues in your own project, try the test project in this repo to confirm your environment is set up properly: `npm run gen-tests && npm run test:ios`.
+
 
 ## Browser
 

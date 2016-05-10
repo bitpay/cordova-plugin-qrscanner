@@ -63,6 +63,7 @@ exports.defineAutoTests = function() {
           expect(typeof status.lightEnabled).toBe('boolean');
           expect(typeof status.canOpenSettings).toBe('boolean');
           expect(typeof status.canEnableLight).toBe('boolean');
+          expect(typeof status.canChangeCamera).toBe('boolean');
           expect(typeof status.currentCamera).toBe('number');
           done();
         });

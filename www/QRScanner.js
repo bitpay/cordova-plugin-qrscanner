@@ -24,6 +24,7 @@ function convertStatus(statusDictionary) {
     lightEnabled: stringToBool(statusDictionary.lightEnabled),
     canOpenSettings: stringToBool(statusDictionary.canOpenSettings),
     canEnableLight: stringToBool(statusDictionary.canEnableLight),
+    canChangeCamera: stringToBool(statusDictionary.canChangeCamera),
     currentCamera: parseInt(statusDictionary.currentCamera)
   };
 }
