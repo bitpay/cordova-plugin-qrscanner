@@ -96,6 +96,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                         frontCamera = device
                     }
                 }
+                // older iPods have no back camera
+                if(backCamera == nil){
+                    currentCamera = 1
+                }
                 let input: AVCaptureDeviceInput
                 input = try self.createCaptureDeviceInput()
                 captureSession = AVCaptureSession()
@@ -167,7 +171,8 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             useMode = AVCaptureTorchMode.Off
         }
         do {
-            if(backCamera!.hasTorch == false || backCamera!.torchAvailable == false || backCamera!.isTorchModeSupported(useMode) == false){
+            // torch is only available for back camera
+            if(backCamera == nil || backCamera!.hasTorch == false || backCamera!.torchAvailable == false || backCamera!.isTorchModeSupported(useMode) == false){
                 throw LightError.torchUnavailable
             }
             try backCamera!.lockForConfiguration()
@@ -267,26 +272,36 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     func useCamera(command: CDVInvokedUrlCommand){
         let index = command.arguments[0] as! Int
         if(currentCamera != index){
-            // switch camera
-            currentCamera = index
-            if(self.prepScanner(command)){
-                do {
-                    captureSession!.beginConfiguration()
-                    let currentInput = captureSession?.inputs[0] as! AVCaptureDeviceInput
-                    captureSession!.removeInput(currentInput)
-                    let input = try self.createCaptureDeviceInput()
-                    captureSession!.addInput(input)
-                    captureSession!.commitConfiguration()
-                    self.getStatus(command)
-                } catch CaptureError.backCameraUnavailable {
+            // camera change only available if both backCamera and frontCamera exist
+            if(backCamera != nil && frontCamera != nil){
+                // switch camera
+                currentCamera = index
+                if(self.prepScanner(command)){
+                    do {
+                        captureSession!.beginConfiguration()
+                        let currentInput = captureSession?.inputs[0] as! AVCaptureDeviceInput
+                        captureSession!.removeInput(currentInput)
+                        let input = try self.createCaptureDeviceInput()
+                        captureSession!.addInput(input)
+                        captureSession!.commitConfiguration()
+                        self.getStatus(command)
+                    } catch CaptureError.backCameraUnavailable {
+                        self.sendErrorCode(command, error: QRScannerError.BACK_CAMERA_UNAVAILABLE)
+                    } catch CaptureError.frontCameraUnavailable {
+                        self.sendErrorCode(command, error: QRScannerError.FRONT_CAMERA_UNAVAILABLE)
+                    } catch CaptureError.couldNotCaptureInput(let error){
+                        print(error.localizedDescription)
+                        self.sendErrorCode(command, error: QRScannerError.CAMERA_UNAVAILABLE)
+                    } catch {
+                        self.sendErrorCode(command, error: QRScannerError.UNEXPECTED_ERROR)
+                    }
+
+                }
+            } else {
+                if(backCamera == nil){
                     self.sendErrorCode(command, error: QRScannerError.BACK_CAMERA_UNAVAILABLE)
-                } catch CaptureError.frontCameraUnavailable {
+                } else {
                     self.sendErrorCode(command, error: QRScannerError.FRONT_CAMERA_UNAVAILABLE)
-                } catch CaptureError.couldNotCaptureInput(let error){
-                    print(error.localizedDescription)
-                    self.sendErrorCode(command, error: QRScannerError.CAMERA_UNAVAILABLE)
-                } catch {
-                    self.sendErrorCode(command, error: QRScannerError.UNEXPECTED_ERROR)
                 }
             }
         } else {
@@ -356,9 +371,9 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             previewing = captureVideoPreviewLayer!.connection.enabled
         }
 
-        var webviewBackgroundIsTransparent = false
+        var showing = false
         if(self.webView!.backgroundColor == UIColor.clearColor()){
-            webviewBackgroundIsTransparent = true
+            showing = true
         }
 
         var lightEnabled = false
@@ -376,6 +391,11 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             canEnableLight = true
         }
 
+        var canChangeCamera = false;
+        if(backCamera != nil && frontCamera != nil){
+            canChangeCamera = true
+        }
+
         let status = [
             "authorized": boolToNumberString(authorized),
             "denied": boolToNumberString(denied),
@@ -383,10 +403,11 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             "prepared": boolToNumberString(prepared),
             "scanning": boolToNumberString(scanning),
             "previewing": boolToNumberString(previewing),
-            "webviewBackgroundIsTransparent": boolToNumberString(webviewBackgroundIsTransparent),
+            "showing": boolToNumberString(showing),
             "lightEnabled": boolToNumberString(lightEnabled),
             "canOpenSettings": boolToNumberString(canOpenSettings),
             "canEnableLight": boolToNumberString(canEnableLight),
+            "canChangeCamera": boolToNumberString(canChangeCamera),
             "currentCamera": String(currentCamera)
         ]
 

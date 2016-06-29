@@ -59,10 +59,11 @@ exports.defineAutoTests = function() {
           expect(typeof status.prepared).toBe('boolean');
           expect(typeof status.scanning).toBe('boolean');
           expect(typeof status.previewing).toBe('boolean');
-          expect(typeof status.webviewBackgroundIsTransparent).toBe('boolean');
+          expect(typeof status.showing).toBe('boolean');
           expect(typeof status.lightEnabled).toBe('boolean');
           expect(typeof status.canOpenSettings).toBe('boolean');
           expect(typeof status.canEnableLight).toBe('boolean');
+          expect(typeof status.canChangeCamera).toBe('boolean');
           expect(typeof status.currentCamera).toBe('number');
           done();
         });
@@ -102,10 +103,10 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var showBtn = 'QRScanner.show()';
   qrscanner_tests += '<h3>Show QRScanner</h3>' +
     '<div id="showBtn"></div>' +
-    'Expected result: Should clear background of the body and html elements (making the QRScanner layer visible through this webview).';
+    'Expected result: Should make the video preview layer visible.';
   var show = function() {
     window.QRScanner.show(function(status) {
-      log(showBtn, null, status, 'webviewBackgroundIsTransparent');
+      log(showBtn, null, status, 'showing');
     });
   };
 
@@ -113,19 +114,19 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var hideBtn = 'QRScanner.hide()';
   qrscanner_tests += '<h3>Hide QRScanner</h3>' +
     '<div id="hideBtn"></div>' +
-    'Expected result: Should reset the native webview background to white and opaque.';
+    'Expected result: Should hide the video preview layer (returning the background to the default – opaque and white).';
   var hide = function() {
     window.QRScanner.hide(function(status) {
-      log(hideBtn, null, status, 'webviewBackgroundIsTransparent');
+      log(hideBtn, null, status, 'showing');
     });
   };
 
 
   var scanBtn = 'QRScanner.scan()';
   var scanWithPauseBtn = 'QRScanner.scan() (with pause)';
-  var stopScanBtn = 'QRScanner.stopScan()';
+  var cancelScanBtn = 'QRScanner.cancelScan()';
   qrscanner_tests += '<h2>Scan</h2>' +
-    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="stopScanBtn"></div>' +
+    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="cancelScanBtn"></div>' +
     'Expected result: Should scan QR codes and log the contents. Scanning can also be stopped. If QRScanner.prepare() has not yet been run, scan also performs any native actions needed.';
   var startScan = function(pause){
     console.log('scanning...');
@@ -142,7 +143,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
       }
     });
   };
-  var stopScan = function() {
+  var cancelScan = function() {
     window.QRScanner.cancelScan();
     console.log('Canceled scanning.');
   };
@@ -238,7 +239,7 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   createActionButton(hideBtn, hide, 'hideBtn');
   createActionButton(scanBtn, scan, 'scanBtn');
   createActionButton(scanWithPauseBtn, scanWithPause, 'scanWithPauseBtn');
-  createActionButton(stopScanBtn, stopScan, 'stopScanBtn');
+  createActionButton(cancelScanBtn, cancelScan, 'cancelScanBtn');
   createActionButton(pausePreviewBtn, pausePreview, 'pausePreviewBtn');
   createActionButton(resumePreviewBtn, resumePreview, 'resumePreviewBtn');
   createActionButton(enableLightBtn, enableLight, 'enableLightBtn');
