@@ -1,4 +1,6 @@
-var module = {};
+/*global module:true, importScripts:false, postMessage:false, onmessage:true*/
+
+module = {};
 importScripts('qrcode-reader.js');
 var QrCode = module.exports;
 var qr = new QrCode();

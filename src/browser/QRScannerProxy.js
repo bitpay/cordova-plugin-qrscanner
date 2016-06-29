@@ -275,7 +275,8 @@
         video.src = URL.createObjectURL(mediaStream);
         success(calcStatus());
       }, function(err){
-        console.error(err);
+        // something bad happened
+        err = null;
         var code = currentCameraIndex? 4 : 3;
         error(code); // FRONT_CAMERA_UNAVAILABLE : BACK_CAMERA_UNAVAILABLE
       });
@@ -344,7 +345,8 @@
           error(5); // CAMERA_UNAVAILABLE
         }
       }, function(err){
-        console.error(err);
+        // something bad happened
+        err = null;
         error(0); // UNEXPECTED_ERROR
       });
     } else if (backCamera === false){
