@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Cordova QR Scanner Plugin",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
@@ -21,7 +21,8 @@
     "timestamp-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && replace '{{TIMESTAMP}}' `timestamp`",
     "install-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm install",
     "test:ios": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:ios",
-    "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser"
+    "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",
