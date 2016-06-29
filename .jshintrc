@@ -9,6 +9,7 @@
   "globals": {
     "cordova": false,
     "module": false,
-    "require": true
+    "require": false,
+    "Promise": false
   }
 }

@@ -103,10 +103,10 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var showBtn = 'QRScanner.show()';
   qrscanner_tests += '<h3>Show QRScanner</h3>' +
     '<div id="showBtn"></div>' +
-    'Expected result: Should clear background of the body and html elements (making the QRScanner layer visible through this webview).';
+    'Expected result: Should make the video preview layer visible.';
   var show = function() {
     window.QRScanner.show(function(status) {
-      log(showBtn, null, status, 'webviewBackgroundIsTransparent');
+      log(showBtn, null, status, 'showing');
     });
   };
 
@@ -114,10 +114,10 @@ exports.defineManualTests = function(contentEl, createActionButton) {
   var hideBtn = 'QRScanner.hide()';
   qrscanner_tests += '<h3>Hide QRScanner</h3>' +
     '<div id="hideBtn"></div>' +
-    'Expected result: Should reset the native webview background to white and opaque.';
+    'Expected result: Should hide the video preview layer (returning the background to the default – opaque and white).';
   var hide = function() {
     window.QRScanner.hide(function(status) {
-      log(hideBtn, null, status, 'webviewBackgroundIsTransparent');
+      log(hideBtn, null, status, 'showing');
     });
   };
 

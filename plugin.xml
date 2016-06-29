@@ -34,12 +34,9 @@
       <js-module src="src/browser/QRScannerProxy.js" name="QRScannerProxy">
           <runs />
       </js-module>
-      <js-module src="src/browser/qrcode-reader.js" name="QRCode">
-          <runs />
-          <clobbers target="window.QRCode" />
-      </js-module>
+      <source-file src="src/browser/worker.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
+      <source-file src="src/browser/qrcode-reader.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
       <js-module src="src/browser/adapter.js" name="AdapterJs">
-          <runs />
           <clobbers target="window.getUserMedia" />
       </js-module>
   </platform>

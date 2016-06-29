@@ -252,7 +252,7 @@ Name                             | Description
 `lightEnabled`                   | A boolean value which is true if the light is enabled.
 `canOpenSettings`                | A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
 `canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
-`canChangeCamera` (TODO)         | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted.
+`canChangeCamera`                | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted.
 `currentCamera`                  | A number representing the index of the currentCamera. `0` is the back camera, `1` is the front.
 
 ### Destroy
@@ -323,7 +323,9 @@ As a consequence, you should assume that your `<body>` element will be completel
 
 ### Privacy Lights
 
-Most devices now include a hardware-level "privacy light", which is enabled when the camera is being used. To prevent this light from being "always on" when the app is running, the browser platform disables/enables use of the camera with the `hide` and `show` methods. If your implementation works well on a mobile platform, you'll find that this addition provides a great head start for a solid `browser` implementation.
+Most devices now include a hardware-level "privacy light", which is enabled when the camera is being used. To prevent this light from being "always on" when the app is running, the browser platform disables/enables use of the camera with the `hide`, `show`, `pausePreview`, and `resumePreview` methods. If your implementation works well on a mobile platform, you'll find that this addition provides a great head start for a solid `browser` implementation.
+
+For this same reason, scanning requires the video preview to be active, and the `pausePreview` method will also pause scanning on the browser platform. (Calling `resumePreview` will continue the scan.)
 
 ### Camera Selection
 
@@ -351,11 +353,21 @@ Both Electron and NW.js automatically provide authorization to access the camera
 
 On the `browser` platform, the `authorized` field is set to `true` if at least one camera is available **and** the user has granted the application access to at least one camera. On Electron and NW.js, this field can reliably be used to determine if a camera is available to the device.
 
+### Adjusting Scan Speed vs. CPU/Power Usage (uncommon)
+
+On the browser platform, it's possible to adjust the interval at which QR decode attempts occur – even while a scan is happening. This enables applications to intellegently adjust scanning speed in different application states. QRScanner will check for the presence of the global variable `window.QRScanner_SCAN_INTERVAL` before scheduling each next QR decode. If not set, the default of `130` (milliseconds) is used.
+
 ## Typescript
 Type definitions for cordova-plugin-qrscanner are [available in the DefinitelyTyped project](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/cordova-plugin-qrscanner/cordova-plugin-qrscanner.d.ts).
 
 ## Contributing &amp; Testing
-To setup the platform tests, run `npm run gen-tests`. This will create a new cordova project in the `cordova-plugin-test-projects` directory next to this repo, install `cordova-plugin-qrscanner`, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework). Once the platform tests are generated, the following commands are available:
+To setup the platform tests, run:
+
+```sh
+npm run gen-tests
+```
+
+This will create a new cordova project in the `cordova-plugin-test-projects` directory next to this repo, install `cordova-plugin-qrscanner`, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework). Once the platform tests are generated, the following commands are available:
 
 - `npm run test:ios`
 - `npm run test:browser`
