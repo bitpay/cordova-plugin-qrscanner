@@ -7,7 +7,7 @@ function stringToBool(string) {
     case '0':
       return false;
     default:
-    throw new Error('QRScanner plugin returned an invalid boolean number-string.');
+    throw new Error('QRScanner plugin returned an invalid boolean number-string: ' + string);
   }
 }
 
@@ -20,7 +20,7 @@ function convertStatus(statusDictionary) {
     prepared: stringToBool(statusDictionary.prepared),
     scanning: stringToBool(statusDictionary.scanning),
     previewing: stringToBool(statusDictionary.previewing),
-    webviewBackgroundIsTransparent: stringToBool(statusDictionary.webviewBackgroundIsTransparent),
+    showing: stringToBool(statusDictionary.showing),
     lightEnabled: stringToBool(statusDictionary.lightEnabled),
     canOpenSettings: stringToBool(statusDictionary.canOpenSettings),
     canEnableLight: stringToBool(statusDictionary.canEnableLight),

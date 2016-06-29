@@ -59,7 +59,7 @@ exports.defineAutoTests = function() {
           expect(typeof status.prepared).toBe('boolean');
           expect(typeof status.scanning).toBe('boolean');
           expect(typeof status.previewing).toBe('boolean');
-          expect(typeof status.webviewBackgroundIsTransparent).toBe('boolean');
+          expect(typeof status.showing).toBe('boolean');
           expect(typeof status.lightEnabled).toBe('boolean');
           expect(typeof status.canOpenSettings).toBe('boolean');
           expect(typeof status.canEnableLight).toBe('boolean');

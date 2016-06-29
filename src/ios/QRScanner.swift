@@ -371,9 +371,9 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             previewing = captureVideoPreviewLayer!.connection.enabled
         }
 
-        var webviewBackgroundIsTransparent = false
+        var showing = false
         if(self.webView!.backgroundColor == UIColor.clearColor()){
-            webviewBackgroundIsTransparent = true
+            showing = true
         }
 
         var lightEnabled = false
@@ -403,7 +403,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             "prepared": boolToNumberString(prepared),
             "scanning": boolToNumberString(scanning),
             "previewing": boolToNumberString(previewing),
-            "webviewBackgroundIsTransparent": boolToNumberString(webviewBackgroundIsTransparent),
+            "showing": boolToNumberString(showing),
             "lightEnabled": boolToNumberString(lightEnabled),
             "canOpenSettings": boolToNumberString(canOpenSettings),
             "canEnableLight": boolToNumberString(canEnableLight),

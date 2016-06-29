@@ -228,7 +228,7 @@ QRScanner.getStatus(function(status){
   "prepared": Boolean
   "scanning": Boolean
   "previewing": Boolean
-  "webviewBackgroundIsTransparent": Boolean
+  "showing": Boolean
   "lightEnabled": Boolean
   "canOpenSettings": Boolean
   "canEnableLight": Boolean
@@ -246,9 +246,9 @@ Name                             | Description
 `denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`).
 `restricted`                     | A boolean value which is true if the user is unable to grant permissions due to parental controls, organization security configuration profiles, or similar reasons.
 `prepared`                       | A boolean value which is true if QRScanner is prepared to capture video and render it to the view.
+`showing`                        | A boolean value which is true when the preview layer is visible (and on all platforms but `browser`, the native webview background is transparent).
 `scanning`                       | A boolean value which is true if QRScanner is actively scanning for a QR code.
 `previewing`                     | A boolean value which is true if QRScanner is displaying a live preview from the device's camera. Set to false when the preview is paused.
-`webviewBackgroundIsTransparent` | A boolean value which is true when the native webview background is transparent.
 `lightEnabled`                   | A boolean value which is true if the light is enabled.
 `canOpenSettings`                | A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
 `canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
