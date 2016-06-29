@@ -2281,14 +2281,16 @@ this.decode = function(src, data){
     var decode = (function() {
 
         try {
+			this.error = undefined;
 			this.result = this.process(this.imagedata);
         } catch (e) {
-            this.result = "error decoding QR Code: " + e;
+            this.error = e;
+            this.result = undefined;
         }
 
 		if (this.callback!=null) {
 
-            this.callback(this.result);
+            this.callback(this.result,this.error);
         };
 
         return this.result;
@@ -2414,9 +2416,8 @@ this.getPixel = function(imageData, x,y){
 	if (imageData.height < y) {
 		throw "point error";
 	}
-	point = (x * 4) + (y * imageData.width * 4);
-	p = (imageData.data[point]*33 + imageData.data[point + 1]*34 + imageData.data[point + 2]*33)/100;
-	return p;
+	var point = (x * 4) + (y * imageData.width * 4);
+	return (imageData.data[point]*33 + imageData.data[point + 1]*34 + imageData.data[point + 2]*33)/100;
 }
 
 this.binarize = function(th){
