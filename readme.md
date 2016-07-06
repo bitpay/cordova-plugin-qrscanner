@@ -315,6 +315,14 @@ While the browser implementation matches the native mobile implementations very 
 
 The browser implementation of this plugin is designed to abstract these platform differences very thoroughly. It's recommended that you focus your development efforts on implementing this plugin well for one of the mobile platform, and the browser platform implementation will degrade gracefully from there.
 
+## Android
+
+Before testing with Android, please install [Java Development Kit (JDK) 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html), [Android Studio](https://developer.android.com/studio/index.html), and the SDK packages for whatever [API level](https://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels) you wish to target.
+
+Cordova's CLI tools require some environment variables to be set in order to function correctly. The CLI will attempt to set these variables for you, but in certain cases you may need to set them manually. Please refer to [Cordova's Android Platform Guide](https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html) for more information.
+
+Please make sure you have Gradle updated. If you get an error stating "Gradle Version 2.10 is required", ensure you selected `Use default Gradle wrapper` when Android Studio started up. Then edit the `Project/gradle/wrapper/gradle-wrapper.properties` file and change the distributionUrl line to `distributionUrl=http\://services.gradle.org/distributions/gradle-2.10-all.zip`.
+
 ### Video Preview DOM Element
 
 Unlike the other platforms, it's not possible to spawn the `<video>` preview behind the `<html>` and `<body>` using only Javascript. Trying to mimick the effect by making the element a sibling to either the `<html>` or `<body>` elements also produces inconsistent results (ie: no rendering on Chromium). Instead, this plugin appends the `<video>` element as the final child of the `<body>` element, and applies styling to cover the entire background.
@@ -371,6 +379,7 @@ This will create a new cordova project in the `cordova-plugin-test-projects` dir
 
 - `npm run test:ios`
 - `npm run test:browser`
+- `npm run test:android`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 
