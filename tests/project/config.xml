@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="test.qrscanner.{{TIMESTAMP}}" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="test.qrscanner.t{{TIMESTAMP}}" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>CvQRScnTst</name>
     <description>
         A test application for the cordova-plugin-qrscanner package.
