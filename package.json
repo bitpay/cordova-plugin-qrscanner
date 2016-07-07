@@ -11,7 +11,7 @@
   "scripts": {
     "test": "npm run jshint",
     "jshint": "jshint www && jshint src && jshint tests",
-    "update": "npm install && npm run update:qrcode-reader && npm run update:adapter.js",
+    "update": "npm update && npm run update:qrcode-reader && npm run update:adapter.js",
     "update:qrcode-reader": "ncp node_modules/qrcode-reader/dist/index.js src/browser/qrcode-reader.js",
     "update:adapter.js": "ncp node_modules/webrtc-adapter/out/adapter_no_edge.js src/browser/adapter.js",
     "gen-tests": "npm run clean-platform-tests && npm run mkdirp-platform-tests && npm run copy-platform-tests && npm run install-platform-tests",
@@ -43,18 +43,18 @@
   },
   "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
   "dependencies": {
-    "qrcode-reader": "^0.1.1",
-    "xcode": "^0.8.4"
+    "qrcode-reader": "^0.2.1",
     "webrtc-adapter": "^1.4.0",
+    "xcode": "^0.8.8"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "^1.1.5",
-    "ghooks": "^1.2.0",
-    "jshint": "^2.9.1",
+    "cz-conventional-changelog": "^1.1.6",
+    "ghooks": "^1.3.2",
+    "jshint": "^2.9.2",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "trash-cli": "^1.3.0",
-    "validate-commit-msg": "^2.5.0"
+    "validate-commit-msg": "^2.6.1"
   },
   "config": {
     "commitizen": {
