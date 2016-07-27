@@ -228,7 +228,7 @@ QRScanner.getStatus(function(status){
 
 Open the app-specific permission settings in the user's device settings. Here the user can enable/disable camera (and other) access for your app.
 
-Note: iOS immediately kills all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
+Note: iOS and Android (6.0+) immediately kill all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
 
 ### Get QRScanner Status
 
@@ -341,6 +341,8 @@ Cordova's CLI tools require some environment variables to be set in order to fun
 
 Please make sure you have Gradle updated. If you get an error stating "Gradle Version 2.10 is required", ensure you selected `Use default Gradle wrapper` when Android Studio started up. Then edit the `Project/gradle/wrapper/gradle-wrapper.properties` file and change the distributionUrl line to `distributionUrl=http\://services.gradle.org/distributions/gradle-2.10-all.zip`.
 
+Open the SDK manager in Android Studio and make sure you have latest Google Play Services SDK Tool installed.
+
 ### Video Preview DOM Element
 
 Unlike the other platforms, it's not possible to spawn the `<video>` preview behind the `<html>` and `<body>` using only Javascript. Trying to mimick the effect by making the element a sibling to either the `<html>` or `<body>` elements also produces inconsistent results (ie: no rendering on Chromium). Instead, this plugin appends the `<video>` element as the final child of the `<body>` element, and applies styling to cover the entire background.
@@ -366,6 +368,8 @@ If more cameras are available, the "front" camera is then chosen from the highes
 ### Light
 
 The browser platform always returns the boolean `status.canEnableLight` as `false`, and the enableLight/disableLight methods throw the `LIGHT_UNAVAILABLE` error code.
+
+`status.canEnableLight` is camera specific, meaning it will return `false` if the camera in use does not have a flash. 
 
 ### Using with Electron or NW.js
 
