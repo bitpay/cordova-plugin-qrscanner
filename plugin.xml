@@ -15,6 +15,28 @@
     <clobbers target="QRScanner" />
   </js-module>
 
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="QRScanner">
+        <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
+      </feature>
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/*">
+        <uses-permission android:name="android.permission.CAMERA" android:required="false" />
+        <uses-feature android:name="android.hardware.camera" android:required="false" />
+        <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+    </config-file>
+    <source-file src="src/android/CameraPreview.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
+    <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
+    <dependency id="cordova-plugin-compat" version="^1.0.0" />
+    <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
+  </platform>
+
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
