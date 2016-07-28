@@ -28,7 +28,6 @@ import android.hardware.Camera;
 import android.provider.Settings;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.HashMap;
