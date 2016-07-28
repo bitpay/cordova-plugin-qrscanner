@@ -45,12 +45,12 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean prepared = false;
     private int currentCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     private String[] permissions = {Manifest.permission.CAMERA};
-
     //Preview started or paused
     private boolean previewing = true;
     private BarcodeView  mBarcodeView;
     private boolean switchFlashOn;
     private boolean cameraPreviewing;
+    private boolean scanning = false;
     private CallbackContext nextScanCallback;
 
     static class QRScannerError {
@@ -387,9 +387,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 mBarcodeView.resume();
             }
         });
-
         prepared = true;
-        getStatus(callbackContext);
     }
 
     @Override
@@ -398,6 +396,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             return;
 
         if(barcodeResult.getText() != null) {
+            scanning = false;
             this.nextScanCallback.success(barcodeResult.getText());
             this.nextScanCallback = null;
         }
@@ -440,10 +439,22 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             }
             setupCamera(callbackContext);
         }
+        getStatus(callbackContext);
+
     }
 
 
     private void scan(final CallbackContext callbackContext) {
+        if(!prepared) {
+            if (hasCamera()) {
+                if (!hasPermission()) {
+                    requestPermission(33);
+                } else {
+                    setupCamera(callbackContext);
+                }
+            }
+        }
+        scanning = true;
         this.nextScanCallback = callbackContext;
         final BarcodeCallback b = this;
         this.cordova.getActivity().runOnUiThread(new Runnable() {
@@ -457,6 +468,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void cancelScan(final CallbackContext callbackContext) {
+        scanning = false;
         if (mBarcodeView != null) {
             mBarcodeView.stopDecoding();
             this.nextScanCallback = null;
@@ -557,7 +569,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         status.put("denied",boolToNumberString(denied));
         status.put("restricted",boolToNumberString(restricted));
         status.put("prepared",boolToNumberString(prepared));
-        status.put("scanning",boolToNumberString(authorized));
+        status.put("scanning",boolToNumberString(scanning));
         status.put("previewing",boolToNumberString(previewing));
         status.put("showing",boolToNumberString(showing));
         status.put("lightEnabled",boolToNumberString(lightOn));
