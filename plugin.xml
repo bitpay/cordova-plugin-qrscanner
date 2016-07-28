@@ -31,7 +31,6 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
     </config-file>
-    <source-file src="src/android/CameraPreview.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <dependency id="cordova-plugin-compat" version="^1.0.0" />
     <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
