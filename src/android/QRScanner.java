@@ -139,14 +139,18 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                         while (cameraClosing) {
                             try {
                                 Thread.sleep(10);
-                            } catch (InterruptedException ignore) {}
+                            } catch (InterruptedException ignore) {
+                            }
                         }
-                        if(!hasPermission()) {
-                            switchFlashOn = true;
-                            requestPermission(33);
+                        if (hasFlash()) {
+                            if (!hasPermission()) {
+                                switchFlashOn = true;
+                                requestPermission(33);
+                            } else
+                                enableLight(callbackContext);
+                        } else {
+                            callbackContext.error(QRScannerError.LIGHT_UNAVAILABLE);
                         }
-                        else
-                            enableLight(callbackContext);
                     }
                 });
                 return true;
@@ -201,8 +205,6 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         }
     }
 
-    //do on pause thingy
-    //fix black screen flash on older devices translucent or making invisible window on load
     private boolean hasFlash() {
         if (flashAvailable == null) {
             flashAvailable = false;
@@ -237,21 +239,28 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             return "0";
     }
 
-    private void doswitchFlash(final boolean toggleLight, CallbackContext callbackContext) throws IOException, CameraAccessException {
+    private void doswitchFlash(final boolean toggleLight, final CallbackContext callbackContext) throws IOException, CameraAccessException {
         if (mBarcodeView == null) {
             //??
         }
-
+        //No flash for front facing cameras
+        if(getCurrentCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            callbackContext.error(QRScannerError.LIGHT_UNAVAILABLE);
+            return;
+        }
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mBarcodeView != null) {
                     mBarcodeView.setTorch(toggleLight);
+                    if(toggleLight)
+                        lightOn = true;
+                    else
+                        lightOn = false;
                 }
+                getStatus(callbackContext);
             }
         });
-
-        getStatus(callbackContext);
     }
 
     public int getCurrentCameraId() {
@@ -412,7 +421,12 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             }
         } else {
             prepared = false;
-            mBarcodeView.pause();
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBarcodeView.pause();
+                }
+            });
             if(cameraPreviewing) {
                 this.cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -459,19 +473,30 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void pausePreview(final CallbackContext callbackContext) {
-        if(mBarcodeView != null) {
-            mBarcodeView.pause();
-            previewing = false;
-        }
-        getStatus(callbackContext);
+        this.cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mBarcodeView != null) {
+                    mBarcodeView.pause();
+                    previewing = false;
+                }
+                getStatus(callbackContext);
+            }
+        });
+
     }
 
     private void resumePreview(final CallbackContext callbackContext) {
-        if(mBarcodeView != null) {
-            mBarcodeView.resume();
-            previewing = true;
-        }
-        getStatus(callbackContext);
+        this.cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mBarcodeView != null) {
+                    mBarcodeView.resume();
+                    previewing = true;
+                }
+                getStatus(callbackContext);
+            }
+        });
     }
 
     private void enableLight(CallbackContext callbackContext) {
