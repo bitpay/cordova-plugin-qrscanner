@@ -28,6 +28,8 @@ import android.hardware.Camera;
 import android.provider.Settings;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -164,11 +166,11 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                         cordova.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                            try {
-                                currentCameraId = args.getInt(0);
-                            } catch (JSONException e) {
-                            }
-                            prepare(callbackContext);
+                                try {
+                                    currentCameraId = args.getInt(0);
+                                } catch (JSONException e) {
+                                }
+                                prepare(callbackContext);
                             }
                         });
                     }
@@ -372,6 +374,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
 
                 cameraPreviewing = true;
                 webView.getView().bringToFront();
+
+                mBarcodeView.resume();
             }
         });
 
