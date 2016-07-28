@@ -7,7 +7,7 @@
     "postinstall": "node scripts/timestamp.js && cordova prepare",
     "test:ios": "cordova build ios && open platforms/ios/CvQRScnTst.xcodeproj",
     "test:browser": "cordova run browser",
-    "test:wp8": "cordova run wp8"
+    "test:windows": "cordova run windows"
   },
   "private": true,
   "dependencies": {

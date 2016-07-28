@@ -41,4 +41,15 @@
       </js-module>
   </platform>
 
+  <platform name="windows">
+      <config-file target="config.xml" parent="/*">
+          <feature name="QRScanner">
+              <param name="windows-package" value="QRScanner" />
+          </feature>
+      </config-file>
+      <js-module src="src/windows/QRScannerProxy.js" name="QRScannerProxy">
+          <merges target=""/>
+      </js-module>
+  </platform>
+
 </plugin>
