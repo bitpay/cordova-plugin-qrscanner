@@ -241,26 +241,27 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
 
     private void doswitchFlash(final boolean toggleLight, final CallbackContext callbackContext) throws IOException, CameraAccessException {
         if (mBarcodeView == null) {
-            //??
+            lightOn = true;
+            prepare(callbackContext);
         }
-        //No flash for front facing cameras
-        if(getCurrentCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            callbackContext.error(QRScannerError.LIGHT_UNAVAILABLE);
-            return;
-        }
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mBarcodeView != null) {
-                    mBarcodeView.setTorch(toggleLight);
-                    if(toggleLight)
-                        lightOn = true;
-                    else
-                        lightOn = false;
-                }
-                getStatus(callbackContext);
+            //No flash for front facing cameras
+            if (getCurrentCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                callbackContext.error(QRScannerError.LIGHT_UNAVAILABLE);
+                return;
             }
-        });
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mBarcodeView != null) {
+                        mBarcodeView.setTorch(toggleLight);
+                        if (toggleLight)
+                            lightOn = true;
+                        else
+                            lightOn = false;
+                    }
+                    getStatus(callbackContext);
+                }
+            });
     }
 
     public int getCurrentCameraId() {
@@ -443,10 +444,16 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
 
 
     private void scan(final CallbackContext callbackContext) {
-        if (mBarcodeView != null) {
-            this.nextScanCallback = callbackContext;
-            mBarcodeView.decodeSingle(this);
-        }
+        this.nextScanCallback = callbackContext;
+        final BarcodeCallback b = this;
+        this.cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mBarcodeView != null) {
+                    mBarcodeView.decodeSingle(b);
+                }
+            }
+        });
     }
 
     private void cancelScan(final CallbackContext callbackContext) {
