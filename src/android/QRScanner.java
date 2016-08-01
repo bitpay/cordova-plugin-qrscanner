@@ -142,9 +142,9 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                             } catch (InterruptedException ignore) {
                             }
                         }
+                        switchFlashOn = true;
                         if (hasFlash()) {
                             if (!hasPermission()) {
-                                switchFlashOn = true;
                                 requestPermission(33);
                             } else
                                 enableLight(callbackContext);
@@ -158,6 +158,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             else if (action.equals("disableLight")) {
                 cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
+                        switchFlashOn = false;
                         disableLight(callbackContext);
                     }
                 });
@@ -438,6 +439,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     }
                 });
                 previewing = true;
+                lightOn = false;
             }
             setupCamera(callbackContext);
             getStatus(callbackContext);
@@ -504,6 +506,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 if(mBarcodeView != null) {
                     mBarcodeView.pause();
                     previewing = false;
+                    if(lightOn)
+                        lightOn = false;
                 }
                 getStatus(callbackContext);
             }
@@ -518,6 +522,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 if(mBarcodeView != null) {
                     mBarcodeView.resume();
                     previewing = true;
+                    if(switchFlashOn)
+                        lightOn = true;
                 }
                 getStatus(callbackContext);
             }
