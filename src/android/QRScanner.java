@@ -52,6 +52,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean cameraPreviewing;
     private boolean scanning = false;
     private CallbackContext nextScanCallback;
+    private boolean shouldScanAgain;
 
     static class QRScannerError {
         private static final int UNEXPECTED_ERROR = 0,
@@ -309,7 +310,6 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 if(switchFlashOn)
                     switchFlash(true, callbackContext);
                 else setupCamera(callbackContext);
-                getStatus(callbackContext);
                 break;
         }
     }
@@ -391,6 +391,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         });
         prepared = true;
         previewing = true;
+        if(shouldScanAgain)
+            scan(callbackContext);
     }
 
     @Override
@@ -420,8 +422,11 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     requestPermission(33);
                 } else {
                     setupCamera(callbackContext);
-                    getStatus(callbackContext);
+                    if(!scanning)
+                        getStatus(callbackContext);
                 }
+            } else {
+                callbackContext.error(QRScannerError.CAMERA_UNAVAILABLE);
             }
         } else {
             prepared = false;
@@ -439,17 +444,19 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                         cameraPreviewing = false;
                     }
                 });
+
                 previewing = true;
                 lightOn = false;
             }
             setupCamera(callbackContext);
-            getStatus(callbackContext);
         }
+        getStatus(callbackContext);
     }
 
-
     private void scan(final CallbackContext callbackContext) {
-        if(!prepared) {
+        scanning = true;
+        if (!prepared) {
+            shouldScanAgain = true;
             if (hasCamera()) {
                 if (!hasPermission()) {
                     requestPermission(33);
@@ -458,17 +465,21 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 }
             }
         }
-        scanning = true;
-        this.nextScanCallback = callbackContext;
-        final BarcodeCallback b = this;
-        this.cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mBarcodeView != null) {
-                    mBarcodeView.decodeSingle(b);
+        else {
+            shouldScanAgain = false;
+            this.nextScanCallback = callbackContext;
+            final BarcodeCallback b = this;
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mBarcodeView != null) {
+                        mBarcodeView.decodeSingle(b);
+                    } else {
+
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void cancelScan(final CallbackContext callbackContext) {
@@ -541,11 +552,6 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         if(hasPermission())
             switchFlash(false, callbackContext);
         else callbackContext.error(QRScannerError.CAMERA_ACCESS_DENIED);
-    }
-
-    private void useCamera(CallbackContext callbackContext, JSONArray args) {
-        switchCamera(callbackContext, args);
-        getStatus(callbackContext);
     }
 
     private void openSettings(CallbackContext callbackContext) {
