@@ -46,7 +46,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private int currentCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     private String[] permissions = {Manifest.permission.CAMERA};
     //Preview started or paused
-    private boolean previewing = true;
+    private boolean previewing = false;
     private BarcodeView  mBarcodeView;
     private boolean switchFlashOn;
     private boolean cameraPreviewing;
@@ -390,6 +390,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             }
         });
         prepared = true;
+        previewing = true;
     }
 
     @Override
