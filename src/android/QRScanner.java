@@ -308,6 +308,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 if(switchFlashOn)
                     switchFlash(true, callbackContext);
                 else setupCamera(callbackContext);
+                getStatus(callbackContext);
                 break;
         }
     }
@@ -438,9 +439,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 previewing = true;
             }
             setupCamera(callbackContext);
+            getStatus(callbackContext);
         }
-        getStatus(callbackContext);
-
     }
 
 
