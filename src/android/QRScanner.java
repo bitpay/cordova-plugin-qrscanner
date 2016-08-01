@@ -418,6 +418,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     requestPermission(33);
                 } else {
                     setupCamera(callbackContext);
+                    getStatus(callbackContext);
                 }
             }
         } else {
