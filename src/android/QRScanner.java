@@ -548,6 +548,10 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void openSettings(CallbackContext callbackContext) {
+        boolean shouldPrepare = prepared;
+        boolean shouldFlash = lightOn;
+        prepared = false;
+        lightOn = false;
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -555,6 +559,10 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         intent.setData(uri);
         this.cordova.getActivity().getApplicationContext().startActivity(intent);
         getStatus(callbackContext);
+        if(shouldPrepare)
+            prepare(callbackContext);
+        if(shouldFlash)
+            enableLight(callbackContext);
     }
 
     private void getStatus(CallbackContext callbackContext) {
