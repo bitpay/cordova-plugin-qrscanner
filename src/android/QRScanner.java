@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
-import android.os.Build;
+
+import com.google.android.gms.games.quest.QuestRef;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
 import com.journeyapps.barcodescanner.BarcodeCallback;
@@ -53,6 +52,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean scanning = false;
     private CallbackContext nextScanCallback;
     private boolean shouldScanAgain;
+    private boolean error = false;
 
     static class QRScannerError {
         private static final int UNEXPECTED_ERROR = 0,
@@ -303,18 +303,23 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 callbackContext.error(QRScannerError.CAMERA_ACCESS_DENIED);
                 return;
             }
-        }
-
-        switch (requestCode) {
-            case 33:
-                if(switchFlashOn)
-                    switchFlash(true, callbackContext);
-                else {
-                    setupCamera(callbackContext);
-                    if(!scanning)
-                        getStatus(callbackContext);
+            else if(r == PackageManager.PERMISSION_GRANTED) {
+                switch (requestCode) {
+                    case 33:
+                        if(switchFlashOn)
+                            switchFlash(true, callbackContext);
+                        else {
+                            setupCamera(callbackContext);
+                            if(!scanning)
+                                getStatus(callbackContext);
+                        }
+                        break;
                 }
-                break;
+            }
+            else {
+                callbackContext.error(QRScannerError.CAMERA_ACCESS_RESTRICTED);
+                return;
+            }
         }
     }
 
@@ -357,15 +362,21 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         showing = false;
     }
 
-    // Check if this device has a camera
     private boolean hasCamera() {
-        if (this.cordova.getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+        if (this.cordova.getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             return true;
         } else {
             return false;
         }
     }
 
+    private boolean hasFrontCamera() {
+        if (this.cordova.getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)){
+            return true;
+        } else {
+            return false;
+        }
+    }
     private void setupCamera(CallbackContext callbackContext) {
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -401,8 +412,9 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
 
     @Override
     public void barcodeResult(BarcodeResult barcodeResult) {
-        if (this.nextScanCallback == null)
+        if (this.nextScanCallback == null) {
             return;
+        }
 
         if(barcodeResult.getText() != null) {
             scanning = false;
@@ -421,13 +433,29 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     // ---- BEGIN EXTERNAL API ----
     private void prepare(final CallbackContext callbackContext) {
         if(!prepared) {
-            if (hasCamera()) {
-                if (!hasPermission()) {
-                    requestPermission(33);
+            if(currentCameraId == 0) {
+                if (hasCamera()) {
+                    if (!hasPermission()) {
+                        requestPermission(33);
+                    } else {
+                        setupCamera(callbackContext);
+                        if (!scanning)
+                            getStatus(callbackContext);
+                    }
                 } else {
-                    setupCamera(callbackContext);
-                    if(!scanning)
-                        getStatus(callbackContext);
+                    callbackContext.error(QRScannerError.BACK_CAMERA_UNAVAILABLE);
+                }
+            } else if(currentCameraId == 1) {
+                if (hasFrontCamera()) {
+                    if (!hasPermission()) {
+                        requestPermission(33);
+                    } else {
+                        setupCamera(callbackContext);
+                        if (!scanning)
+                            getStatus(callbackContext);
+                    }
+                } else {
+                    callbackContext.error(QRScannerError.FRONT_CAMERA_UNAVAILABLE);
                 }
             } else {
                 callbackContext.error(QRScannerError.CAMERA_UNAVAILABLE);
@@ -458,32 +486,29 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void scan(final CallbackContext callbackContext) {
-        scanning = true;
-        if (!prepared) {
-            shouldScanAgain = true;
-            if (hasCamera()) {
-                if (!hasPermission()) {
-                    requestPermission(33);
-                } else {
-                    setupCamera(callbackContext);
-                }
-            }
-        }
-        else {
-            shouldScanAgain = false;
-            this.nextScanCallback = callbackContext;
-            final BarcodeCallback b = this;
-            this.cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mBarcodeView != null) {
-                        mBarcodeView.decodeSingle(b);
+            scanning = true;
+            if (!prepared) {
+                shouldScanAgain = true;
+                if (hasCamera()) {
+                    if (!hasPermission()) {
+                        requestPermission(33);
                     } else {
-
+                        setupCamera(callbackContext);
                     }
                 }
-            });
-        }
+            } else {
+                shouldScanAgain = false;
+                this.nextScanCallback = callbackContext;
+                final BarcodeCallback b = this;
+                this.cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mBarcodeView != null) {
+                            mBarcodeView.decodeSingle(b);
+                        }
+                    }
+                });
+            }
     }
 
     private void cancelScan(final CallbackContext callbackContext) {
@@ -496,6 +521,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 }
             }
         });
+        if(this.nextScanCallback != null)
+            this.nextScanCallback.error(QRScannerError.SCAN_CANCELED);
         this.nextScanCallback = null;
     }
 
@@ -559,25 +586,29 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void openSettings(CallbackContext callbackContext) {
-        boolean shouldPrepare = prepared;
-        boolean shouldFlash = lightOn;
-        boolean shouldShow = showing;
-        destroy(callbackContext);
-        prepared = false;
-        lightOn = false;
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Uri uri = Uri.fromParts("package", this.cordova.getActivity().getPackageName(), null);
-        intent.setData(uri);
-        this.cordova.getActivity().getApplicationContext().startActivity(intent);
-        getStatus(callbackContext);
-        if(shouldPrepare)
-            prepare(callbackContext);
-        if(shouldFlash)
-            enableLight(callbackContext);
-        if(shouldShow)
-            show(callbackContext);
+        try {
+            boolean shouldPrepare = prepared;
+            boolean shouldFlash = lightOn;
+            boolean shouldShow = showing;
+            destroy(callbackContext);
+            prepared = false;
+            lightOn = false;
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromParts("package", this.cordova.getActivity().getPackageName(), null);
+            intent.setData(uri);
+            this.cordova.getActivity().getApplicationContext().startActivity(intent);
+            getStatus(callbackContext);
+            if (shouldPrepare)
+                prepare(callbackContext);
+            if (shouldFlash)
+                enableLight(callbackContext);
+            if (shouldShow)
+                show(callbackContext);
+        } catch (Exception e) {
+            callbackContext.error(QRScannerError.OPEN_SETTINGS_UNAVAILABLE);
+        }
     }
 
     private void getStatus(CallbackContext callbackContext) {
