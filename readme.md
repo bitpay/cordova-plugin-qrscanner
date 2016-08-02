@@ -204,7 +204,7 @@ QRScanner.pausePreview(function(status){
 })
 ```
 
-Pauses the video preview on the current frame (as if a snapshot was taken).
+Pauses the video preview on the current frame (as if a snapshot was taken) and stops scanning (if scanning).
 
 ```js
 QRScanner.resumePreview(function(status){
@@ -212,7 +212,7 @@ QRScanner.resumePreview(function(status){
 })
 ```
 
-Resumes the video preview.
+Resumes the video preview and continues to scan (if scanning before pausePreview()).
 
 ### Open App Settings
 
