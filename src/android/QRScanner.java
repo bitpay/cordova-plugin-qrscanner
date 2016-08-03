@@ -246,7 +246,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         }
             //No flash for front facing cameras
             if (getCurrentCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                callbackContext.error(QRScannerError.SCAN_CANCELED);
+                callbackContext.error(QRScannerError.LIGHT_UNAVAILABLE);
                 return;
             }
             cordova.getActivity().runOnUiThread(new Runnable() {
