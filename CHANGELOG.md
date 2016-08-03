@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.0...v2.0.1) (2016-08-03)
+
+
+### Bug Fixes
+
+* **js:** added requred args param to cordova.exec calls ([99050d6](https://github.com/bitpay/cordova-plugin-qrscanner/commit/99050d6))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/v1.1.0...v2.0.0) (2016-06-29)
 
@@ -15,6 +25,8 @@
 
 * `status.webviewBackgroundIsTransparent` has been renamed to `status.showing`
 
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/v1.0.1...v1.1.0) (2016-04-05)
 
@@ -22,10 +34,14 @@
 
 * **ios**: add support for WKWebView ([953c971](https://github.com/bitpay/cordova-plugin-qrscanner/commit/953c971))
 
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/v1.0.0...v1.0.1) (2016-02-23)
 
 Improves installation documentation
+
+
 
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/0.1.0...v1.0.0) (2016-01-25)
