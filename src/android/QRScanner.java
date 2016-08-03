@@ -51,7 +51,6 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean scanning = false;
     private CallbackContext nextScanCallback;
     private boolean shouldScanAgain;
-    private boolean shouldContinueScanning = true;
 
     static class QRScannerError {
         private static final int UNEXPECTED_ERROR = 0,
