@@ -44,7 +44,7 @@
   "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
   "dependencies": {
     "qrcode-reader": "^0.2.1",
-    "webrtc-adapter": "^1.4.0",
+    "webrtc-adapter": "^2.0.2",
     "xcode": "^0.8.8"
   },
   "devDependencies": {
