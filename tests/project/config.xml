@@ -26,6 +26,7 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
+    <plugin name="phonegap-plugin-barcodescanner" spec="../../cordova-plugin-qrscanner/src/windows/phonegap-plugin-barcodescanner"/>
     <plugin name="cordova-plugin-qrscanner" spec="../../cordova-plugin-qrscanner" />
     <plugin name="cordova-plugin-qrscanner-tests" spec="../../cordova-plugin-qrscanner/tests" />
     <plugin name="cordova-plugin-test-framework" spec="~1.1.2" />
