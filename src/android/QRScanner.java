@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.hardware.Camera;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @SuppressWarnings("deprecation")
 public class QRScanner extends CordovaPlugin implements BarcodeCallback {
@@ -51,6 +53,11 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean scanning = false;
     private CallbackContext nextScanCallback;
     private boolean shouldScanAgain;
+    private boolean denied;
+    private boolean authorized;
+    private boolean restricted;
+    private boolean oneTime = true;
+    private boolean keepDenied = false;
 
     static class QRScannerError {
         private static final int UNEXPECTED_ERROR = 0,
@@ -311,27 +318,47 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
 
     public void onRequestPermissionResult(int requestCode, String[] permissions,
                                           int[] grantResults) throws JSONException {
-        for (int r : grantResults) {
-            if (r == PackageManager.PERMISSION_DENIED) {
-                callbackContext.error(QRScannerError.CAMERA_ACCESS_DENIED);
-                return;
-            }
-            else if(r == PackageManager.PERMISSION_GRANTED) {
-                switch (requestCode) {
-                    case 33:
-                        if(switchFlashOn)
-                            switchFlash(true, callbackContext);
-                        else {
-                            setupCamera(callbackContext);
-                            if(!scanning)
-                                getStatus(callbackContext);
-                        }
-                        break;
+        oneTime = false;
+        if (requestCode == 33) {
+            // for each permission check if the user granted/denied them
+            // you may want to group the rationale in a single dialog,
+            // this is just an example
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(cordova.getActivity(), permission);
+                    if (! showRationale) {
+                        // user denied flagging NEVER ASK AGAIN
+                        denied = true;
+                        authorized = false;
+                        callbackContext.error(QRScannerError.CAMERA_ACCESS_DENIED);
+                        return;
+                    } else {
+                        authorized = false;
+                        denied = false;
+                        callbackContext.error(QRScannerError.CAMERA_ACCESS_DENIED);
+                        return;
+                    }
+                } else if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                    authorized = true;
+                    denied = false;
+                    switch (requestCode) {
+                        case 33:
+                            if(switchFlashOn)
+                                switchFlash(true, callbackContext);
+                            else {
+                                setupCamera(callbackContext);
+                                if(!scanning)
+                                    getStatus(callbackContext);
+                            }
+                            break;
+                    }
                 }
-            }
-            else {
-                callbackContext.error(QRScannerError.CAMERA_ACCESS_RESTRICTED);
-                return;
+                else {
+                    authorized = false;
+                    denied = false;
+                    restricted = false;
+                }
             }
         }
     }
@@ -517,6 +544,19 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     }
                 }
             } else {
+                if(!previewing) {
+                    this.cordova.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mBarcodeView != null) {
+                                mBarcodeView.resume();
+                                previewing = true;
+                                if(switchFlashOn)
+                                    lightOn = true;
+                            }
+                        }
+                    });
+                }
                 shouldScanAgain = false;
                 this.nextScanCallback = callbackContext;
                 final BarcodeCallback b = this;
@@ -606,12 +646,17 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     }
 
     private void openSettings(CallbackContext callbackContext) {
+        oneTime = true;
+        if(denied)
+            keepDenied = true;
         try {
+            denied = false;
+            authorized = false;
             boolean shouldPrepare = prepared;
             boolean shouldFlash = lightOn;
             boolean shouldShow = showing;
-            destroy(callbackContext);
-            prepared = false;
+            if(prepared)
+                destroy(callbackContext);
             lightOn = false;
             Intent intent = new Intent();
             intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -629,24 +674,32 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         } catch (Exception e) {
             callbackContext.error(QRScannerError.OPEN_SETTINGS_UNAVAILABLE);
         }
+
     }
 
     private void getStatus(CallbackContext callbackContext) {
 
-        boolean authorizationStatus = hasPermission();
+        if(oneTime) {
+            boolean authorizationStatus = hasPermission();
 
-        boolean authorized = false;
-        if(authorizationStatus)
-            authorized = true;
+            authorized = false;
+            if (authorizationStatus)
+                authorized = true;
 
-        boolean denied = false;
-        if(!authorizationStatus)
-            denied = true;
+            if(keepDenied && !authorized)
+                denied = true;
+            else
+                denied = false;
 
-        //No applicable API
-        boolean restricted = false;
+            //No applicable API
+            restricted = false;
+        }
         boolean canOpenSettings = true;
+
         boolean canEnableLight = hasFlash();
+
+        if(currentCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT)
+            canEnableLight = false;
 
         HashMap status = new HashMap();
         status.put("authorized",boolToNumberString(authorized));
@@ -670,6 +723,19 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private void destroy(CallbackContext callbackContext) {
         prepared = false;
         makeOpaque();
+        previewing = false;
+        if(scanning) {
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    scanning = false;
+                    if (mBarcodeView != null) {
+                        mBarcodeView.stopDecoding();
+                    }
+                }
+            });
+            this.nextScanCallback = null;
+        }
 
         if(cameraPreviewing) {
             this.cordova.getActivity().runOnUiThread(new Runnable() {
@@ -680,8 +746,10 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 }
             });
         }
-        if(currentCameraId != Camera.CameraInfo.CAMERA_FACING_FRONT)
-            switchFlash(false, callbackContext);
+        if(currentCameraId != Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            if (lightOn)
+                switchFlash(false, callbackContext);
+        }
         closeCamera();
         currentCameraId = 0;
         getStatus(callbackContext);
