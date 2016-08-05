@@ -3,7 +3,7 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 # cordova-plugin-qrscanner
-A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. Currently iOS and browser only.
+A fast, energy efficient, highly-configurable QR code scanner for Cordova apps – available for the iOS, Android, and browser platforms.
 
 QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an HTML/CSS/JS interface to be built inside the webview to control the scanner.
 
@@ -261,7 +261,7 @@ Retrieve the status of QRScanner and provide it to the callback function.
 Name                             | Description
 :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 `authorized`                     | On iOS and Android 6.0+, camera access is granted at runtime by the user (by clicking "Allow" at the dialog). The `authorized` property is a boolean value which is true only when the user has allowed camera access to your app (`AVAuthorizationStatus.Authorized`). On platforms with permissions granted at install (Android pre-6.0, Windows Phone) this property is always true.
-`denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`). On Android(6.0+), denied will remain false up until the user permanently denies camera permission by checking the `Never ask again` checkbox. Once checked, the user must be prompted to openSettings() in order to grant camera permissions at which point, if granted, denied will switch to false and authorized to true.
+`denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`).
 `restricted`                     | A boolean value which is true if the user is unable to grant permissions due to parental controls, organization security configuration profiles, or similar reasons.
 `prepared`                       | A boolean value which is true if QRScanner is prepared to capture video and render it to the view.
 `showing`                        | A boolean value which is true when the preview layer is visible (and on all platforms but `browser`, the native webview background is transparent).
@@ -324,6 +324,18 @@ This plugin is always tested with the latest version of Xcode. Please be sure yo
 
 If you run into issues in your own project, try the test project in this repo to confirm your environment is set up properly: `npm run gen-tests && npm run test:ios`.
 
+## Android
+
+On Android, calling `pausePreview()` will also disable the light. However, if `disableLight()` is not called, the light will be reenabled when `resumePreview()` is called.
+
+If you run into issues in your own project, try the test project in this repo to confirm your environment is set up properly: `npm run gen-tests && npm run test:android`.
+
+### Permissions
+
+Unlike iOS, on Android >=6.0, permissions can be requested multiple times. If the user denies camera access, `status.denied` will remain `false` unless the user permanently denies by checking the `Never ask again` checkbox. Once `status.denied` is `true`, `openSettings()` is the only remaining option to grant camera permissions.
+
+Because of API limitations, `status.restricted` will always be false on the Android platform. See [#15](https://github.com/bitpay/cordova-plugin-qrscanner/issues/15) for details. Pull requests welcome!
+
 
 ## Browser
 
@@ -333,18 +345,6 @@ While the browser implementation matches the native mobile implementations very 
 - **light** – we are not aware of any devices for the `browser` platform which have a "light" (aka. "torch") – should a device like this be produced, and if [this spec](http://w3c.github.io/mediacapture-image/#filllightmode) is [implemented by Chromium](https://bugs.chromium.org/p/chromium/issues/detail?id=485972), this plugin will attempt to support it.
 
 The browser implementation of this plugin is designed to abstract these platform differences very thoroughly. It's recommended that you focus your development efforts on implementing this plugin well for one of the mobile platform, and the browser platform implementation will degrade gracefully from there.
-
-## Android
-
-Before testing with Android, please install [Java Development Kit (JDK) 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html), [Android Studio](https://developer.android.com/studio/index.html), and the SDK packages for whatever [API level](https://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels) you wish to target.
-
-Cordova's CLI tools require some environment variables to be set in order to function correctly. The CLI will attempt to set these variables for you, but in certain cases you may need to set them manually. Please refer to [Cordova's Android Platform Guide](https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html) for more information.
-
-Please make sure you have Gradle updated. If you get an error stating "Gradle Version 2.10 is required", ensure you selected `Use default Gradle wrapper` when Android Studio started up. Then edit the `Project/gradle/wrapper/gradle-wrapper.properties` file and change the distributionUrl line to `distributionUrl=http\://services.gradle.org/distributions/gradle-2.10-all.zip`.
-
-Open the SDK manager in Android Studio and make sure you have latest Google Play Services SDK Tool installed.
-
-When calling pausePreview() with the flash on the camera preview will pause and the flash will switch off. Call resumePreview() to resume the camera preview and activate the flash.
 
 ### Video Preview DOM Element
 
