@@ -204,7 +204,7 @@ QRScanner.pausePreview(function(status){
 })
 ```
 
-Pauses the video preview on the current frame (as if a snapshot was taken).
+Pauses the video preview on the current frame (as if a snapshot was taken) and stops scanning (if scanning).
 
 ```js
 QRScanner.resumePreview(function(status){
@@ -212,7 +212,7 @@ QRScanner.resumePreview(function(status){
 })
 ```
 
-Resumes the video preview.
+Resumes the video preview and continues to scan (if scanning before pausePreview()).
 
 ### Open App Settings
 
@@ -228,7 +228,7 @@ QRScanner.getStatus(function(status){
 
 Open the app-specific permission settings in the user's device settings. Here the user can enable/disable camera (and other) access for your app.
 
-Note: iOS immediately kills all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
+Note: iOS and Android (6.0+) immediately kill all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
 
 ### Get QRScanner Status
 
@@ -261,7 +261,7 @@ Retrieve the status of QRScanner and provide it to the callback function.
 Name                             | Description
 :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 `authorized`                     | On iOS and Android 6.0+, camera access is granted at runtime by the user (by clicking "Allow" at the dialog). The `authorized` property is a boolean value which is true only when the user has allowed camera access to your app (`AVAuthorizationStatus.Authorized`). On platforms with permissions granted at install (Android pre-6.0, Windows Phone) this property is always true.
-`denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`).
+`denied`                         | A boolean value which is true if the user permenantly denied camera access to the app (`AVAuthorizationStatus.Denied`). Once denied, camera access can only be gained by requesting the user change their decision (consider offering a link to the setting via `openSettings()`). On Android(6.0+), denied will remain false up until the user permanently denies camera permission by checking the `Never ask again` checkbox. Once checked, the user must be prompted to openSettings() in order to grant camera permissions at which point, if granted, denied will switch to false and authorized to true.
 `restricted`                     | A boolean value which is true if the user is unable to grant permissions due to parental controls, organization security configuration profiles, or similar reasons.
 `prepared`                       | A boolean value which is true if QRScanner is prepared to capture video and render it to the view.
 `showing`                        | A boolean value which is true when the preview layer is visible (and on all platforms but `browser`, the native webview background is transparent).
@@ -272,6 +272,7 @@ Name                             | Description
 `canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
 `canChangeCamera`                | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted.
 `currentCamera`                  | A number representing the index of the currentCamera. `0` is the back camera, `1` is the front.
+
 
 ### Destroy
 
@@ -333,6 +334,18 @@ While the browser implementation matches the native mobile implementations very 
 
 The browser implementation of this plugin is designed to abstract these platform differences very thoroughly. It's recommended that you focus your development efforts on implementing this plugin well for one of the mobile platform, and the browser platform implementation will degrade gracefully from there.
 
+## Android
+
+Before testing with Android, please install [Java Development Kit (JDK) 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html), [Android Studio](https://developer.android.com/studio/index.html), and the SDK packages for whatever [API level](https://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels) you wish to target.
+
+Cordova's CLI tools require some environment variables to be set in order to function correctly. The CLI will attempt to set these variables for you, but in certain cases you may need to set them manually. Please refer to [Cordova's Android Platform Guide](https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html) for more information.
+
+Please make sure you have Gradle updated. If you get an error stating "Gradle Version 2.10 is required", ensure you selected `Use default Gradle wrapper` when Android Studio started up. Then edit the `Project/gradle/wrapper/gradle-wrapper.properties` file and change the distributionUrl line to `distributionUrl=http\://services.gradle.org/distributions/gradle-2.10-all.zip`.
+
+Open the SDK manager in Android Studio and make sure you have latest Google Play Services SDK Tool installed.
+
+When calling pausePreview() with the flash on the camera preview will pause and the flash will switch off. Call resumePreview() to resume the camera preview and activate the flash.
+
 ### Video Preview DOM Element
 
 Unlike the other platforms, it's not possible to spawn the `<video>` preview behind the `<html>` and `<body>` using only Javascript. Trying to mimick the effect by making the element a sibling to either the `<html>` or `<body>` elements also produces inconsistent results (ie: no rendering on Chromium). Instead, this plugin appends the `<video>` element as the final child of the `<body>` element, and applies styling to cover the entire background.
@@ -358,6 +371,8 @@ If more cameras are available, the "front" camera is then chosen from the highes
 ### Light
 
 The browser platform always returns the boolean `status.canEnableLight` as `false`, and the enableLight/disableLight methods throw the `LIGHT_UNAVAILABLE` error code.
+
+`status.canEnableLight` is camera specific, meaning it will return `false` if the camera in use does not have a flash.
 
 ### Using with Electron or NW.js
 
@@ -396,6 +411,7 @@ This will create a new cordova project in the `cordova-plugin-test-projects` dir
 
 - `npm run test:ios`
 - `npm run test:browser`
+- `npm run test:android`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 

@@ -20,6 +20,7 @@
     "copy-platform-tests": "ncp tests/project ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
     "install-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm install",
     "test:ios": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:ios",
+    "test:android": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:android",
     "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
