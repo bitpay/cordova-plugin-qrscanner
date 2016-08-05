@@ -1,3 +1,20 @@
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.1...v2.1.0) (2016-08-05)
+
+
+### Bug Fixes
+
+* **all:** added required parameters to certain cordova.exec functions ([69fe4e6](https://github.com/bitpay/cordova-plugin-qrscanner/commit/69fe4e6))
+
+
+### Features
+
+* **android:** add QRScanner class and majority of its methods ([7e589ef](https://github.com/bitpay/cordova-plugin-qrscanner/commit/7e589ef))
+* **android:** android platform release preparation ([2d60614](https://github.com/bitpay/cordova-plugin-qrscanner/commit/2d60614))
+* **android:** complete initial android release ([4afa02e](https://github.com/bitpay/cordova-plugin-qrscanner/commit/4afa02e))
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.0...v2.0.1) (2016-08-03)
 
