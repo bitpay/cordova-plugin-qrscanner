@@ -50,7 +50,7 @@ var BARCODE_FORMAT = {
  *
  * @returns {Promise<String>} Camera id
  */
-function findCamera() {
+function findBackCamera() {
     var Devices = Windows.Devices.Enumeration;
 
     // Enumerate cameras and add them to the list
@@ -68,6 +68,27 @@ function findCamera() {
         // If there is back cameras, return the id of the first,
         // otherwise take the first available device's id
         return (backCameras[0] || cameras[0]).id;
+    });
+}
+
+function findFrontCamera() {
+    var Devices = Windows.Devices.Enumeration;
+
+    // Enumerate cameras and add them to the list
+    return Devices.DeviceInformation.findAllAsync(Devices.DeviceClass.videoCapture)
+    .then(function (cameras) {
+
+        if (!cameras || cameras.length === 0) {
+            throw new Error("No cameras found");
+        }
+
+        var frontCameras = cameras.filter(function (camera) {
+            return camera.enclosureLocation && camera.enclosureLocation.panel === Devices.Panel.front;
+        });
+
+        // If there is back cameras, return the id of the first,
+        // otherwise take the first available device's id
+        return (frontCameras[0] || cameras[0]).id;
     });
 }
 
@@ -410,7 +431,7 @@ module.exports = {
          * Starts stream transmission to preview frame and then run barcode search
          */
         function startPreview() {
-            return findCamera()
+            return findBackCamera()
             .then(function (id) {
                 var captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
                 captureSettings.streamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.video;
@@ -586,6 +607,368 @@ module.exports = {
         }
 
         BarcodeReader.destroyPreview = destroyPreview;
+    },
+
+    preview: function (success, fail, args) {
+        var capturePreview,
+            previewMirroring,
+            capture,
+            reader;
+
+        // Save call state for suspend/resume
+        BarcodeReader.scanCallArgs = {
+            success: success,
+            fail: fail,
+            args: args
+        };
+
+        function updatePreviewForRotation(evt) {
+            if (!capture) {
+                return;
+            }
+
+            var displayInformation = (evt && evt.target) || Windows.Graphics.Display.DisplayInformation.getForCurrentView();
+            var currentOrientation = displayInformation.currentOrientation;
+
+            previewMirroring = capture.getPreviewMirroring();
+
+            // Lookup up the rotation degrees.
+            var rotDegree = videoPreviewRotationLookup(currentOrientation, previewMirroring);
+
+            capture.setPreviewRotation(degreesToRotation(rotDegree));
+            return WinJS.Promise.as();
+        }
+
+        /**
+         * Creates a preview frame and necessary objects
+         */
+        function createPreview() {
+
+            // Create fullscreen preview
+            var capturePreviewFrameStyle = document.createElement('link');
+            capturePreviewFrameStyle.rel = "stylesheet";
+            capturePreviewFrameStyle.type = "text/css";
+            capturePreviewFrameStyle.href = urlutil.makeAbsolute("/www/css/plugin-barcodeScanner.css");
+
+            document.head.appendChild(capturePreviewFrameStyle);
+
+            capturePreviewFrame = document.createElement('div');
+            capturePreviewFrame.className = "barcode-scanner-wrap";
+            capturePreviewFrame.style.zIndex = -100;
+
+            capturePreview = document.createElement("video");
+            capturePreview.className = "barcode-scanner-preview";
+            capturePreview.style.height = 'calc(100%)';
+            capturePreview.style.top = 'calc(50%)';
+            capturePreview.addEventListener('click', function () {
+                focus();
+            });
+
+                capturePreviewFrame.appendChild(capturePreview);
+        }
+
+        function focus(controller) {
+
+            var result = WinJS.Promise.wrap();
+
+            if (!capturePreview || capturePreview.paused) {
+                // If the preview is not yet playing, there is no sense in running focus
+                return result;
+            }
+
+            if (!controller) {
+                try {
+                    controller = capture && capture.videoDeviceController;
+                } catch (err) {
+                    console.log('Failed to access focus control for current camera: ' + err);
+                    return result;
+                }
+            }
+
+            if (!controller.focusControl || !controller.focusControl.supported) {
+                console.log('Focus control for current camera is not supported');
+                return result;
+            }
+
+            // Multiple calls to focusAsync leads to internal focusing hang on some Windows Phone 8.1 devices
+            if (controller.focusControl.focusState === Windows.Media.Devices.MediaCaptureFocusState.searching) {
+                return result;
+            }
+
+            // The delay prevents focus hang on slow devices
+            return WinJS.Promise.timeout(INITIAL_FOCUS_DELAY)
+            .then(function () {
+                try {
+                    return controller.focusControl.focusAsync().then(function () {
+                        return result;
+                    }, function (e) {
+                        // This happens on mutliple taps
+                        if (e.number !== OPERATION_IS_IN_PROGRESS) {
+                            console.error('focusAsync failed: ' + e);
+                            return WinJS.Promise.wrapError(e);
+                        }
+                        return result;
+                    });
+                } catch (e) {
+                    // This happens on mutliple taps
+                    if (e.number !== OPERATION_IS_IN_PROGRESS) {
+                        console.error('focusAsync failed: ' + e);
+                        return WinJS.Promise.wrapError(e);
+                    }
+                    return result;
+                }
+            });
+        }
+
+        function setupFocus(focusControl) {
+
+            function supportsFocusMode(mode) {
+                return focusControl.supportedFocusModes.indexOf(mode).returnValue;
+            }
+
+            if (!focusControl || !focusControl.supported || !focusControl.configure) {
+                return WinJS.Promise.wrap();
+            }
+
+            var FocusMode = Windows.Media.Devices.FocusMode;
+            var focusConfig = new Windows.Media.Devices.FocusSettings();
+            focusConfig.autoFocusRange = Windows.Media.Devices.AutoFocusRange.normal;
+
+            // Determine a focus position if the focus search fails:
+            focusConfig.disableDriverFallback = false;
+
+            if (supportsFocusMode(FocusMode.continuous)) {
+                console.log("Device supports continuous focus mode");
+                focusConfig.mode = FocusMode.continuous;
+            } else if (supportsFocusMode(FocusMode.auto)) {
+                console.log("Device doesn\'t support continuous focus mode, switching to autofocus mode");
+                focusConfig.mode = FocusMode.auto;
+            }
+
+            focusControl.configure(focusConfig);
+
+            // Continuous focus should start only after preview has started. See 'Remarks' at
+            // https://msdn.microsoft.com/en-us/library/windows/apps/windows.media.devices.focuscontrol.configure.aspx
+            function waitForIsPlaying() {
+                var isPlaying = !capturePreview.paused && !capturePreview.ended && capturePreview.readyState > 2;
+
+                if (!isPlaying) {
+                    return WinJS.Promise.timeout(CHECK_PLAYING_TIMEOUT)
+                    .then(function () {
+                        return waitForIsPlaying();
+                    });
+                }
+
+                return focus();
+            }
+
+            return waitForIsPlaying();
+        }
+
+        function disableZoomAndScroll() {
+            document.body.classList.add('no-zoom');
+            document.body.classList.add('no-scroll');
+        }
+
+        function enableZoomAndScroll() {
+            document.body.classList.remove('no-zoom');
+            document.body.classList.remove('no-scroll');
+        }
+
+        /**
+         * Starts stream transmission to preview frame and then run barcode search
+         */
+        function startPreview() {
+            return findBackCamera()
+            .then(function (id) {
+                var captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
+                captureSettings.streamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.video;
+                captureSettings.photoCaptureSource = Windows.Media.Capture.PhotoCaptureSource.videoPreview;
+                captureSettings.videoDeviceId = id;
+
+                capture = new Windows.Media.Capture.MediaCapture();
+                return capture.initializeAsync(captureSettings);
+            })
+            .then(function () {
+
+                var controller = capture.videoDeviceController;
+                var deviceProps = controller.getAvailableMediaStreamProperties(Windows.Media.Capture.MediaStreamType.videoRecord);
+
+                deviceProps = Array.prototype.slice.call(deviceProps);
+                deviceProps = deviceProps.filter(function (prop) {
+                    // filter out streams with "unknown" subtype - causes errors on some devices
+                    return prop.subtype !== "Unknown";
+                }).sort(function (propA, propB) {
+                    // sort properties by resolution
+                    return propB.width - propA.width;
+                });
+
+                var maxResProps = deviceProps[0];
+                return controller.setMediaStreamPropertiesAsync(Windows.Media.Capture.MediaStreamType.videoRecord, maxResProps)
+                .then(function () {
+                    return {
+                        capture: capture,
+                        width: maxResProps.width,
+                        height: maxResProps.height
+                    };
+                });
+            })
+            .then(function (captureSettings) {
+
+                capturePreview.msZoom = true;
+                capturePreview.src = URL.createObjectURL(capture);
+                capturePreview.play();
+
+                // Insert preview frame and controls into page
+                document.body.appendChild(capturePreviewFrame);
+
+                disableZoomAndScroll();
+
+                return setupFocus(captureSettings.capture.videoDeviceController.focusControl)
+                .then(function () {
+                    Windows.Graphics.Display.DisplayInformation.getForCurrentView().addEventListener("orientationchanged", updatePreviewForRotation, false);
+                    return updatePreviewForRotation();
+                })
+                .then(function () {
+
+                    if (!Windows.Media.Devices.CameraStreamState) {
+                        // CameraStreamState is available starting with Windows 10 so skip this check for 8.1
+                        // https://msdn.microsoft.com/en-us/library/windows/apps/windows.media.devices.camerastreamstate
+                        return WinJS.Promise.as();
+                    }
+
+                    function checkCameraStreamState() {
+                        if (capture.cameraStreamState !== Windows.Media.Devices.CameraStreamState.streaming) {
+
+                            // Using loop as MediaCapture.CameraStreamStateChanged does not fire with CameraStreamState.streaming state.
+                            return WinJS.Promise.timeout(CAMERA_STREAM_STATE_CHECK_RETRY_TIMEOUT)
+                            .then(function () {
+                                return checkCameraStreamState();
+                            });
+                        }
+
+                        return WinJS.Promise.as();
+                    }
+
+                    // Ensure CameraStreamState is Streaming
+                    return checkCameraStreamState();
+                })
+                .then(function () {
+                    return captureSettings;
+                });
+            });
+        }
+
+        /**
+         * Removes preview frame and corresponding objects from window
+         */
+        function stopScanning() {
+            var promise = WinJS.Promise.as();
+
+            Windows.Graphics.Display.DisplayInformation.getForCurrentView().removeEventListener("orientationchanged", updatePreviewForRotation, false);
+            document.removeEventListener('backbutton', cancelPreview);
+
+            reader && reader.stop();
+            reader = null;
+
+
+            return promise;
+        }
+
+        function destroyPreview() {
+            var promise = WinJS.Promise.as();
+
+            Windows.Graphics.Display.DisplayInformation.getForCurrentView().removeEventListener("orientationchanged", updatePreviewForRotation, false);
+            document.removeEventListener('backbutton', cancelPreview);
+
+            capturePreview.pause();
+            capturePreview.src = null;
+
+            if (capturePreviewFrame) {
+                document.body.removeChild(capturePreviewFrame);
+            }
+            capturePreviewFrame = null;
+
+            reader && reader.stop();
+            reader = null;
+
+            if (capture) {
+                promise = capture.stopRecordAsync();
+            }
+            capture = null;
+
+            enableZoomAndScroll();
+
+            return promise;
+        }
+
+        /**
+         * Stops preview and then call success callback with cancelled=true
+         * See https://github.com/phonegap-build/BarcodeScanner#using-the-plugin
+         */
+        function cancelPreview() {
+            BarcodeReader.scanCancelled = true;
+            reader && reader.stop();
+        }
+
+        function checkCancelled() {
+            if (BarcodeReader.scanCancelled || BarcodeReader.suspended) {
+                throw new Error('Canceled');
+            }
+        }
+
+        BarcodeReader.scanPromise = WinJS.Promise.wrap(createPreview())
+        .then(function () {
+            checkCancelled();
+            return startPreview();
+        })
+        .then(function (captureSettings) {
+            checkCancelled();
+            reader = BarcodeReader.get(captureSettings.capture);
+            reader.init(captureSettings.capture, captureSettings.width, captureSettings.height);
+
+            // Add a small timeout before capturing first frame otherwise
+            // we would get an 'Invalid state' error from 'getPreviewFrameAsync'
+            return WinJS.Promise.timeout(200)
+            .then(function () {
+                checkCancelled();
+                return reader.readCode();
+            });
+        })
+        .then(function (result) {
+            // Suppress null result (cancel) on suspending
+            if (BarcodeReader.suspended) {
+                return;
+            }
+
+            //destroyPreview();
+            success({
+                text: result && result.text,
+                format: result && BARCODE_FORMAT[result.barcodeFormat],
+                cancelled: !result
+            });
+        }, function (error) {
+            // Suppress null result (cancel) on suspending
+            if (BarcodeReader.suspended) {
+                return;
+            }
+
+            destroyPreview();
+            if (error.message == 'Canceled') {
+                success({
+                    cancelled: true
+                });
+            } else {
+                fail(error);
+            }
+        });
+
+        BarcodeReader.videoPreviewIsVisible = function () {
+            return capturePreviewFrame !== null;
+        }
+
+        stopScanning();
+
     },
 
     /**

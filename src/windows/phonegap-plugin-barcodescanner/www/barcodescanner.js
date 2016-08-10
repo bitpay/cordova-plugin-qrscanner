@@ -121,6 +121,46 @@ BarcodeScanner.prototype.scan = function (successCallback, errorCallback, config
             );
         };
 
+        BarcodeScanner.prototype.preview = function (successCallback, errorCallback, config) {
+
+                    if (config instanceof Array) {
+                        // do nothing
+                    } else {
+                        if (typeof(config) === 'object') {
+                            config = [ config ];
+                        } else {
+                            config = [];
+                        }
+                    }
+
+                    if (errorCallback == null) {
+                        errorCallback = function () {
+                        };
+                    }
+
+                    if (typeof errorCallback != "function") {
+                        console.log("BarcodeScanner.preview failure: failure parameter not a function");
+                        return;
+                    }
+
+                    if (typeof successCallback != "function") {
+                        console.log("BarcodeScanner.preview failure: success callback parameter must be a function");
+                        return;
+                    }
+
+                    exec(
+                        function(result) {
+                            successCallback(result);
+                        },
+                        function(error) {
+                            errorCallback(error);
+                        },
+                        'BarcodeScanner',
+                        'preview',
+                        config
+                    );
+                };
+
         //-------------------------------------------------------------------
         BarcodeScanner.prototype.encode = function (type, data, successCallback, errorCallback, options) {
             if (errorCallback == null) {

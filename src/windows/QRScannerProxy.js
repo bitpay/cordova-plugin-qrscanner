@@ -1,18 +1,28 @@
-
+  var prepared = false,
+      authorized = false,
+      denied = false,
+      restricted = false,
+      scanning = false,
+      previewing = false,
+      showing = false,
+      lightEnabled = false,
+      canOpenSettings = false,
+      canEnableLight = false,
+      canChangeCamera = false;
 
     function calcStatus(){
      return {
-       authorized: '0',
-       denied: '0',
-       restricted: '0',
-       prepared: '0',
-       scanning: '0',
-       previewing: '0',
-       showing: '0',
-       lightEnabled: '0',
-       canOpenSettings: '0',
-       canEnableLight: '0',
-       canChangeCamera: '0',
+       authorized: authorized? '1' : '0',
+       denied: denied? '1' : '0',
+       restricted: restricted? '1' : '0',
+       prepared: prepared? '1' : '0',
+       scanning: scanning? '1' : '0',
+       previewing: previewing? '1' : '0',
+       showing: showing? '1' : '0',
+       lightEnabled: lightEnabled? '1' : '0',
+       canOpenSettings: canOpenSettings? '1' : '0',
+       canEnableLight: canEnableLight? '1' : '0',
+       canChangeCamera: canChangeCamera? '1' : '0',
        currentCamera: '0'
      };
     }
@@ -21,17 +31,40 @@
 
   //<!--Begin Public API-->
     function show(successCallback, errorCallback, strInput){
+      if(!showing){
+        var elmts = document.getElementsByClassName("barcode-scanner-wrap");
+        if(elmts){
+          var preview = elmts[0];
+        }
+        preview.style.visibility = 'visible';
+        showing = true;
+      }
       successCallback(calcStatus());
     }
 
+    function hide(successCallback, errorCallback, strInput){
+      if(showing){
+        var elmts = document.getElementsByClassName("barcode-scanner-wrap");
+        if(elmts){
+          var preview = elmts[0];
+        }
+        preview.style.visibility = 'hidden';
+        showing = false;
+      }
+    }
+
     function prepare(successCallback, errorCallback, strInput){
-      cordova.plugins.barcodeScanner.scan(
+      if(!prepared){
+      cordova.plugins.barcodeScanner.preview(
         function(result){
           successCallback(calcStatus());
         },
         function(error){
           errorCallback("");
         });
+        hide();
+      }
+      prepared = true;
     }
 
     function openSettings(successCallback, errorCallback, strInput){
@@ -54,6 +87,7 @@
 
 module.exports = {
   show: show,
+  hide: hide,
   prepare: prepare,
   openSettings: openSettings,
   getStatus: getStatus,
