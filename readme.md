@@ -13,39 +13,57 @@ QRScanner's live video preview is rendered behind the Cordova app's native webvi
 cordova plugin add cordova-plugin-qrscanner
 ```
 
-On most platforms, simply adding the plugin to the Cordova project will make the `window.QRScanner` global object available.
+On most platforms, simply adding the plugin to the Cordova project will make the `window.QRScanner` global object available once the `deviceready` event propagates.
 
 ### Usage
 
+First, get permission to access the user's camera:
+
 ```js
 // For the best user experience, make sure the user is ready to give your app
-// camera access before you issue the prompt.
+// camera access before you show the prompt. On iOS, you only get one chance.
 
-QRScanner.prepare(onDone); // prompt for access
+QRScanner.prepare(onDone); // show the prompt
 
-function onDone(status){
+function onDone(err, status){
+  if (err) {
+   // here we can handle errors and clean up any loose ends.
+   console.error(err);
+  }
   if (status.authorized) {
     // W00t, you have camera access and the scanner is initialized.
+  } else if (status.denied) {
+   // The video preview will remain black, and scanning is disabled. We can
+   // try to ask the user to change their mind, but we'll have to send them
+   // to their device settings with `QRScanner.openSettings()`.
   } else {
-        // The video preview will remain black, and scanning is disabled. We can
-        // try to ask the user to change their mind, but we'll have to send them
-        // to their device settings with `QRScanner.openSettings()`.
+    // we didn't get permission, but we didn't get denied. (On Android, a denial
+    // isn't permanent unless the user checks the "Don't ask again" box.)
+    // We can ask again at the next relevant opportunity.
   }
 }
+```
 
-// Later in your app, when you're ready to show the video preview:
+Later in your app, when you're ready to show the video preview and scan:
 
+```js
 // Make the webview transparent so the video preview is visible behind it.
-// (Optional on iOS.)
+// (Not required for scanning to work on iOS.)
 QRScanner.show();
+// Be sure to make any opaque HTML elements transparent here to avoid
+// covering the video.
 
 // Start a scan. Scanning will continue until something is detected or
 // `QRScanner.cancelScan()` is called.
 QRScanner.scan(displayContents);
 
-function displayContents(text){
-  // The scan completed, display the contents of the QR code:
-  alert(text);
+function displayContents(err, text){
+  if(err){
+    // an error occurred, or the scan was canceled (error code `6`)
+  } else {
+    // The scan completed, display the contents of the QR code:
+    alert(text);
+  }
 }
 ```
 
@@ -91,7 +109,7 @@ A project can only have one bridging header. If your app uses plugins other than
 Copy the script from `cordova-plugin-qrscanner/scripts/swift-support.js` into your project (eg. into the `hooks` folder), and modify the `BRIDGING_HEADER_END` variable to point to your new bridging header. Finally, remove and re-add the ios platform to trigger the hook. See [this issue](https://github.com/eface2face/cordova-plugin-iosrtc/issues/9) for more information.
 
 ## API
-With the exception of `QRScanner.scan()`, all callbacks are optional.
+With the exception of `QRScanner.scan(callback)`, all callbacks are optional.
 
 ### Prepare
 
@@ -108,7 +126,7 @@ var done = function(err, status){
 QRScanner.prepare(done);
 ```
 
-Request permission to access the camera (if not already granted), prepare the video preview, and configure everything needed by QRScanner. This will only be visible if `QRScanner.show()` has already made the webview transparent.
+Request permission to access the camera (if not already granted), prepare the video preview, and configure everything needed by QRScanner. On platforms where possible, this also starts the video preview, saving valuable milliseconds and making it seem like the camera is starting instantly when `QRScanner.show()` is called. (These changes will only be visible to the user if `QRScanner.show()` has already made the webview transparent.)
 
 ### Scan
 
@@ -123,7 +141,7 @@ var callback = function(err, contents){
 QRScanner.scan(callback);
 ```
 
-Sets QRScanner to "watch" for valid QR codes. Once a valid code is detected, it's contents are passed to the callback, and scanning is toggled off. If `QRScanner.prepare()` has not been called, this method performs that setup as well. The video preview does not need to be visible for scanning to function.
+Sets QRScanner to "watch" for valid QR codes. Once a valid code is detected, it's contents are passed to the callback, and scanning is toggled off. If `QRScanner.prepare()` has not been called, this method performs that setup as well. On platforms other than iOS, the video preview must be visible for scanning to function.
 
 ```js
 QRScanner.cancelScan(function(status){
@@ -131,7 +149,7 @@ QRScanner.cancelScan(function(status){
 });
 ```
 
-Cancels the current scan. If `QRScanner.prepare()` has not been called, this method performs that setup as well.
+Cancels the current scan. If `QRScanner.prepare()` has not been called, this method performs that setup as well. When a scan is canceled, the callback of the canceled `scan()` receives the `SCAN_CANCELED` error.
 
 ### Show
 
@@ -141,9 +159,11 @@ QRScanner.show(function(status){
 });
 ```
 
-Configures the native webview to have a transparent background, then sets the background of the `<body>` and parent elements to transparent, allowing the webview to re-render with the transparent background.
+Configures the native webview to have a transparent background, then sets the background of the `<body>` and `<html>` DOM elements to transparent, allowing the webview to re-render with the transparent background.
 
-To see the video preview, your application background must be transparent in the areas through which it should show.
+To see the video preview, your application background must be transparent in the areas through which the preview should show.
+
+The [`show`](#show) and [`hide`](#hide) methods are the fastest way to toggle visibility of the scanner. When building the scanner into tab systems and similar layouts, this makes the application feel much more responsive. It's possible to reduce power consumption (to extend battery life on mobile platforms) by intellegently [`destroy`](#destroy)ing the scanner when it's unlikely to be used for a long period of time. Before scanning is used again, you can re-[`prepare`](#prepare) it, making the interface seem much more responsive when `show` is called.
 
 ### Hide
 
@@ -204,7 +224,7 @@ QRScanner.pausePreview(function(status){
 })
 ```
 
-Pauses the video preview on the current frame (as if a snapshot was taken) and stops scanning (if scanning).
+Pauses the video preview on the current frame (as if a snapshot was taken) and pauses scanning (if a scan is in progress).
 
 ```js
 QRScanner.resumePreview(function(status){
@@ -212,7 +232,7 @@ QRScanner.resumePreview(function(status){
 })
 ```
 
-Resumes the video preview and continues to scan (if scanning before pausePreview()).
+Resumes the video preview and continues to scan (if a scan was in progress before `pausePreview()`).
 
 ### Open App Settings
 
@@ -228,7 +248,7 @@ QRScanner.getStatus(function(status){
 
 Open the app-specific permission settings in the user's device settings. Here the user can enable/disable camera (and other) access for your app.
 
-Note: iOS and Android (6.0+) immediately kill all apps affected by permissions changes. If the user changes a permission settings, your app will stop and only restart when they return.
+Note: iOS immediately kills all apps affected by permission changes in Settings. If the user changes a permission setting, your app will stop and only restart when they return.
 
 ### Get QRScanner Status
 
@@ -282,10 +302,10 @@ QRScanner.destroy(function(status){
 });
 ```
 
-Runs hide(), stops scanning, video capture, and the preview, and deallocates as much as possible. (E.g. to improve performance/battery life when the scanner is not likely to be used for a while.) Basically reverts the plugin to it's startup-state.
+Runs [`hide`](#hide), [`cancelScan`](#scan), stops video capture, removes the video preview, and deallocates as much as possible. Basically reverts the plugin to it's startup-state.
 
 ## Error Handling
-Many QRScanner functions accept a callback with an `error` parameter. When QRScanner experiences errors, this parameter contains a QRScannerError object with properties `name` (_String_), `code` (_Number_), and `_message` (_String_). When handling errors, rely only on the `name` or `code` parameter, as the specific content of `_message` is not considered part of the plugin's stable API.
+Many QRScanner functions accept a callback with an `error` parameter. When QRScanner experiences errors, this parameter contains a QRScannerError object with properties `name` (_String_), `code` (_Number_), and `_message` (_String_). When handling errors, rely only on the `name` or `code` parameter, as the specific content of `_message` is not considered part of the plugin's stable API. Particularly if your app is localized, it's also a good idea to provide your own `message` when informing the user of errors.
 
 ```js
 QRScanner.scan(function(err, contents){
