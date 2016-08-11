@@ -141,7 +141,7 @@ var callback = function(err, contents){
 QRScanner.scan(callback);
 ```
 
-Sets QRScanner to "watch" for valid QR codes. Once a valid code is detected, it's contents are passed to the callback, and scanning is toggled off. If `QRScanner.prepare()` has not been called, this method performs that setup as well. On platforms other than iOS, the video preview must be visible for scanning to function.
+Sets QRScanner to "watch" for valid QR codes. Once a valid code is detected, it's contents are passed to the callback, and scanning is toggled off. If `QRScanner.prepare()` has not been called, this method performs that setup as well. On platforms other than iOS and Android, the video preview must be visible for scanning to function.
 
 ```js
 QRScanner.cancelScan(function(status){
