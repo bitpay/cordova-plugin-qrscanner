@@ -327,6 +327,8 @@ If you run into issues in your own project, try the test project in this repo to
 
 Before testing - ensure the Windows Phone SDK is installed. In order to deploy from the command line Windows Phone 8.0 SDK and Visual Studio 2012 update 2 (or later) must be installed. Visual Studio 2015 is recommended for debugging Windows desktop apps.
 
+The Windows platform renders an impervious white layer behind its browser- the video preview is not behind the webView, but is actually an HTML element that is carefully managed. Hide and show change the style properties (visibility) of the preview.
+
 ## Browser
 
 While the browser implementation matches the native mobile implementations very closely, the platform itself does not. Notably:
