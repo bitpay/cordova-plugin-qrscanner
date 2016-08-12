@@ -7,6 +7,21 @@
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
+    var capture,
+        captureSettings,
+        reader;
+
+    var ERRORS = {
+        UNEXPECTED_ERROR: 0,
+        CAMERA_ACESS_DENIED: 1,
+        CAMERA_ACCESS_RESTRICTED: 2,
+        BACK_CAMERA_UNAVAILABLE: 3,
+        FRONT_CAMERA_UNAVAILABLE: 4,
+        CAMERA_UNAVAILABLE: 5,
+        SCAN_CANCELED: 6,
+        LIGHT_UNAVAILABLE: 7,
+        OPEN_SETTINGS_UNAVAILABLE: 8
+    };
 
  var prepared = false,
      authorized = false,
@@ -265,11 +280,25 @@ function degreesToRotation(degrees) {
 
 
     function scan(success, fail, args) {
-        console.log("THISSSS");
         var capturePreview,
-            previewMirroring,
-            capture,
-            reader;
+            capturePreviewFrame,
+            previewMirroring;
+
+        /**
+         * Creates a preview frame and necessary objects
+         */
+        function createPreview() {
+            var frames = document.getElementsByClassName('barcode-scanner-wrap');
+            var previews = document.getElementsByClassName('barcode-scanner-preview');
+            if (frames && previews) {
+                capturePreview = previews[0];
+                capturePreviewFrame = frames[0];
+            }
+            //console.log(capturePreview);
+            //console.log(capturePreviewFrame);
+
+        }
+
 
         // Save call state for suspend/resume
         BarcodeReader.scanCallArgs = {
@@ -295,30 +324,6 @@ function degreesToRotation(degrees) {
             return WinJS.Promise.as();
         }
 
-        /**
-         * Creates a preview frame and necessary objects
-         */
-        function createPreview() {
-
-            // Create fullscreen preview
-            var capturePreviewFrameStyle = document.createElement('link');
-            capturePreviewFrameStyle.rel = "stylesheet";
-            capturePreviewFrameStyle.type = "text/css";
-            capturePreviewFrameStyle.href = urlutil.makeAbsolute("/www/css/plugin-barcodeScanner.css");
-
-            document.head.appendChild(capturePreviewFrameStyle);
-
-            capturePreviewFrame = document.createElement('div');
-            capturePreviewFrame.className = "barcode-scanner-wrap";
-
-            capturePreview = document.createElement("video");
-            capturePreview.className = "barcode-scanner-preview";
-            capturePreview.addEventListener('click', function () {
-                focus();
-            });
-
-                capturePreviewFrame.appendChild(capturePreview);
-        }
 
         function focus(controller) {
 
@@ -434,7 +439,7 @@ function degreesToRotation(degrees) {
         function startPreview() {
             return findBackCamera()
             .then(function (id) {
-                var captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
+                captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
                 captureSettings.streamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.video;
                 captureSettings.photoCaptureSource = Windows.Media.Capture.PhotoCaptureSource.videoPreview;
                 captureSettings.videoDeviceId = id;
@@ -581,7 +586,6 @@ function degreesToRotation(degrees) {
                 return;
             }
 
-            destroyPreview();
             success({
                 text: result && result.text,
                 format: result && BARCODE_FORMAT[result.barcodeFormat],
@@ -593,7 +597,6 @@ function degreesToRotation(degrees) {
                 return;
             }
 
-            destroyPreview();
             if (error.message == 'Canceled') {
                 success({
                     cancelled: true
@@ -610,11 +613,9 @@ function degreesToRotation(degrees) {
         BarcodeReader.destroyPreview = destroyPreview;
     }
 
-    function preview(success, fail, args) {
+    function initialize(success, fail, args) {
         var capturePreview,
-            previewMirroring,
-            capture,
-            reader;
+            previewMirroring;
 
         // Save call state for suspend/resume
         BarcodeReader.scanCallArgs = {
@@ -656,6 +657,7 @@ function degreesToRotation(degrees) {
             capturePreviewFrame = document.createElement('div');
             capturePreviewFrame.className = "barcode-scanner-wrap";
             capturePreviewFrame.style.zIndex = -100;
+            capturePreviewFrame.style.visibility = 'hidden';
 
             capturePreview = document.createElement("video");
             capturePreview.className = "barcode-scanner-preview";
@@ -782,7 +784,7 @@ function degreesToRotation(degrees) {
         function startPreview() {
             return findBackCamera()
             .then(function (id) {
-                var captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
+                captureSettings = new Windows.Media.Capture.MediaCaptureInitializationSettings();
                 captureSettings.streamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.video;
                 captureSettings.photoCaptureSource = Windows.Media.Capture.PhotoCaptureSource.videoPreview;
                 captureSettings.videoDeviceId = id;
@@ -870,7 +872,7 @@ function degreesToRotation(degrees) {
             document.removeEventListener('backbutton', cancelPreview);
 
             reader && reader.stop();
-            reader = null;
+           // reader = null;
 
 
             return promise;
@@ -922,7 +924,7 @@ function degreesToRotation(degrees) {
         .then(function () {
             checkCancelled();
             return startPreview();
-        })
+        });/*
         .then(function (captureSettings) {
             checkCancelled();
             reader = BarcodeReader.get(captureSettings.capture);
@@ -963,13 +965,16 @@ function degreesToRotation(degrees) {
                 fail(error);
             }
         });
-
+        */
         BarcodeReader.videoPreviewIsVisible = function () {
             return capturePreviewFrame !== null;
         }
 
-        stopScanning();
-
+        if (result = null) {
+            errorCallback(ERROR.SCAN_CANCELED)
+        } else {
+            success();
+        }
     }
 
 
@@ -1025,10 +1030,136 @@ Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", function () {
 }, false);
 
 //<!--Begin Public API-->
+function show(successCallback, errorCallback, strInput){
+  if(!showing){
+    var elmts = document.getElementsByClassName("barcode-scanner-wrap");
+    if(elmts){
+      var preview = elmts[0];
+      preview.style.visibility = 'visible';
+      showing = true;
+    }
+  }
+  successCallback(calcStatus());
+}
+
+function hide(successCallback, errorCallback, strInput){
+  if(showing){
+    var elmts = document.getElementsByClassName("barcode-scanner-wrap");
+    if(elmts){
+      var preview = elmts[0];
+      preview.style.visibility = 'hidden';
+      showing = false;
+    }
+  }
+}
+
+function prepare(successCallback, errorCallback, strInput) {
+    if (!prepared) {
+        prepared = true;
+        initialize(
+          function (result) {
+              successCallback(calcStatus());
+          },
+          function (error) {
+              errorCallback("");
+          });
+    }
+}
+
+function regularScan(successCallback, errorCallback, strInput) {
+    if (prepared && !scanning) {
+        scan(
+              function (result) {
+                  if (result.text !== null) {
+                      successCallback(result.text);
+                  } else {
+                      errorCallback(ERRORS.SCAN_CANCELED);
+                  }
+              },
+              function (error) {
+                  errorCallback("Scanning Failed!");
+              });
+        scanning = true;
+    }
+}
+
+function openSettings(successCallback, errorCallback, strInput) {
+    /*
+    var settingsUri = new Windows.Foundation.Uri("ms-settings:privacy-webcam");
+    Windows.System.Launcher.launchUriAsync(settingsUri).then(
+        function (success) {
+            if (success) {
+                canOpenSettings = true;
+                successCallback(calcStatus());
+            } else {
+                canOpenSettings = false;
+                errorCallback(calcStatus());
+            }
+        });
+        */
+
+    //http://stackoverflow.com/questions/24455311/uri-scheme-launching
+    canOpenSettings = false;
+    errorCallback(ERRORS.OPEN_SETTINGS_UNAVAILABLE);
+
+}
+
+function destroy(successCallback, errorCallback, strInput) {
+    hide();
+}
+
+function pausePreview(successCallback, errorCallback, strInput) {
+    var elmts = document.getElementsByClassName('barcode-scanner-preview');
+    if (elmts) {
+        var preview = elmts[0];
+        preview.pause();
+    }
+}
+
+function resumePreview(successCallback, errorCallback, strInput) {
+    var elmts = document.getElementsByClassName('barcode-scanner-preview');
+    if (elmts) {
+        var preview = elmts[0];
+        preview.play();
+    }
+}
+
+function cancelScan(successCallback, errorCallback, strInput) {
+    if (scanning) {
+        reader.stop();
+        scanning = false;
+    }
+}
+
+function getStatus(successCallback, errorCallback, strInput) {
+    successCallback(calcStatus());
+}
+
+function enableLight(successCallback, errorCallback, strInput) {
+    if (prepared) {
+        canEnableLight = capture.VideoDeviceController.TorchControl.Supported;
+        if (canEnableLight) {
+            capture.VideoDeviceController.TorchControl.Enabled = true;
+        } else {
+            errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+        }
+    }
+}
+
 
 
 module.exports = {
-  scan: scan
+  scan: regularScan,
+  show: show,
+  prepare: prepare,
+  hide: hide,
+  openSettings: openSettings,
+  destroy: destroy,
+  pausePreview: pausePreview,
+  resumePreview: resumePreview,
+  cancelScan: cancelScan,
+  getStatus: getStatus,
+  enableLight: enableLight
 };
 
 require("cordova/exec/proxy").add("QRScanner", module.exports);
