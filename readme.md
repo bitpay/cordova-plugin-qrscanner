@@ -323,6 +323,11 @@ This plugin is always tested with the latest version of Xcode. Please be sure yo
 
 If you run into issues in your own project, try the test project in this repo to confirm your environment is set up properly: `npm run gen-tests && npm run test:ios`.
 
+## Windows
+
+Before testing - ensure the Windows Phone SDK is installed. In order to deploy from the command line Windows Phone 8.0 SDK and Visual Studio 2012 update 2 (or later) must be installed. Visual Studio 2015 is recommended for debugging Windows desktop apps.
+
+The Windows platform renders an impervious white layer behind its browser- the video preview is not behind the webView, but is actually an HTML element that is carefully managed. Hide and show change the style properties (visibility) of the preview.
 
 ## Browser
 
@@ -396,6 +401,7 @@ This will create a new cordova project in the `cordova-plugin-test-projects` dir
 
 - `npm run test:ios`
 - `npm run test:browser`
+- `npm run test:windows`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 

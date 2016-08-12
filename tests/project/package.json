@@ -6,7 +6,8 @@
     "clean": "rm -rf node_modules && rm -rf platforms && rm -rf plugins",
     "postinstall": "node scripts/timestamp.js && cordova prepare",
     "test:ios": "cordova build ios && open platforms/ios/CvQRScnTst.xcodeproj",
-    "test:browser": "cordova run browser"
+    "test:browser": "cordova run browser",
+    "test:windows": "cordova run windows --device -- --phone"
   },
   "private": true,
   "dependencies": {
