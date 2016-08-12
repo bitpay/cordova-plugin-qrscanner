@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner-tests",
-  "version": "1.0.0",
+  "version": "2.1.1",
   "description": "Cordova tests for the cordova-plugin-qrscanner package",
   "scripts": {
     "clean": "rm -rf node_modules && rm -rf platforms && rm -rf plugins",

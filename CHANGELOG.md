@@ -1,3 +1,13 @@
+<a name="2.1.1"></a>
+## [2.1.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.0...v2.1.1) (2016-08-12)
+
+
+### Bug Fixes
+
+* **android:** fixes the enableLight and disableLight methods ([21add2f](https://github.com/bitpay/cordova-plugin-qrscanner/commit/21add2f))
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.1...v2.1.0) (2016-08-05)
 
