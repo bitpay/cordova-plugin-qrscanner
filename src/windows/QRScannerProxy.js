@@ -658,7 +658,9 @@ function degreesToRotation(degrees) {
             capturePreviewFrame.className = "barcode-scanner-wrap";
             capturePreviewFrame.style.zIndex = -100;
             capturePreviewFrame.style.visibility = 'hidden';
-
+            if (showing) {
+            capturePreviewFrame.style.visibility = 'visible';
+            }
             capturePreview = document.createElement("video");
             capturePreview.className = "barcode-scanner-preview";
             capturePreview.style.height = 'calc(100%)';
@@ -1033,11 +1035,11 @@ Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", function () {
 function show(successCallback, errorCallback, strInput){
   if(!showing){
     var elmts = document.getElementsByClassName("barcode-scanner-wrap");
-    if(elmts){
+    if(prepared){
       var preview = elmts[0];
       preview.style.visibility = 'visible';
-      showing = true;
     }
+    showing = true;
   }
   successCallback(calcStatus());
 }
@@ -1056,6 +1058,7 @@ function hide(successCallback, errorCallback, strInput){
 function prepare(successCallback, errorCallback, strInput) {
     if (!prepared) {
         prepared = true;
+        previewing = true;
         initialize(
           function (result) {
               successCallback(calcStatus());
@@ -1106,6 +1109,37 @@ function openSettings(successCallback, errorCallback, strInput) {
 
 function destroy(successCallback, errorCallback, strInput) {
     hide();
+    var frames = document.getElementsByClassName('barcode-scanner-wrap');
+    var previews = document.getElementsByClassName('barcode-scanner-preview');
+    if (frames && previews) {
+        capturePreview = previews[0];
+        capturePreviewFrame = frames[0];
+    }
+    var promise = WinJS.Promise.as();
+
+    capturePreview.pause();
+    capturePreview.src = null;
+
+    if (capturePreviewFrame) {
+        document.body.removeChild(capturePreviewFrame);
+    }
+    capturePreviewFrame = null;
+
+    reader && reader.stop();
+    reader = null;
+
+    if (capture) {
+        promise = capture.stopRecordAsync();
+    }
+    capture = null;
+
+    document.body.style.backgroundColor = '#dfe2e2';
+    scanning = false;
+    prepared = false;
+    showing = false;
+    previewing = false;
+    return promise;
+
 }
 
 function pausePreview(successCallback, errorCallback, strInput) {
@@ -1146,6 +1180,10 @@ function enableLight(successCallback, errorCallback, strInput) {
     }
 }
 
+function disableLight(successCallback, errorCallback, strInput) {
+
+}
+
 
 
 module.exports = {
@@ -1159,7 +1197,8 @@ module.exports = {
   resumePreview: resumePreview,
   cancelScan: cancelScan,
   getStatus: getStatus,
-  enableLight: enableLight
+  enableLight: enableLight,
+  disableLight: disableLight
 };
 
 require("cordova/exec/proxy").add("QRScanner", module.exports);
