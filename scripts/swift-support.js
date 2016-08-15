@@ -15,6 +15,7 @@ var
 	xcode = require('xcode'),
 
 	BUILD_VERSION = '7.0',
+	SWIFT_VERSION_XCODE = '2.3',
 	BUILD_VERSION_XCODE = '"' + BUILD_VERSION + '"',
 	RUNPATH_SEARCH_PATHS = '@executable_path/Frameworks',
 	RUNPATH_SEARCH_PATHS_XCODE = '"' + RUNPATH_SEARCH_PATHS + '"',
@@ -132,6 +133,7 @@ module.exports = function (context) {
 			buildSettings.SWIFT_OBJC_BRIDGING_HEADER = swiftBridgingHeadXcode;
 			buildSettings.IPHONEOS_DEPLOYMENT_TARGET = BUILD_VERSION_XCODE;
 			buildSettings.ENABLE_BITCODE = ENABLE_BITCODE_XCODE;
+			buildSettings.SWIFT_VERSION = SWIFT_VERSION_XCODE;
 		});
 
 		// Writing the file again
