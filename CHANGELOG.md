@@ -1,3 +1,13 @@
+<a name="2.2.0"></a>
+## [2.1.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.1...v2.1.2) (2016-08-15)
+
+
+### Features
+
+* **ios:** Support iOS 10 beta ([fa7ef5b](https://github.com/bitpay/cordova-plugin-qrscanner/commit/fa7ef5b))
+
+
+
 <a name="2.1.1"></a>
 ## [2.1.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.0...v2.1.1) (2016-08-12)
 
