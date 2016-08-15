@@ -5,7 +5,7 @@
 # cordova-plugin-qrscanner
 A fast, energy efficient, highly-configurable QR code scanner for Cordova apps – available for the iOS, Android, and browser platforms.
 
-QRScanner's live video preview is rendered behind the Cordova app's native webview, and the native webview's background is made transparent. This allows for an HTML/CSS/JS interface to be built inside the webview to control the scanner.
+QRScanner's native camera preview is rendered behind the Cordova app's webview, and QRScanner provides `show` and `hide` methods to toggle the transparency of the webview's background. This allows for a completely HTML/CSS/JS interface to be built inside the webview to control the scanner.
 
 ## Get Started
 
@@ -17,7 +17,13 @@ On most platforms, simply adding the plugin to the Cordova project will make the
 
 ### Usage
 
-First, get permission to access the user's camera:
+There are two primary steps to integrating `cordova-plugin-qrscanner`.
+
+#### 1. Get Permission Early (Optional)
+
+**This step is optional** – if the best place for your app to ask for camera permissions is at the moment scanning begins, you can safely skip this step.
+
+If there's a better place in your app's onboarding process to ask for permission to use the camera ("permission priming"), this plugin makes it possible to ask prior to scanning using the [`prepare` method](#prepare). The `prepare` method initializes all the infrastructure required for scanning to happen, including (if applicable) asking for camera permissions. This can also be done before attempting to show the video preview, making your app feel faster and more responsive.
 
 ```js
 // For the best user experience, make sure the user is ready to give your app
@@ -32,27 +38,26 @@ function onDone(err, status){
   }
   if (status.authorized) {
     // W00t, you have camera access and the scanner is initialized.
+    // QRscanner.show() should feel very fast.
   } else if (status.denied) {
    // The video preview will remain black, and scanning is disabled. We can
    // try to ask the user to change their mind, but we'll have to send them
    // to their device settings with `QRScanner.openSettings()`.
   } else {
-    // we didn't get permission, but we didn't get denied. (On Android, a denial
-    // isn't permanent unless the user checks the "Don't ask again" box.)
-    // We can ask again at the next relevant opportunity.
+    // we didn't get permission, but we didn't get permanently denied. (On
+    // Android, a denial isn't permanent unless the user checks the "Don't
+    // ask again" box. We can ask again at the next relevant opportunity.
   }
 }
 ```
 
-Later in your app, when you're ready to show the video preview and scan:
+#### 2. Scan
+
+Later in your application, simply call the [`scan` method](#scan) to enable scanning, and the [`show` method](#show) to make the camera preview visible.
+
+If you haven't previously `prepare`d the scanner, the `scan` method will first internally `prepare` the scanner, then begin scanning. If you'd rather ask for camera permissions at the time scanning is attempted, this is the simplest option.
 
 ```js
-// Make the webview transparent so the video preview is visible behind it.
-// (Not required for scanning to work on iOS.)
-QRScanner.show();
-// Be sure to make any opaque HTML elements transparent here to avoid
-// covering the video.
-
 // Start a scan. Scanning will continue until something is detected or
 // `QRScanner.cancelScan()` is called.
 QRScanner.scan(displayContents);
@@ -65,7 +70,14 @@ function displayContents(err, text){
     alert(text);
   }
 }
+
+// Make the webview transparent so the video preview is visible behind it.
+QRScanner.show();
+// Be sure to make any opaque HTML elements transparent here to avoid
+// covering the video.
 ```
+
+Please see the [full API docs](#api) for details about each method, [error handling](#error-handling), and [platform specific details](#platform-specific-details).
 
 ### iOS Installation
 
