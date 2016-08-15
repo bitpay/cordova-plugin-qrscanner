@@ -71,21 +71,26 @@ function displayContents(err, text){
 
 This plugin requires some additional installation steps for the iOS platform.
 
-The iOS component of the plugin is written in Swift 2. To enable it, be sure you're running the lastest version of Xcode, then add the following hook to the iOS platform in your Cordova app's `config.xml`:
+The iOS component of the plugin is written in Swift 2.3. To enable it, be sure you're running the lastest version of Xcode, then add the following hook and setting to the iOS platform in your Cordova app's `config.xml`:
 
 ```xml
 <platform name="ios">
     <hook type="before_build" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
+    <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+      <string>The camera is used to read QR codes.</string>
+    </config-file>
 </platform>
 ```
 
-This script requires the `xcode` npm module:
+The script requires the `xcode` npm module:
 
 ```bash
 npm install --save xcode
 ```
 
 Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app.
+
+Starting with iOS 10, the `NSCameraUsageDescription` string is also required to avoid a runtime exit. This field can be provided in a single language, localized using the `InfoPlist.strings` file, or simply left empty (`<string></string>`).
 
 #### Using multiple Cordova plugins written in Swift
 

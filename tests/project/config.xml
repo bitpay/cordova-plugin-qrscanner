@@ -25,6 +25,9 @@
         <preference name="orientation" value="all" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+          <string>The test app uses the camera to read QR codes.</string>
+        </config-file>
     </platform>
     <plugin name="cordova-plugin-qrscanner" spec="../../cordova-plugin-qrscanner" />
     <plugin name="cordova-plugin-qrscanner-tests" spec="../../cordova-plugin-qrscanner/tests" />
