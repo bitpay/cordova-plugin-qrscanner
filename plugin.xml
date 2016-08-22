@@ -16,9 +16,6 @@
   </js-module>
 
   <platform name="android">
-    <js-module src="www/QRScanner.js" name="QRScanner">
-      <clobbers target="cordova.plugins.Keyboard" />
-    </js-module>
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="QRScanner">
         <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
@@ -35,9 +32,6 @@
   </platform>
 
   <platform name="ios">
-    <js-module src="www/QRScanner.js" name="QRScanner">
-      <clobbers target="cordova.plugins.Keyboard" />
-    </js-module>
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
         <param name="ios-package" value="QRScanner"/>
@@ -55,7 +49,6 @@
       </config-file>
       <js-module src="src/browser/QRScannerProxy.js" name="QRScannerProxy">
           <runs />
-          <clobbers target="cordova.plugins.QRScannerProxy" />
       </js-module>
       <source-file src="src/browser/worker.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
       <source-file src="src/browser/qrcode-reader.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
