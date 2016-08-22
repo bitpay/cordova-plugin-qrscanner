@@ -197,7 +197,22 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         let found = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
         if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil {
             scanning = false
-            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: found.stringValue)
+            
+            // We also return the coordinates of the QR code
+            let codeObj = captureVideoPreviewLayer?.transformedMetadataObjectForMetadataObject(found)
+            
+            var QrBounds = Dictionary<String, CGFloat>()
+            var result = Dictionary<String, AnyObject>()
+            
+            QrBounds["width"] = codeObj?.bounds.width
+            QrBounds["height"] = codeObj?.bounds.height
+            QrBounds["x"] = codeObj?.bounds.origin.x
+            QrBounds["y"] = codeObj?.bounds.origin.y
+            
+            result["value"] = found.stringValue
+            result["coords"] = QrBounds
+
+            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsDictionary: result)
             commandDelegate!.sendPluginResult(pluginResult, callbackId: nextScanningCommand?.callbackId!)
             nextScanningCommand = nil
         }
