@@ -539,6 +539,7 @@
       getStatus: getStatus,
       destroy: destroy
   };
-
-  require('cordova/exec/proxy').add('QRScanner', module.exports);
+  
+  window.QRScanner = module.exports;
+  // require('cordova/exec/proxy').add('QRScanner', module.exports);
 })();
