@@ -196,8 +196,6 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
         let found = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
         if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil {
-            scanning = false
-            
             // We also return the coordinates of the QR code
             let codeObj = captureVideoPreviewLayer?.transformedMetadataObjectForMetadataObject(found)
             
