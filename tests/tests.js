@@ -88,8 +88,31 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     }
   }
 
+  var qrscanner_tests = '';
+
+  var portraitBtn = 'Portrait';
+  var landscapeBtn = 'Landscape';
+  var unlockBtn = 'Unlock Orientation';
+  qrscanner_tests += '<h3>Screen Orientation</h3>' +
+    '<div id="portraitBtn"></div><div id="landscapeBtn"></div><div id="unlockBtn"></div>' +
+    'Manual tests should be completed in each screen orientation mode. (This section uses <code>cordova-plugin-screen-orientation</code>.)';
+  var portrait = function() {
+    window.screen.lockOrientation('portrait');
+  };
+  var landscape = function() {
+    window.screen.lockOrientation('landscape');
+  };
+  var unlock = function() {
+    window.screen.unlockOrientation();
+  };
+
+  // log when orientation changes
+  window.addEventListener("orientationchange", function(){
+      console.log('Screen orientation changed to: ' + screen.orientation);
+  });
+
   var prepareBtn = 'QRScanner.prepare()';
-  var qrscanner_tests = '<h1>QRScanner Tests</h1>' +
+  qrscanner_tests += '<h1>QRScanner Tests</h1>' +
     '<h3>Prepare QRScanner</h3>' +
     '<div id="prepareBtn"></div>' +
     'Expected result: Will request Camera access (if needed) and prepare the video preview UI layer. Runs callback(err, status), even if already prepared.';
@@ -124,11 +147,12 @@ exports.defineManualTests = function(contentEl, createActionButton) {
 
   var scanBtn = 'QRScanner.scan()';
   var scanWithPauseBtn = 'QRScanner.scan() (with pause)';
+  var scanWithPauseAndVibrateBtn = 'QRScanner.scan() (pause, vibrate)';
   var cancelScanBtn = 'QRScanner.cancelScan()';
   qrscanner_tests += '<h2>Scan</h2>' +
-    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="cancelScanBtn"></div>' +
+    '<div id="scanBtn"></div><div id="scanWithPauseBtn"></div><div id="scanWithPauseAndVibrateBtn"></div><div id="cancelScanBtn"></div>' +
     'Expected result: Should scan QR codes and log the contents. Scanning can also be stopped. If QRScanner.prepare() has not yet been run, scan also performs any native actions needed.';
-  var startScan = function(pause){
+  var startScan = function(pause, vibrate){
     console.log('scanning...');
     window.QRScanner.scan(function(err, result) {
       console.log('QRScanner.scan() callback returned.');
@@ -140,6 +164,10 @@ exports.defineManualTests = function(contentEl, createActionButton) {
         if(pause){
           window.QRScanner.pausePreview();
         }
+        if(vibrate){
+          // 80ms vibration
+          window.navigator.vibrate(80);
+        }
       }
     });
   };
@@ -148,10 +176,13 @@ exports.defineManualTests = function(contentEl, createActionButton) {
     console.log('Canceled scanning.');
   };
   var scan = function() {
-    startScan(false);
+    startScan(false, false);
   };
   var scanWithPause = function(){
-    startScan(true);
+    startScan(true, false);
+  };
+  var scanWithPauseAndVibrate = function(){
+    startScan(true, true);
   };
 
   var pausePreviewBtn = 'QRScanner.pausePreview()';
@@ -234,11 +265,15 @@ exports.defineManualTests = function(contentEl, createActionButton) {
 
   contentEl.innerHTML = qrscanner_tests;
 
+  createActionButton(portraitBtn, portrait, 'portraitBtn');
+  createActionButton(landscapeBtn, landscape, 'landscapeBtn');
+  createActionButton(unlockBtn, unlock, 'unlockBtn');
   createActionButton(prepareBtn, prepare, 'prepareBtn');
   createActionButton(showBtn, show, 'showBtn');
   createActionButton(hideBtn, hide, 'hideBtn');
   createActionButton(scanBtn, scan, 'scanBtn');
   createActionButton(scanWithPauseBtn, scanWithPause, 'scanWithPauseBtn');
+  createActionButton(scanWithPauseAndVibrateBtn, scanWithPauseAndVibrate, 'scanWithPauseAndVibrateBtn');
   createActionButton(cancelScanBtn, cancelScan, 'cancelScanBtn');
   createActionButton(pausePreviewBtn, pausePreview, 'pausePreviewBtn');
   createActionButton(resumePreviewBtn, resumePreview, 'resumePreviewBtn');

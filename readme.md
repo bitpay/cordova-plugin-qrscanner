@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/bitpay/cordova-plugin-qrscanner.svg?branch=master)](https://travis-ci.org/bitpay/cordova-plugin-qrscanner) [![npm](https://img.shields.io/npm/v/cordova-plugin-qrscanner.svg)](https://www.npmjs.com/package/cordova-plugin-qrscanner) [![npm](https://img.shields.io/npm/dm/cordova-plugin-qrscanner.svg)](https://www.npmjs.com/package/cordova-plugin-qrscanner)
 [![Dependency Status](https://david-dm.org/bitpay/cordova-plugin-qrscanner.svg)](https://david-dm.org/bitpay/cordova-plugin-qrscanner)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 # cordova-plugin-qrscanner
 A fast, energy efficient, highly-configurable QR code scanner for Cordova apps. Currently iOS and browser only.
@@ -11,6 +12,46 @@ QRScanner's live video preview is rendered behind the Cordova app's native webvi
 ```bash
 cordova plugin add cordova-plugin-qrscanner
 ```
+
+On most platforms, simply adding the plugin to the Cordova project will make the `window.QRScanner` global object available.
+
+### Usage
+
+```js
+// For the best user experience, make sure the user is ready to give your app
+// camera access before you issue the prompt.
+
+QRScanner.prepare(onDone); // prompt for access
+
+function onDone(status){
+  if (status.authorized) {
+    // W00t, you have camera access and the scanner is initialized.
+  } else {
+        // The video preview will remain black, and scanning is disabled. We can
+        // try to ask the user to change their mind, but we'll have to send them
+        // to their device settings with `QRScanner.openSettings()`.
+  }
+}
+
+// Later in your app, when you're ready to show the video preview:
+
+// Make the webview transparent so the video preview is visible behind it.
+// (Optional on iOS.)
+QRScanner.show();
+
+// Start a scan. Scanning will continue until something is detected or
+// `QRScanner.cancelScan()` is called.
+QRScanner.scan(displayContents);
+
+function displayContents(text){
+  // The scan completed, display the contents of the QR code:
+  alert(text);
+}
+```
+
+### iOS Installation
+
+This plugin requires some additional installation steps for the iOS platform.
 
 The iOS component of the plugin is written in Swift 2. To enable it, be sure you're running the lastest version of Xcode, then add the following hook to the iOS platform in your Cordova app's `config.xml`:
 
@@ -26,32 +67,9 @@ This script requires the `xcode` npm module:
 npm install --save xcode
 ```
 
-Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app:
+Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app.
 
-```js
-// Make sure the user will give your app camera access when prompted, then:
-
-QRScanner.prepare(onDone); // prompt for access
-
-function onDone(status){
-  if (!status.authorized) {
-    // the video preview will remain black, and scanning is disabled
-    // you can try asking the user again, but you'll have to use `QRScanner.openSettings()`.
-  }
-}
-
-// later in your app:
-
-QRScanner.show(); // optional: make the webview transparent so the video preview is visible behind it
-
-QRScanner.scan(displayContents); // scan until something is found
-
-function displayContents(text){
-  alert(text);
-}
-```
-
-### Using multiple Cordova plugins written in Swift
+#### Using multiple Cordova plugins written in Swift
 
 Because Cordova is written in Objective-C, Cordova plugins written in Swift [require a `bridging header` to interact with Cordova](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html).
 
@@ -305,6 +323,11 @@ This plugin is always tested with the latest version of Xcode. Please be sure yo
 
 If you run into issues in your own project, try the test project in this repo to confirm your environment is set up properly: `npm run gen-tests && npm run test:ios`.
 
+## Windows
+
+Before testing - ensure the Windows Phone SDK is installed. In order to deploy from the command line Windows Phone 8.0 SDK and Visual Studio 2012 update 2 (or later) must be installed. Visual Studio 2015 is recommended for debugging Windows desktop apps.
+
+The Windows platform renders an impervious white layer behind its browser- the video preview is not behind the webView, but is actually an HTML element that is carefully managed. Hide and show change the style properties (visibility) of the preview.
 
 ## Browser
 
@@ -361,7 +384,14 @@ On the browser platform, it's possible to adjust the interval at which QR decode
 Type definitions for cordova-plugin-qrscanner are [available in the DefinitelyTyped project](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/cordova-plugin-qrscanner/cordova-plugin-qrscanner.d.ts).
 
 ## Contributing &amp; Testing
-To setup the platform tests, run:
+
+To contribute, first install the dependencies:
+
+```sh
+npm install
+```
+
+Then setup the test project:
 
 ```sh
 npm run gen-tests
@@ -371,6 +401,7 @@ This will create a new cordova project in the `cordova-plugin-test-projects` dir
 
 - `npm run test:ios`
 - `npm run test:browser`
+- `npm run test:windows`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 
