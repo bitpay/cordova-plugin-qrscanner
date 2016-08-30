@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-qrscanner.QRScannerProxy", function(require, exports, module) {
 /*
  * Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
  *
@@ -9,6 +10,7 @@
  */
     var capture,
         captureSettings,
+        controller,
         reader;
 
     var ERRORS = {
@@ -48,7 +50,6 @@
       canOpenSettings: canOpenSettings? '1' : '0',
       canEnableLight: canEnableLight? '1' : '0',
       canChangeCamera: canChangeCamera? '1' : '0',
-      currentCamera: '0'
     };
    }
 
@@ -278,7 +279,6 @@ function degreesToRotation(degrees) {
     }
 }
 
-
     function scan(success, fail, args) {
         var capturePreview,
             capturePreviewFrame,
@@ -449,7 +449,7 @@ function degreesToRotation(degrees) {
             })
             .then(function () {
 
-                var controller = capture.videoDeviceController;
+                controller = capture.videoDeviceController;
                 var deviceProps = controller.getAvailableMediaStreamProperties(Windows.Media.Capture.MediaStreamType.videoRecord);
 
                 deviceProps = Array.prototype.slice.call(deviceProps);
@@ -796,7 +796,7 @@ function degreesToRotation(degrees) {
             })
             .then(function () {
 
-                var controller = capture.videoDeviceController;
+                controller = capture.videoDeviceController;
                 var deviceProps = controller.getAvailableMediaStreamProperties(Windows.Media.Capture.MediaStreamType.videoRecord);
 
                 deviceProps = Array.prototype.slice.call(deviceProps);
@@ -1170,18 +1170,73 @@ function getStatus(successCallback, errorCallback, strInput) {
 }
 
 function enableLight(successCallback, errorCallback, strInput) {
-    if (prepared) {
-        canEnableLight = capture.VideoDeviceController.TorchControl.Supported;
-        if (canEnableLight) {
-            capture.VideoDeviceController.TorchControl.Enabled = true;
-        } else {
-            errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+    var light;
+    if (lightEnabled) {
+        return successCallback(calcStatus());
+    }
+    // lightEnabler function is compatible with windows flashControl and torchControl classes
+    //warning: lumia's light functionality may be disabled while plugged in
+    function lightEnabler(lightControl) {
+        if (lightcontrol.supported && (prepared || scanning)) {
+            lightcontrol.enabled = true;
+            canEnableLight = true;
+            if (lightcontrol.powerSupported) {
+                lightcontrol.powerPercent = 90;
+                lightEnabled = true;
+                return successCallback(calcStatus());
+            }
+            else {
+                canEnableLight = false;
+                return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+            }
         }
     }
+    // try to initialize and enable flashControl instance using global controller (hopefully back camera)
+    //windows.media.capture.mediaCapture.videoDeviceController.flashControl
+    light = controller.flashControl;
+    if (light.supported && (prepared || scanning)) {
+        try {
+            return lightEnabler(light);
+        }
+        catch (err) {
+            return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+        }
+    }
+    // try to initialize and enable torchControl using global controller (hopefully back camera)
+    //windows.media.capture.mediaCapture.videoDeviceController.torchControl
+    else light = controller.torchControl;
+    if (light.supported && (prepared || scanning)) {
+        try {
+            return lightEnabler(light);
+        }
+        catch (err) {
+            return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+        }
+    }
+    // if all else fails, return error
+    else return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
 }
 
 function disableLight(successCallback, errorCallback, strInput) {
-
+    // enable function of torchControll class (disabled when false)
+    var tcEnabled = controller.torchControl.enabled;
+    // enable function for flashControl class (disabled when false)
+    var fcEnabled = controller.flashControl.enabled;
+    if ((scanning || prepared) && lightEnabled) {
+        // disable torchControl
+        if (tcEnabled) {
+            tcEnabled = false;
+            lightEnabled = false;
+            return successCallback(calcStatus());
+        }
+        // disable flashControl
+        if (fcEnabled) {
+            fcEnabled = false;
+            lightEnabled = false;
+            return successCallback(calcStatus());
+        }
+    }
+    else return successCallback(calcStatus());
 }
 
 
@@ -1202,3 +1257,5 @@ module.exports = {
 };
 
 require("cordova/exec/proxy").add("QRScanner", module.exports);
+
+});
