@@ -5,6 +5,7 @@ import AVFoundation
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     var cameraView: UIView!
+    var cornersLayer: RSCornersLayer!
     var captureSession:AVCaptureSession?
     var captureVideoPreviewLayer:AVCaptureVideoPreviewLayer?
     var metaOutput: AVCaptureMetadataOutput?
@@ -14,6 +15,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     var backCamera: AVCaptureDevice?
 
     var scanning: Bool = false
+    var scanned: Bool = false
     var nextScanningCommand: CDVInvokedUrlCommand?
 
     enum QRScannerError: Int32 {
@@ -39,9 +41,12 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     override func pluginInitialize() {
-      super.pluginInitialize()
-      NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(pageDidLoad), name: CDVPageDidLoadNotification, object: nil)
-      self.cameraView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
+        super.pluginInitialize()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(pageDidLoad), name: CDVPageDidLoadNotification, object: nil)
+        self.cameraView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
+        
+        self.cornersLayer = RSCornersLayer()
+        self.cornersLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height)
     }
 
     func sendErrorCode(command: CDVInvokedUrlCommand, error: QRScannerError){
@@ -112,6 +117,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 captureVideoPreviewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
                 captureVideoPreviewLayer!.frame = cameraView.bounds
                 cameraView.layer.addSublayer(captureVideoPreviewLayer!)
+                cameraView.layer.addSublayer(cornersLayer)
                 captureSession!.startRunning()
             }
             return true
@@ -190,29 +196,29 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     // This method processes metadataObjects captured by iOS.
 
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
-        if metadataObjects == nil || metadataObjects.count == 0 || scanning == false {
-            // while nothing is detected, or if scanning is false, do nothing.
-            return
+        var barcodeObjects : Array<AVMetadataMachineReadableCodeObject> = []
+        var cornersArray : Array<[AnyObject]> = []
+        for metadataObject : AnyObject in metadataObjects {
+            if let l = self.captureVideoPreviewLayer {
+                let transformedMetadataObject = l.transformedMetadataObjectForMetadataObject(metadataObject as! AVMetadataObject)
+                if transformedMetadataObject.isKindOfClass(AVMetadataMachineReadableCodeObject.self) {
+                    let barcodeObject = transformedMetadataObject as! AVMetadataMachineReadableCodeObject
+                    barcodeObjects.append(barcodeObject)
+                    cornersArray.append(barcodeObject.corners)
+                }
+            }
         }
-        let found = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-        if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil {
-            // We also return the coordinates of the QR code
-            let codeObj = captureVideoPreviewLayer?.transformedMetadataObjectForMetadataObject(found)
-            
-            var QrBounds = Dictionary<String, CGFloat>()
-            var result = Dictionary<String, AnyObject>()
-            
-            QrBounds["width"] = codeObj?.bounds.width
-            QrBounds["height"] = codeObj?.bounds.height
-            QrBounds["x"] = codeObj?.bounds.origin.x
-            QrBounds["y"] = codeObj?.bounds.origin.y
-            
-            result["value"] = found.stringValue
-            result["coords"] = QrBounds
 
-            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsDictionary: result)
-            commandDelegate!.sendPluginResult(pluginResult, callbackId: nextScanningCommand?.callbackId!)
-            nextScanningCommand = nil
+        cornersLayer.cornersArray = cornersArray
+
+        if (!barcodeObjects.isEmpty) {
+            let found = barcodeObjects[0]
+            if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil  && scanned == false {
+                scanned = true;
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: found.stringValue)
+                commandDelegate!.sendPluginResult(pluginResult, callbackId: nextScanningCommand?.callbackId!)
+                nextScanningCommand = nil
+            }
         }
     }
 
@@ -245,6 +251,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     func scan(command: CDVInvokedUrlCommand){
         if(self.prepScanner(command)){
             nextScanningCommand = command
+            scanned = false
             scanning = true
         }
     }
@@ -252,6 +259,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     func cancelScan(command: CDVInvokedUrlCommand){
         if(self.prepScanner(command)){
             scanning = false
+            scanned = false
             if(nextScanningCommand != nil){
                 self.sendErrorCode(nextScanningCommand!, error: QRScannerError.SCAN_CANCELED)
             }
