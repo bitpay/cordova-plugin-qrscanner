@@ -21,20 +21,6 @@ public class RSCornersLayer: CALayer {
         }
     }
     
-    override public init() {
-        super.init()
-        print(1)
-    }
-    
-//    override public init(layer: AnyObject) {
-//        super.init(layer: layer)
-//        print(2)
-//    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override public func drawInContext(ctx: CGContext) {
         objc_sync_enter(self)
         
