@@ -38,6 +38,7 @@
       </feature>
     </config-file>
     <header-file src="src/ios/QRScanner-Bridging-Header.h" />
+    <source-file src="src/ios/QRScannerViewfinder.swift"/>
     <source-file src="src/ios/QRScanner.swift"/>
   </platform>
 
