@@ -57,23 +57,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     // utility method
     func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
         if #available(iOS 8.0, *) {
-//            dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0).async(DispatchQueue.global) {
-//                if(background != nil){
-//                    background!()
-//                }
-//                let popTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), Int64(delay * Double(NSEC_PER_SEC)))
-//                dispatch_after(popTime, DispatchQueue.main) {
-//                    if(completion != nil){
-//                        completion!()
-//                    }
-//                }
-//            }
             DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).async {
                 if (background != nil) {
                     background!()
                 }
-//                    let popTime = dispatch_time(DispatchTime.now, Int64(delay * Double(NSEC_PER_SEC)))
-//                    dispatch_after(popTime, DispatchQueue.main) {
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + delay * Double(NSEC_PER_SEC)) {
                     if(completion != nil){
                         completion!()
