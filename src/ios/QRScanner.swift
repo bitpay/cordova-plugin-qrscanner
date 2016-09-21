@@ -206,11 +206,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     // This method processes metadataObjects captured by iOS.
-
-    private func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+    func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
         var barcodeObjects : Array<AVMetadataMachineReadableCodeObject> = []
         var cornersArray : Array<[AnyObject]> = []
-        for metadataObject : AnyObject in metadataObjects {
+        for metadataObject : Any in metadataObjects {
             if let l = self.captureVideoPreviewLayer {
                 let transformedMetadataObject = l.transformedMetadataObject(for: metadataObject as! AVMetadataObject)
                 if transformedMetadataObject is AVMetadataMachineReadableCodeObject {
@@ -222,7 +221,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
 
         cornersLayer.cornersArray = cornersArray
-
+        
         if (!barcodeObjects.isEmpty) {
             let found = barcodeObjects[0]
             if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil  && scanned == false {
