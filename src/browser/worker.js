@@ -2,12 +2,12 @@
 
 module = {};
 importScripts('qrcode-reader.js');
-var QrCode = module.exports;
-var qr = new QrCode();
-qr.callback = function(result, err){
-	postMessage({result: result, err: err});
+const QrCode = module.exports;
+const qr = new QrCode();
+qr.callback = (result, err) => {
+	postMessage({result, err});
 };
-onmessage = function(event){
-	var imageData = event.data;
-  qr.decode(imageData);
+onmessage = event => {
+	const imageData = event.data;
+	qr.decode(imageData);
 };
