@@ -59,7 +59,8 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
     private boolean restricted;
     private boolean oneTime = true;
     private boolean keepDenied = false;
-
+    private boolean appPausedWithActivePreview = false;
+    
     static class QRScannerError {
         private static final int UNEXPECTED_ERROR = 0,
                 CAMERA_ACCESS_DENIED = 1,
@@ -217,6 +218,22 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         } catch (Exception e) {
             callbackContext.error(QRScannerError.UNEXPECTED_ERROR);
             return false;
+        }
+    }
+
+    @Override
+    public void onPause(boolean multitasking) {
+        if (previewing) {
+            this.appPausedWithActivePreview = true;
+            this.pausePreview(null);
+        }
+    }
+
+    @Override
+    public void onResume(boolean multitasking) {
+        if (this.appPausedWithActivePreview) {
+            this.appPausedWithActivePreview = false;
+            this.resumePreview(null);
         }
     }
 
@@ -624,7 +641,9 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     if(lightOn)
                         lightOn = false;
                 }
-                getStatus(callbackContext);
+                
+                if (callbackContext != null)
+                    getStatus(callbackContext);
             }
         });
 
@@ -640,7 +659,9 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                     if(switchFlashOn)
                         lightOn = true;
                 }
-                getStatus(callbackContext);
+                
+                if (callbackContext != null)
+                    getStatus(callbackContext);
             }
         });
     }
