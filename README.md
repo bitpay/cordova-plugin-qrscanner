@@ -14,7 +14,7 @@ This forks first of all makes the plugin fully working on iOS 10 (the swift code
 
 I've also added a feature that draws a square around the detected QR code, nothing too fancy, but an useful feedback for your users that will feel somethings is actually happening.
 
-Last things is that I converted all the JavaScript code to ES6 (be aware though, that means you need to use Babel or something like that)
+Last things is that I converted some of the JavaScript code to ES6 (be aware though, that means you need to use Babel or something like that)
 
 ## Get Started
 
