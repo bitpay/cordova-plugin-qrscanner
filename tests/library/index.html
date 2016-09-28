@@ -1,0 +1,66 @@
+<html>
+<head>
+  <title>QRScanner Library Test</title>
+  <script src="../../dist/QRScanner.min.js"></script>
+  <script>
+    function prepare(){
+      QRScanner.prepare(function(err, status){
+        if(err){
+          console.error(err._message);
+        } else {
+          console.log('QRScanner is initialized. Status:');
+          console.log(status);
+        }
+      });
+    }
+    function scan(){
+      QRScanner.scan(
+      function(err, result){
+        window.alert('result: "' + result + '",  error: ' + err)
+      });
+    }
+    function frontCamera(){
+      QRScanner.useFrontCamera(function(err, status){
+        err && console.error(err);
+        console.log(status);
+      });
+    }
+    function backCamera(){
+      QRScanner.useBackCamera(function(err, status){
+        err && console.error(err);
+        console.log(status);
+      });
+    }
+    function show(){
+      QRScanner.show(function(status){
+        console.log(status);
+      });
+    }
+    function hide(){
+      QRScanner.hide(function(status){
+        console.log(status);
+      });
+    }
+    function pausePreview(){
+      QRScanner.pausePreview(function(status){
+        console.log(status);
+      });
+    }
+    function resumePreview(){
+      QRScanner.resumePreview(function(status){
+        console.log(status);
+      });
+    }
+  </script>
+</head>
+<body>
+  <button onclick="scan()"><h1>prepare</h1></button>
+  <button onclick="scan()"><h1>scan</h1></button>
+  <button onclick="frontCamera()"><h1>useFrontCamera</h1></button>
+  <button onclick="backCamera()"><h1>useBackCamera</h1></button>
+  <button onclick="show()"><h1>show</h1></button>
+  <button onclick="hide()"><h1>hide</h1></button>
+  <button onclick="pausePreview()"><h1>pausePreview</h1></button>
+  <button onclick="resumePreview()"><h1>resumePreview</h1></button>
+</body>
+</html>

@@ -1,4 +1,7 @@
-(function() {
+require('webrtc-adapter');
+var workerScript = require("raw!../worker.min.js");
+
+module.exports = function(){
 
   var ELEMENTS = {
     preview: 'cordova-plugin-qrscanner-video-preview',
@@ -84,7 +87,7 @@
               return searchState;
             } else {
               searchState.nextConstraint = next;
-              return navigator.mediaDevices.getUserMedia(searchState.nextConstraint).then(function(mediaStream){
+              return window.navigator.mediaDevices.getUserMedia(searchState.nextConstraint).then(function(mediaStream){
                 // We found the first working constraint object, now we can stop
                 // the stream and short-circuit the search.
                 killStream(mediaStream);
@@ -125,7 +128,7 @@
   }
 
   function chooseCameras(){
-    var devices = navigator.mediaDevices.enumerateDevices();
+    var devices = window.navigator.mediaDevices.enumerateDevices();
     return devices.then(function(mediaDeviceInfoList){
       var videoDeviceIds = mediaDeviceInfoList.filter(function(elem){
         return elem.kind === 'videoinput';
@@ -229,7 +232,7 @@
   }
 
   function canChangeCamera(){
-    return backCamera !== null && frontCamera !== null;
+    return !!backCamera && !!frontCamera;
   }
 
   function calcStatus(){
@@ -262,7 +265,7 @@
   function startCamera(success, error){
       var currentCameraIndex = getCurrentCameraIndex();
       var currentCamera = getCurrentCamera();
-      navigator.mediaDevices.getUserMedia({
+      window.navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
           deviceId: {exact: currentCamera.deviceId},
@@ -307,7 +310,8 @@
 
   function initialize(success, error){
     if(scanWorker === null){
-      scanWorker = new Worker('/plugins/cordova-plugin-qrscanner/src/browser/worker.js');
+      var workerBlob = new Blob([workerScript],{type: "text/javascript"});
+      scanWorker = new Worker(URL.createObjectURL(workerBlob));
     }
     if(!getVideoPreview()){
       // prepare DOM (sync)
@@ -418,7 +422,6 @@
         }
       };
       thisScanCycle = function(){
-        window.lastData = getCurrentImageData(video);
         scanWorker.postMessage(getCurrentImageData(video));
         // avoid race conditions, always clear before starting a cycle
         window.clearTimeout(nextScan);
@@ -452,7 +455,6 @@
       video.pause();
       var img = new Image();
       img.src = captureCurrentFrame(video);
-      window.lastImage = img.src;
       getImg().style.backgroundImage = 'url(' + img.src + ')';
       bringStillToFront();
       // kill the active stream to turn off the privacy light (the screenshot
@@ -482,13 +484,22 @@
 
   function useCamera(success, error, array){
     var requestedCamera = array[0];
+    var initialized = isInitialized();
     if(requestedCamera !== currentCamera){
-      currentCamera = requestedCamera;
-      hide(function(status){
-        // Don't need this one
-        status = null;
-      });
-      show(success, error);
+      if(initialized && requestedCamera === 1 && !canChangeCamera()){
+          error(4); //FRONT_CAMERA_UNAVAILABLE
+      } else {
+        currentCamera = requestedCamera;
+        if(initialized){
+          hide(function(status){
+            // Don't need this one
+            status = null;
+          });
+          show(success, error);
+        } else {
+          success(calcStatus());
+        }
+      }
     } else {
       success(calcStatus());
     }
@@ -524,7 +535,7 @@
     success(calcStatus());
   }
 
-  module.exports = {
+  return {
       prepare: prepare,
       show: show,
       hide: hide,
@@ -539,6 +550,4 @@
       getStatus: getStatus,
       destroy: destroy
   };
-
-  require('cordova/exec/proxy').add('QRScanner', module.exports);
-})();
+}
