@@ -1,3 +1,13 @@
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.2.0...v2.3.0) (2016-09-28)
+
+
+### Features
+
+* **all:** Add build process, release browser platform as a UMD library ([052b8d3](https://github.com/bitpay/cordova-plugin-qrscanner/commit/052b8d3)), closes [#30](https://github.com/bitpay/cordova-plugin-qrscanner/issues/30)
+
+
+
 <a name="2.2.0"></a>
 ## [2.1.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.1...v2.1.2) (2016-08-15)
 

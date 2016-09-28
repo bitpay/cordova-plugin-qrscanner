@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Cordova QR Scanner Plugin",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
