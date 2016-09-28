@@ -125,6 +125,24 @@ A project can only have one bridging header. If your app uses plugins other than
 ```
 Copy the script from `cordova-plugin-qrscanner/scripts/swift-support.js` into your project (eg. into the `hooks` folder), and modify the `BRIDGING_HEADER_END` variable to point to your new bridging header. Finally, remove and re-add the ios platform to trigger the hook. See [this issue](https://github.com/eface2face/cordova-plugin-iosrtc/issues/9) for more information.
 
+### Electron or NW.js usage without `cordova-browser`
+
+If your app uses the Cordova Browser platform, simply adding the plugin to the Cordova project will make the `window.QRScanner` global object available once the `deviceready` event propagates. For apps not using `cordova-browser`, this plugin is also available as a simple javascript library.
+
+The library uses the [Universal Module Definition API](https://github.com/umdjs/umd), so it can simply be required by most build systems.
+
+```js
+var QRScanner = require('QRScanner');
+```
+
+Or alternatively, the library can be included in a page as-is, and the QRScanner will be made available at `window.QRScanner`.
+
+```html
+<script src="path/to/qrscanner/library.bundle.min.js"></script>
+```
+
+On the browser platform, performance is improved by running the processing-intensive scanning operation in a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API). For more information about the browser platform, see [Browser Platform Specific Details](#browser).
+
 ## API
 With the exception of `QRScanner.scan(callback)`, all callbacks are optional.
 
@@ -307,7 +325,7 @@ Name                             | Description
 `lightEnabled`                   | A boolean value which is true if the light is enabled.
 `canOpenSettings`                | A boolean value which is true only if the users' operating system is able to `QRScanner.openSettings()`.
 `canEnableLight`                 | A boolean value which is true only if the users' device can enable a light in the direction of the currentCamera.
-`canChangeCamera`                | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted.
+`canChangeCamera`                | A boolean value which is true only if the current device "should" have a front camera. The camera may still not be capturable, which would emit error code 3, 4, or 5 when the switch is attempted. (On the browser platform, this value is false until the `prepare` method is called.)
 `currentCamera`                  | A number representing the index of the currentCamera. `0` is the back camera, `1` is the front.
 
 
@@ -397,7 +415,7 @@ For this same reason, scanning requires the video preview to be active, and the 
 
 ### Camera Selection
 
-The browser platform attempts to select the best camera as the "back" camera (the default camera). If a "next-best" camera is available, that camera will be selected as the "front" camera. Camera switching is intended to be "togglable", so this plugin has no plans to support access to more than 2 cameras.
+When the `prepare` method runs, the browser platform attempts to select the best camera as the "back" camera (the default camera). If a "next-best" camera is available, that camera will be selected as the "front" camera. Camera switching is intended to be "togglable", so this plugin has no plans to support access to more than 2 cameras.
 
 The "back" camera is selected by the following criteria:
 1. [**facingMode**](http://w3c.github.io/mediacapture-main/#dfn-facingmode) – if a camera with a facingMode of `environment` exists, we use this one.
@@ -410,12 +428,6 @@ If more cameras are available, the "front" camera is then chosen from the highes
 The browser platform always returns the boolean `status.canEnableLight` as `false`, and the enableLight/disableLight methods throw the `LIGHT_UNAVAILABLE` error code.
 
 `status.canEnableLight` is camera specific, meaning it will return `false` if the camera in use does not have a flash.
-
-### Using with Electron or NW.js
-
-This plugin should work out-of-the box with the Cordova browser platform. As of now, there is no clear "best-way" of using the cordova browser build inside an Electron or NW.js application. This plugin attempts to provide an as-clean-as-possible source such that implementations can choose to either:
- - fully implement the cordova platform (please [let us know](https://github.com/bitpay/cordova-plugin-qrscanner/issues/new) how you do it so we can add documentation!), or
- - import this plugin's source into the Electron or NW.js project and re-bundle it manually.
 
 #### Using Status.authorized
 

@@ -9,9 +9,7 @@
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
 
-  <asset src="www/QRScanner.js" target="js/QRScanner.js"/>
-
-  <js-module src="www/QRScanner.js" name="QRScanner">
+  <js-module src="www/www.min.js" name="QRScanner">
     <clobbers target="QRScanner" />
   </js-module>
 
@@ -39,22 +37,20 @@
     </config-file>
     <header-file src="src/ios/QRScanner-Bridging-Header.h" />
     <source-file src="src/ios/QRScanner.swift"/>
+    <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+      <string></string>
+    </config-file>
   </platform>
 
   <platform name="browser">
-      <config-file target="config.xml" parent="/*">
-          <feature name="QRScanner">
-              <param name="browser-package" value="QRScanner" />
-          </feature>
-      </config-file>
-      <js-module src="src/browser/QRScannerProxy.js" name="QRScannerProxy">
-          <runs />
-      </js-module>
-      <source-file src="src/browser/worker.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
-      <source-file src="src/browser/qrcode-reader.js" target-dir="platform_www/plugins/cordova-plugin-qrscanner/src/browser" />
-      <js-module src="src/browser/adapter.js" name="AdapterJs">
-          <clobbers target="window.getUserMedia" />
-      </js-module>
+    <config-file target="config.xml" parent="/*">
+      <feature name="QRScanner">
+          <param name="browser-package" value="QRScanner" />
+      </feature>
+    </config-file>
+    <js-module src="src/browser/plugin.min.js" name="QRScannerProxy">
+      <runs />
+    </js-module>
   </platform>
 
 </plugin>

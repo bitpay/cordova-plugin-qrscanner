@@ -1,8 +1,7 @@
-/*global module:true, importScripts:false, postMessage:false, onmessage:true*/
+/*global module:true, postMessage:false, onmessage:true*/
 
 module = {};
-importScripts('qrcode-reader.js');
-var QrCode = module.exports;
+var QrCode = require('qrcode-reader').default;
 var qr = new QrCode();
 qr.callback = function(result, err){
 	postMessage({result: result, err: err});
