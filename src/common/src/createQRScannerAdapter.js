@@ -220,4 +220,4 @@ return {
     cordova.exec(doneCallback(callback), null, 'QRScanner', 'getStatus', []);
   }
 };
-}
+};

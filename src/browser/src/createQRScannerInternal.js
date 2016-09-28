@@ -550,4 +550,4 @@ module.exports = function(){
       getStatus: getStatus,
       destroy: destroy
   };
-}
+};

@@ -13,7 +13,7 @@
     "clean-build": "trash dist/plugin.min.js && trash dist/www.min.js && trash src/browser/worker.min.js",
     "install": "npm run build",
     "test": "npm run jshint",
-    "jshint": "jshint www && jshint src && jshint tests",
+    "jshint": "jshint src/browser/src && jshint src/common/src && jshint tests",
     "gen-tests": "npm run build && npm run clean-platform-tests && npm run mkdirp-platform-tests && npm run copy-platform-tests && npm run install-platform-tests",
     "clean-platform-tests": "trash ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
     "mkdirp-platform-tests": "mkdirp ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",

@@ -17,7 +17,7 @@ function QRScanner() {
       openSettings: internal.openSettings,
       getStatus: internal.getStatus,
       destroy: internal.destroy
-  }
+  };
 
   // shim cordova's functionality for library usage
   var shimCordova = {
@@ -31,10 +31,10 @@ function QRScanner() {
         functionList[functionName](successCallback, errorCallback);
       }
     }
-  }
+  };
 
   var adapter = createQRScannerAdapter(shimCordova);
   return adapter;
-};
+}
 
 module.exports = new QRScanner();

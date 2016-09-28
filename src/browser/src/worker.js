@@ -1,4 +1,4 @@
-/*global module:true, importScripts:false, postMessage:false, onmessage:true*/
+/*global module:true, postMessage:false, onmessage:true*/
 
 module = {};
 var QrCode = require('qrcode-reader').default;
