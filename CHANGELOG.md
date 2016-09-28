@@ -1,3 +1,13 @@
+<a name="2.3.1"></a>
+## [2.3.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.0...v2.3.1) (2016-09-28)
+
+
+### Bug Fixes
+
+* **package:** remove install script ([b769bec](https://github.com/bitpay/cordova-plugin-qrscanner/commit/b769bec))
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.2.0...v2.3.0) (2016-09-28)
 
