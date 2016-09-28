@@ -1,6 +1,12 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
 node_modules/
-dist/
 
 # generated files
+dist/
 src/browser/plugin.min.js
 www/www.min.js

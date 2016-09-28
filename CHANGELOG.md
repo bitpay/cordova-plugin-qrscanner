@@ -1,5 +1,15 @@
+<a name="2.3.2"></a>
+## [2.3.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.1...2.3.2) (2016-09-28)
+
+
+### Bug Fixes
+
+* **library:** rename UMD library file in dist ([a4b385f](https://github.com/bitpay/cordova-plugin-qrscanner/commit/a4b385f))
+
+
+
 <a name="2.3.1"></a>
-## [2.3.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.0...v2.3.1) (2016-09-28)
+## [2.3.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.0...2.3.1) (2016-09-28)
 
 
 ### Bug Fixes
@@ -9,7 +19,7 @@
 
 
 <a name="2.3.0"></a>
-# [2.3.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.2.0...v2.3.0) (2016-09-28)
+# [2.3.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.2.0...2.3.0) (2016-09-28)
 
 
 ### Features
@@ -19,7 +29,7 @@
 
 
 <a name="2.2.0"></a>
-## [2.1.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.1...v2.1.2) (2016-08-15)
+## [2.1.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.1...2.1.2) (2016-08-15)
 
 
 ### Features
@@ -29,7 +39,7 @@
 
 
 <a name="2.1.1"></a>
-## [2.1.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.0...v2.1.1) (2016-08-12)
+## [2.1.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.1.0...2.1.1) (2016-08-12)
 
 
 ### Bug Fixes
@@ -39,7 +49,7 @@
 
 
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.1...v2.1.0) (2016-08-05)
+# [2.1.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.1...2.1.0) (2016-08-05)
 
 
 ### Bug Fixes
@@ -56,7 +66,7 @@
 
 
 <a name="2.0.1"></a>
-## [2.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.0...v2.0.1) (2016-08-03)
+## [2.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.0.0...2.0.1) (2016-08-03)
 
 
 ### Bug Fixes
@@ -66,7 +76,7 @@
 
 
 <a name="2.0.0"></a>
-# [2.0.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/v1.1.0...v2.0.0) (2016-06-29)
+# [2.0.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/v1.1.0...2.0.0) (2016-06-29)
 
 ### Bug Fixes
 
