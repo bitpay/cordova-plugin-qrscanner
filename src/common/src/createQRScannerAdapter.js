@@ -49,6 +49,9 @@ function clearBackground() {
 }
 
 function errorCallback(callback) {
+  if (!callback) {
+    return null;
+  }
   return function(error) {
     var errorCode = parseInt(error);
     var QRScannerError = {};

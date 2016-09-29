@@ -19,6 +19,18 @@ function QRScanner() {
       destroy: internal.destroy
   };
 
+  // always returns an executable function for use by the internal component
+  // if a callback is provided, use it
+  function getFunc(callback){
+    if(typeof callback === "function"){
+      return callback;
+    }
+    return function(){
+      // callback is not needed
+      return;
+    };
+  }
+
   // shim cordova's functionality for library usage
   var shimCordova = {
     exec: function(successCallback, errorCallback, className, functionName, inputArray){
@@ -26,9 +38,9 @@ function QRScanner() {
         return errorCallback(0);
       }
       if(inputArray){
-        functionList[functionName](successCallback, errorCallback, inputArray);
+        functionList[functionName](getFunc(successCallback), getFunc(errorCallback), inputArray);
       } else {
-        functionList[functionName](successCallback, errorCallback);
+        functionList[functionName](getFunc(successCallback), getFunc(errorCallback));
       }
     }
   };

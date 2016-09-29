@@ -144,7 +144,7 @@ Or alternatively, the library can be included in a page as-is, and the QRScanner
 On the browser platform, performance is improved by running the processing-intensive scanning operation in a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API). For more information about the browser platform, see [Browser Platform Specific Details](#browser).
 
 ## API
-With the exception of `QRScanner.scan(callback)`, all callbacks are optional.
+With the exception of `QRScanner.scan(callback)` and `QRScanner.getStatus(callback)`, all callbacks are optional.
 
 ### Prepare
 
