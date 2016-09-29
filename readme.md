@@ -458,10 +458,14 @@ npm run gen-tests
 
 This will create a new cordova project in the `cordova-plugin-test-projects` directory next to this repo, install `cordova-plugin-qrscanner`, and configure the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework). Once the platform tests are generated, the following commands are available:
 
-- `npm run test:ios`
-- `npm run test:browser`
 - `npm run test:android`
+- `npm run test:browser`
+- `npm run test:ios`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
+
+The manual tests for the library are available without the cordova test project:
+
+- `npm run test:library`
 
 The build for this repo currently only confirms javascript style and syntax with [jshint](https://github.com/jshint/jshint). Pull requests with additional automated test methods are welcome!

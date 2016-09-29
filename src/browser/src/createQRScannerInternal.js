@@ -446,7 +446,7 @@ module.exports = function(){
           if(sendError){
             error(6); // SCAN_CANCELED
           }
-        }
+        };
       };
       thisScanCycle();
     }, error);
