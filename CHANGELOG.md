@@ -1,3 +1,14 @@
+<a name="2.3.3"></a>
+## [2.3.3](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.2...2.3.3) (2016-09-29)
+
+
+### Bug Fixes
+
+* **browser:** make cancelScan call the current scan's callback with error code 6 ([d5ca673](https://github.com/bitpay/cordova-plugin-qrscanner/commit/d5ca673))
+* **library:** fixes an issue with optional callbacks being required ([99dc348](https://github.com/bitpay/cordova-plugin-qrscanner/commit/99dc348))
+
+
+
 <a name="2.3.2"></a>
 ## [2.3.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.1...2.3.2) (2016-09-28)
 
