@@ -20,6 +20,7 @@ module.exports = function(){
   var scanWorker = null;
   var thisScanCycle = null;
   var nextScan = null;
+  var cancelNextScan = null;
 
   // standard screen widths/heights, from 4k down to 320x240
   // widths and heights are each tested separately to account for screen rotation
@@ -218,13 +219,19 @@ module.exports = function(){
   }
 
   function bringStillToFront(){
-    getImg().style.visibility = 'visible';
-    previewing = false;
+    var img = getImg();
+    if(img){
+      img.style.visibility = 'visible';
+      previewing = false;
+    }
   }
 
   function bringPreviewToFront(){
-    getImg().style.visibility = 'hidden';
-    previewing = true;
+    var img = getImg();
+    if(img){
+      img.style.visibility = 'hidden';
+      previewing = true;
+    }
   }
 
   function isInitialized(){
@@ -423,13 +430,23 @@ module.exports = function(){
       };
       thisScanCycle = function(){
         scanWorker.postMessage(getCurrentImageData(video));
-        // avoid race conditions, always clear before starting a cycle
-        window.clearTimeout(nextScan);
+        if(cancelNextScan !== null){
+          // avoid race conditions, always clear before starting a cycle
+          cancelNextScan();
+        }
         // interval in milliseconds at which to try decoding the QR code
         var SCAN_INTERVAL = window.QRScanner_SCAN_INTERVAL || 130;
         // this value can be adjusted on-the-fly (while a scan is active) to
         // balance scan speed vs. CPU/power usage
         nextScan = window.setTimeout(thisScanCycle, SCAN_INTERVAL);
+        cancelNextScan = function(sendError){
+          window.clearTimeout(nextScan);
+          nextScan = null;
+          cancelNextScan = null;
+          if(sendError){
+            error(6); // SCAN_CANCELED
+          }
+        }
       };
       thisScanCycle();
     }, error);
@@ -437,19 +454,21 @@ module.exports = function(){
 
   function cancelScan(success, error){
     error = null; // should never error
-    if(nextScan !== null){
-      window.clearTimeout(nextScan);
+    if(cancelNextScan !== null){
+      cancelNextScan(true);
     }
     scanning = false;
-    success(calcStatus());
+    if(typeof success === "function"){
+      success(calcStatus());
+    }
   }
 
   function pausePreview(success, error){
     error = null; // should never error
     if(mediaStreamIsActive()){
       // pause scanning too
-      if(nextScan !== null){
-        window.clearTimeout(nextScan);
+      if(cancelNextScan !== null){
+        cancelNextScan();
       }
       var video = getVideoPreview();
       video.pause();
@@ -519,6 +538,7 @@ module.exports = function(){
   // the application needs to force the plugin to chooseCameras() again.
   function destroy(success, error){
     error = null; // should never error
+    cancelScan();
     if(mediaStreamIsActive()){
       killActiveMediaStream();
     }
