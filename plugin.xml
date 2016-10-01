@@ -38,7 +38,7 @@
     <header-file src="src/ios/QRScanner-Bridging-Header.h" />
     <source-file src="src/ios/QRScanner.swift"/>
     <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-      <string></string>
+      <string>The camera is used to scan QR codes.</string>
     </config-file>
   </platform>
 
