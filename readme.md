@@ -46,7 +46,7 @@ function onDone(err, status){
   } else {
     // we didn't get permission, but we didn't get permanently denied. (On
     // Android, a denial isn't permanent unless the user checks the "Don't
-    // ask again" box. We can ask again at the next relevant opportunity.
+    // ask again" box.) We can ask again at the next relevant opportunity.
   }
 }
 ```
@@ -94,7 +94,7 @@ The iOS component of the plugin is written in Swift 2.3. To enable it, be sure y
 </platform>
 ```
 
-The script requires the `xcode` npm module:
+The script requires the `xcode` npm module. (This will already be installed as a dependency of `cordova-plugin-qrscanner` if you install this package via npm.)
 
 ```bash
 npm install --save xcode
@@ -244,6 +244,17 @@ Switch video capture to the device's front camera.
 
 ```js
 QRScanner.useBackCamera(function(err, status){
+  err && console.error(err);
+  console.log(status);
+});
+```
+
+Camera selection can also be done directly with the `useCamera` method.
+
+```js
+var back = 0; // default camera on plugin initialization
+var front = 1;
+QRScanner.useCamera(front, function(err, status){
   err && console.error(err);
   console.log(status);
 });
