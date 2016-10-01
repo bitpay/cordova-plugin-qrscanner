@@ -21,6 +21,7 @@
     "test:ios": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:ios",
     "test:android": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:android",
     "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser",
+    "test:windows": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:windows",
     "test:library": "npm run build && node tests/library/test.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "prep-release": "git clean -dfx && npm install && npm run build && npm run changelog"
