@@ -14,6 +14,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     var backCamera: AVCaptureDevice?
 
     var scanning: Bool = false
+    var paused: Bool = false;
     var nextScanningCommand: CDVInvokedUrlCommand?
 
     enum QRScannerError: Int32 {
@@ -258,11 +259,19 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     func pausePreview(command: CDVInvokedUrlCommand) {
+        if(scanning){
+            paused = true;
+            scanning = false;
+        }
         captureVideoPreviewLayer?.connection.enabled = false
         self.getStatus(command)
     }
 
     func resumePreview(command: CDVInvokedUrlCommand) {
+        if(paused){
+            paused = false;
+            scanning = true;
+        }
         captureVideoPreviewLayer?.connection.enabled = true
         self.getStatus(command)
     }
