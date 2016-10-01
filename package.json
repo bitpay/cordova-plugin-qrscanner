@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "2.3.3",
-  "description": "Cordova QR Scanner Plugin",
+  "version": "2.3.4",
+  "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
     "platforms": [
@@ -36,7 +36,13 @@
     "scanner",
     "reader",
     "ecosystem:cordova",
-    "cordova-ios"
+    "cordova-ios",
+    "cordova-android",
+    "cordova-browser",
+    "UMD",
+    "library",
+    "electron",
+    "NW.js"
   ],
   "author": "Jason Dreyzehner",
   "license": "MIT",

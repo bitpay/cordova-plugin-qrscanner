@@ -1,3 +1,14 @@
+<a name="2.3.4"></a>
+## [2.3.4](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.3...2.3.4) (2016-10-01)
+
+
+### Bug Fixes
+
+* **ios:** Make NSCameraUsageDescription string non-empty, which is now rejected by Apple ([514a2d2](https://github.com/bitpay/cordova-plugin-qrscanner/commit/514a2d2))
+* **ios:** pause scanning with pausePreview method on iOS ([c0722c7](https://github.com/bitpay/cordova-plugin-qrscanner/commit/c0722c7)), closes [#12](https://github.com/bitpay/cordova-plugin-qrscanner/issues/12)
+
+
+
 <a name="2.3.3"></a>
 ## [2.3.3](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.2...2.3.3) (2016-09-29)
 
