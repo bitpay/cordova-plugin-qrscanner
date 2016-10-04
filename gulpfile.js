@@ -8,7 +8,7 @@ const remap = fs.readFileSync('src/common/src/cordova-remap.js', 'utf-8');
 
 function webpack(config, callback){
   const exec = require('child_process').exec;
-  exec('node_modules/.bin/webpack --config ' + config, (error, stdout, stderr) => {
+  exec(__dirname + '/node_modules/.bin/webpack --config ' + config, (error, stdout, stderr) => {
     console.log(stdout);
     console.log(stderr);
     callback(error);
