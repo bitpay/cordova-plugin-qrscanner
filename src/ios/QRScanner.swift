@@ -5,7 +5,6 @@ import AVFoundation
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     var cameraView: UIView!
-    var cornersLayer: RSCornersLayer!
     var captureSession:AVCaptureSession?
     var captureVideoPreviewLayer:AVCaptureVideoPreviewLayer?
     var metaOutput: AVCaptureMetadataOutput?
@@ -44,9 +43,6 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         super.pluginInitialize()
         NotificationCenter.default.addObserver(self, selector: #selector(pageDidLoad), name: NSNotification.Name.CDVPageDidLoad, object: nil)
         self.cameraView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-        
-        self.cornersLayer = RSCornersLayer()
-        self.cornersLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 
     func sendErrorCode(command: CDVInvokedUrlCommand, error: QRScannerError){
@@ -116,7 +112,6 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 captureVideoPreviewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
                 captureVideoPreviewLayer!.frame = cameraView.bounds
                 cameraView.layer.addSublayer(captureVideoPreviewLayer!)
-                cameraView.layer.addSublayer(cornersLayer)
                 captureSession!.startRunning()
             }
             return true
@@ -194,29 +189,16 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     // This method processes metadataObjects captured by iOS.
     func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
-        var barcodeObjects : Array<AVMetadataMachineReadableCodeObject> = []
-        var cornersArray : Array<[AnyObject]> = []
-        for metadataObject : Any in metadataObjects {
-            if let l = self.captureVideoPreviewLayer {
-                let transformedMetadataObject = l.transformedMetadataObject(for: metadataObject as! AVMetadataObject)
-                if transformedMetadataObject is AVMetadataMachineReadableCodeObject {
-                    let barcodeObject = transformedMetadataObject as! AVMetadataMachineReadableCodeObject
-                    barcodeObjects.append(barcodeObject)
-                    cornersArray.append(barcodeObject.corners as [AnyObject])
-                }
-            }
+        if metadataObjects == nil || metadataObjects.count == 0 || scanning == false {
+            // while nothing is detected, or if scanning is false, do nothing.
+            return
         }
-
-        cornersLayer.cornersArray = cornersArray
-        
-        if (!barcodeObjects.isEmpty) {
-            let found = barcodeObjects[0]
-            if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil  && scanned == false {
-                scanned = true;
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: found.stringValue)
-                commandDelegate!.send(pluginResult, callbackId: nextScanningCommand?.callbackId!)
-                nextScanningCommand = nil
-            }
+        let found = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
+        if found.type == AVMetadataObjectTypeQRCode && found.stringValue != nil {
+            scanning = false
+            let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: found.stringValue)
+            commandDelegate!.send(pluginResult, callbackId: nextScanningCommand?.callbackId!)
+            nextScanningCommand = nil
         }
     }
 
