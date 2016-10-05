@@ -46,7 +46,7 @@ function onDone(err, status){
   } else {
     // we didn't get permission, but we didn't get permanently denied. (On
     // Android, a denial isn't permanent unless the user checks the "Don't
-    // ask again" box. We can ask again at the next relevant opportunity.
+    // ask again" box.) We can ask again at the next relevant opportunity.
   }
 }
 ```
@@ -89,12 +89,12 @@ The iOS component of the plugin is written in Swift 2.3. To enable it, be sure y
 <platform name="ios">
     <hook type="before_build" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
     <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-      <string>The camera is used to read QR codes.</string>
+      <string>The camera is used to scan QR codes.</string>
     </config-file>
 </platform>
 ```
 
-The script requires the `xcode` npm module:
+The script requires the `xcode` npm module. (This will already be installed as a dependency of `cordova-plugin-qrscanner` if you install this package via npm.)
 
 ```bash
 npm install --save xcode
@@ -102,7 +102,7 @@ npm install --save xcode
 
 Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app.
 
-Starting with iOS 10, the `NSCameraUsageDescription` string is also required to avoid a runtime exit. This field can be provided in a single language, localized using the `InfoPlist.strings` file, or simply left empty (`<string></string>`).
+Starting with iOS 10, a non-empty `NSCameraUsageDescription` string is also required to avoid a runtime exit. This field can be provided in a single language or localized using the `InfoPlist.strings` file. (Note: Apps with an empty `NSCameraUsageDescription` will not exit at runtime, but are rejected by iTunes Connect when uploaded for distribution.)
 
 #### Using multiple Cordova plugins written in Swift
 
@@ -244,6 +244,17 @@ Switch video capture to the device's front camera.
 
 ```js
 QRScanner.useBackCamera(function(err, status){
+  err && console.error(err);
+  console.log(status);
+});
+```
+
+Camera selection can also be done directly with the `useCamera` method.
+
+```js
+var back = 0; // default camera on plugin initialization
+var front = 1;
+QRScanner.useCamera(front, function(err, status){
   err && console.error(err);
   console.log(status);
 });
