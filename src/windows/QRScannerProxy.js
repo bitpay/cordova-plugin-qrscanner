@@ -1033,10 +1033,11 @@ Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", function () {
 }, false);
 
 function prepare2() {
-  if (prepared) {
-    WinJS.Promise.resolve();
-  }
   return new WinJS.Promise(function (resolve, reject) {
+    if (prepared) {
+      resolve();
+      return;
+    }
     prepared = true;
     previewing = true;
     initialize(resolve, reject);
@@ -1191,20 +1192,24 @@ function enableLight(successCallback, errorCallback, strInput) {
         if (lightControl.powerSupported) {
           lightControl.powerPercent = 90;
         }
+        return true;
       }
+      return false;
     }
 
-    lightEnabled = lightEnabler(controller.flashControl) || lightEnabler(controller.torchControl);
+    let flashEnabled = lightEnabler(controller.flashControl);
+    let torchEnabled = lightEnabler(controller.torchControl);
+
+    lightEnabled = flashEnabled || torchEnabled;
 
     if (!lightEnabled) {
       return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
     }
 
     canEnableLight = true;
-    lightEnabled = true;
     return successCallback(calcStatus());
   }, function () {
-    return errorCallback(ERRORS.LIGHT_UNAVAILABLE);
+    return errorCallback(ERRORS.UNEXPECTED_ERROR);
   });
 
 }
