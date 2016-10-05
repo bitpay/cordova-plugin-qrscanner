@@ -13,7 +13,7 @@ QRScanner's native camera preview is rendered behind the Cordova app's webview, 
 cordova plugin add cordova-plugin-qrscanner
 ```
 
-On most platforms, simply adding the plugin to the Cordova project will make the `window.QRScanner` global object available once the `deviceready` event propagates.
+Simply adding this plugin to the Cordova project will make the `window.QRScanner` global object available once the `deviceready` event propagates.
 
 ### Usage
 
@@ -78,52 +78,6 @@ QRScanner.show();
 ```
 
 Please see the [full API docs](#api) for details about each method, [error handling](#error-handling), and [platform specific details](#platform-specific-details).
-
-### iOS Installation
-
-This plugin requires some additional installation steps for the iOS platform.
-
-The iOS component of the plugin is written in Swift 2.3. To enable it, be sure you're running the lastest version of Xcode, then add the following hook and setting to the iOS platform in your Cordova app's `config.xml`:
-
-```xml
-<platform name="ios">
-    <hook type="before_build" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
-    <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-      <string>The camera is used to scan QR codes.</string>
-    </config-file>
-</platform>
-```
-
-The script requires the `xcode` npm module. (This will already be installed as a dependency of `cordova-plugin-qrscanner` if you install this package via npm.)
-
-```bash
-npm install --save xcode
-```
-
-Swift will now be enabled during your build, and the `QRScanner` plugin will be available in your app.
-
-Starting with iOS 10, a non-empty `NSCameraUsageDescription` string is also required to avoid a runtime exit. This field can be provided in a single language or localized using the `InfoPlist.strings` file. (Note: Apps with an empty `NSCameraUsageDescription` will not exit at runtime, but are rejected by iTunes Connect when uploaded for distribution.)
-
-#### Using multiple Cordova plugins written in Swift
-
-Because Cordova is written in Objective-C, Cordova plugins written in Swift [require a `bridging header` to interact with Cordova](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html).
-
-A project can only have one bridging header. If your app uses plugins other than `cordova-plugin-qrscanner` which are also written in Swift, you will need to create a master bridging header to import each. Create a new bridging header and import each of the plugins' bridging headers, for example:
-
-```c
-//  MyProject-Bridging-Header.h
-//  Use this file to import your target's public headers that you would like to expose to Swift.
-
-//cordova-plugin-apple-watch
-#import "Watch-Bridge.h"
-
-//com.eface2face.iosrtc
-#import "iosrtc-Bridging-Header.h"
-
-//cordova-plugin-qrscanner
-#import "QRScanner-Bridging-Header.h"
-```
-Copy the script from `cordova-plugin-qrscanner/scripts/swift-support.js` into your project (eg. into the `hooks` folder), and modify the `BRIDGING_HEADER_END` variable to point to your new bridging header. Finally, remove and re-add the ios platform to trigger the hook. See [this issue](https://github.com/eface2face/cordova-plugin-iosrtc/issues/9) for more information.
 
 ### Electron or NW.js usage without `cordova-browser`
 
