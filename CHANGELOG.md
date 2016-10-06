@@ -1,3 +1,27 @@
+<a name="2.4.0"></a>
+# [2.4.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.4...2.4.0) (2016-10-06)
+
+## How to Upgrade
+
+If you installed a previous version of this plugin and manually added a block like the following to your `config.xml`:
+
+```xml
+<platform name="ios">
+    <hook type="before_build" src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" />
+    <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+      <string>The camera is used to scan QR codes.</string>
+    </config-file>
+</platform>
+```
+
+you can simply delete the whole thing, it is no longer necessary. The iOS platform now installs itself completely, and no additional configuration is needed.
+
+### Features
+
+* **ios:** remove need for the swift-support hook, remove script ([dca1f7e](https://github.com/bitpay/cordova-plugin-qrscanner/commit/dca1f7e))
+
+
+
 <a name="2.3.4"></a>
 ## [2.3.4](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.3...2.3.4) (2016-10-01)
 
