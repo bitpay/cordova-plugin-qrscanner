@@ -21,13 +21,9 @@
         <allow-intent href="market:*" />
     </platform>
     <platform name="ios">
-        <hook src="plugins/cordova-plugin-qrscanner/scripts/swift-support.js" type="before_build" />
         <preference name="orientation" value="all" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-          <string>The test app uses the camera to scan QR codes.</string>
-        </config-file>
     </platform>
     <plugin name="cordova-plugin-qrscanner" spec="../../cordova-plugin-qrscanner" />
     <plugin name="cordova-plugin-qrscanner-tests" spec="../../cordova-plugin-qrscanner/tests" />
