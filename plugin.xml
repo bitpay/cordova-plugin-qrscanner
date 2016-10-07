@@ -20,9 +20,9 @@
       </feature>
     </config-file>
     <config-file target="AndroidManifest.xml" parent="/*">
-        <uses-permission android:name="android.permission.CAMERA" android:required="false" />
-        <uses-feature android:name="android.hardware.camera" android:required="false" />
-        <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+      <uses-permission android:name="android.permission.CAMERA" android:required="false" />
+      <uses-feature android:name="android.hardware.camera" android:required="false" />
+      <uses-feature android:name="android.hardware.camera.front" android:required="false" />
     </config-file>
     <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <dependency id="cordova-plugin-compat" version="^1.0.0" />
@@ -45,12 +45,40 @@
   <platform name="browser">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
-          <param name="browser-package" value="QRScanner" />
+        <param name="browser-package" value="QRScanner" />
       </feature>
     </config-file>
     <js-module src="src/browser/plugin.min.js" name="QRScannerProxy">
       <runs />
     </js-module>
+  </platform>
+
+  <platform name="windows">
+    <config-file target="config.xml" parent="/*">
+      <feature name="QRScanner">
+        <param name="windows-package" value="QRScanner" />
+      </feature>
+    </config-file>
+    <js-module src="src/windows/lib/qrScannerProxy.js" name="qrScannerProxy">
+      <runs/>
+    </js-module>
+    <js-module src="src/windows/lib/qrScanner.js" name="qrScanner">
+      <runs/>
+    </js-module>
+    <js-module src="src/windows/lib/videoCapture.js" name="videoCapture">
+      <runs/>
+    </js-module>
+    <js-module src="src/windows/lib/preview.js" name="preview">
+      <runs/>
+    </js-module>
+    <framework src="src/windows/QRReader/QRReader.csproj" custom="true" type="projectReference" target="phone" versions="8.1"/>
+    <config-file target="package.appxmanifest" parent="/Package/Capabilities">
+      <DeviceCapability Name="webcam" />
+    </config-file>
+
+    <asset src="src/windows/lib/preview.css" target="css/plugin-qrscanner-preview.css" />
+    <hook src="hooks/windows/check-arch.js" type="before_compile" />
+    <hook src="hooks/windows/check-arch.js" type="before_run" />
   </platform>
 
 </plugin>
