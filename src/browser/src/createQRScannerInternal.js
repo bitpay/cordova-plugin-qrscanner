@@ -1,5 +1,5 @@
 require('webrtc-adapter');
-var workerScript = require("raw!../worker.min.js");
+var workerScript = require("raw-loader!../worker.min.js");
 
 module.exports = function(){
 

@@ -356,6 +356,11 @@ Unlike iOS, on Android >=6.0, permissions can be requested multiple times. If th
 
 Because of API limitations, `status.restricted` will always be false on the Android platform. See [#15](https://github.com/bitpay/cordova-plugin-qrscanner/issues/15) for details. Pull requests welcome!
 
+## Windows
+
+Before testing - ensure the Windows Phone SDK is installed. In order to deploy from the command line Windows Phone 8.0 SDK and Visual Studio 2012 update 2 (or later) must be installed. Visual Studio 2015 is recommended for debugging Windows desktop apps.
+
+The Windows platform renders an impervious white layer behind its browser- the video preview is not behind the webView, but is actually an HTML element that is carefully managed. Hide and show change the style properties (visibility) of the preview.
 
 ## Browser
 
@@ -426,6 +431,7 @@ This will create a new cordova project in the `cordova-plugin-test-projects` dir
 - `npm run test:android`
 - `npm run test:browser`
 - `npm run test:ios`
+- `npm run test:windows`
 
 Both Automatic Tests (via Cordova Plugin Test Framework's built-in [Jasmine](https://github.com/jasmine/jasmine)) and Manual Tests are available. Automatic tests confirm the existence and expected structure of the javascript API, and manual tests should be used to confirm functionality on each platform.
 
