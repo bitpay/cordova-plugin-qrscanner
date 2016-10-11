@@ -422,12 +422,26 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
 
-    func openSettings(command: CDVInvokedUrlCommand) {
-        if #available(iOS 8.0, *) {
-            UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
-            self.getStatus(command)
+    func openSettings(_ command: CDVInvokedUrlCommand) {
+        if #available(iOS 10.0, *) {
+        guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
+            return
+        }
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                self.getStatus(command)
+            })
         } else {
             self.sendErrorCode(command: command, error: QRScannerError.OPEN_SETTINGS_UNAVAILABLE)
+            }
+        } else {
+        // pre iOS 10.0
+            if #available(iOS 8.0, *) {
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
+                self.getStatus(command)
+            } else {
+                self.sendErrorCode(command: command, error: QRScannerError.OPEN_SETTINGS_UNAVAILABLE)
+            }
         }
     }
 }
