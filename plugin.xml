@@ -53,4 +53,27 @@
     </js-module>
   </platform>
 
+  <platform name="windows">
+      <config-file target="config.xml" parent="/*">
+          <feature name="QRScanner">
+              <param name="windows-package" value="QRScanner" />
+          </feature>
+      </config-file>
+      <js-module src="src/windows/QRScannerProxy.js" name="QRScannerProxy">
+          <merges target=""/>
+      </js-module>
+      <config-file target="package.appxmanifest" parent="/Package/Capabilities">
+        <DeviceCapability Name="webcam" />
+      </config-file>
+
+     <framework src="src/windows/lib.UW/x86/ZXing.winmd" target-dir="x86" arch="x86" custom="true" versions=">8.1" />
+     <framework src="src/windows/lib.UW/x64/ZXing.winmd" target-dir="x64" arch="x64" custom="true" versions=">8.1" />
+     <framework src="src/windows/lib.UW/ARM/ZXing.winmd" target-dir="ARM" arch="ARM" custom="true" versions=">8.1" />
+     <framework src="src/windows/lib/WinRTBarcodeReader.csproj" custom="true" type="projectReference" versions="&lt;=8.1"/>
+
+     <asset src="src/windows/assets/plugin-barcodeScanner.css" target="css/plugin-barcodeScanner.css" />
+     <hook src="hooks/windows/check-arch.js" type="before_compile" />
+     <hook src="hooks/windows/check-arch.js" type="before_run" />
+  </platform>
+
 </plugin>
