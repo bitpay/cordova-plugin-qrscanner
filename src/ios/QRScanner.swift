@@ -3,8 +3,51 @@ import AVFoundation
 
 @objc(QRScanner)
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
+    
+    class CameraView: UIView {
+        var videoPreviewLayer:AVCaptureVideoPreviewLayer?
+        
+        func interfaceOrientationToVideoOrientation(orientation : UIInterfaceOrientation) -> AVCaptureVideoOrientation {
+            switch (orientation) {
+            case UIInterfaceOrientation.portrait:
+                return AVCaptureVideoOrientation.portrait;
+            case UIInterfaceOrientation.portraitUpsideDown:
+                return AVCaptureVideoOrientation.portraitUpsideDown;
+            case UIInterfaceOrientation.landscapeLeft:
+                return AVCaptureVideoOrientation.landscapeLeft;
+            case UIInterfaceOrientation.landscapeRight:
+                return AVCaptureVideoOrientation.landscapeRight;
+            default:
+                return AVCaptureVideoOrientation.portraitUpsideDown;
+            }
+        }
 
-    var cameraView: UIView!
+        override func layoutSubviews() {
+            super.layoutSubviews();
+            if let sublayers = self.layer.sublayers {
+                for layer in sublayers {
+                    layer.frame = self.bounds;
+                }
+            }
+            
+            self.videoPreviewLayer?.connection.videoOrientation = interfaceOrientationToVideoOrientation(orientation:  UIApplication.shared.statusBarOrientation);
+        }
+        
+        
+        func addPreviewLayer(previewLayer:AVCaptureVideoPreviewLayer?) {
+            previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
+            previewLayer!.frame = self.bounds
+            self.layer.addSublayer(previewLayer!)
+            self.videoPreviewLayer = previewLayer;
+        }
+        
+        func removePreviewLayer() {
+            self.videoPreviewLayer!.removeFromSuperlayer()
+            self.videoPreviewLayer = nil
+        }
+    }
+
+    var cameraView: CameraView!
     var captureSession:AVCaptureSession?
     var captureVideoPreviewLayer:AVCaptureVideoPreviewLayer?
     var metaOutput: AVCaptureMetadataOutput?
@@ -42,7 +85,8 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     override func pluginInitialize() {
         super.pluginInitialize()
         NotificationCenter.default.addObserver(self, selector: #selector(pageDidLoad), name: NSNotification.Name.CDVPageDidLoad, object: nil)
-        self.cameraView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        self.cameraView = CameraView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        self.cameraView.autoresizingMask = [.flexibleWidth, .flexibleHeight];
     }
 
     func sendErrorCode(command: CDVInvokedUrlCommand, error: QRScannerError){
@@ -109,9 +153,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 metaOutput!.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
                 metaOutput!.metadataObjectTypes = [AVMetadataObjectTypeQRCode]
                 captureVideoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-                captureVideoPreviewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
-                captureVideoPreviewLayer!.frame = cameraView.bounds
-                cameraView.layer.addSublayer(captureVideoPreviewLayer!)
+                cameraView.addPreviewLayer(previewLayer: captureVideoPreviewLayer)
                 captureSession!.startRunning()
             }
             return true
@@ -334,7 +376,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         if(self.captureSession != nil){
         backgroundThread(delay: 0, background: {
             self.captureSession!.stopRunning()
-            self.captureVideoPreviewLayer!.removeFromSuperlayer()
+            self.cameraView.removePreviewLayer()
             self.captureVideoPreviewLayer = nil
             self.metaOutput = nil
             self.captureSession = nil
