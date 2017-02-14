@@ -12,7 +12,6 @@
   "dependencies": {
     "cordova": "^6.1.1",
     "lodash-node": "^3.10.2",
-    "replace": "^0.3.0",
-    "xcode": "^0.8.4"
+    "replace": "^0.3.0"
   }
 }
