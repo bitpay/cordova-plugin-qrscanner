@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
@@ -56,6 +56,7 @@
     "webrtc-adapter": "^3.1.4"
   },
   "devDependencies": {
+    "conventional-changelog-cli": "^1.2.0",
     "cz-conventional-changelog": "^1.1.6",
     "express": "^4.14.0",
     "gulp": "^3.9.1",

@@ -1,3 +1,14 @@
+<a name="2.4.1"></a>
+## [2.4.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.4.0...v2.4.1) (2017-02-14)
+
+
+### Bug Fixes
+
+* **ios:** correct video preview orientation handling on iOS ([141edbb](https://github.com/bitpay/cordova-plugin-qrscanner/commit/141edbb)), closes [#7](https://github.com/bitpay/cordova-plugin-qrscanner/issues/7)
+* **ios:** fix openSettings on iOS 10.0 ([#43](https://github.com/bitpay/cordova-plugin-qrscanner/issues/43)) ([aaa098c](https://github.com/bitpay/cordova-plugin-qrscanner/commit/aaa098c))
+
+
+
 <a name="2.4.0"></a>
 # [2.4.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.3.4...2.4.0) (2016-10-06)
 
