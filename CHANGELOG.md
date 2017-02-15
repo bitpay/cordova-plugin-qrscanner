@@ -1,3 +1,13 @@
+<a name="2.5.0"></a>
+# [2.5.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.4.1...v2.5.0) (2017-02-15)
+
+
+### Features
+
+* **windows:** add support for windows phone 8.1 ([3efa2df](https://github.com/bitpay/cordova-plugin-qrscanner/commit/3efa2df))
+
+
+
 <a name="2.4.1"></a>
 ## [2.4.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.4.0...v2.4.1) (2017-02-14)
 
