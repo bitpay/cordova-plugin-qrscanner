@@ -7,6 +7,23 @@ A fast, energy efficient, highly-configurable QR code scanner for Cordova apps �
 
 QRScanner's native camera preview is rendered behind the Cordova app's webview, and QRScanner provides `show` and `hide` methods to toggle the transparency of the webview's background. This allows for a completely HTML/CSS/JS interface to be built inside the webview to control the scanner.
 
+## Examples
+
+<!-- Does your project use cordova-plugin-qrscanner? We'd love to share a screenshot of your scanning interface! Please send a pull request adding your screenshot to the list below. -->
+
+<table>
+<tr align="center">
+<!-- Please be sure your screenshot is hosted by cloud.githubusercontent.com. (You can upload by adding the image to any GitHub issue. -->
+<td><img height="450" src="https://cloud.githubusercontent.com/assets/904007/24809138/943a9628-1b8c-11e7-8659-828c8060a9b6.PNG" alt="BitPay – Secure Bitcoin Wallet"></td>
+<td><img height="450" src="https://cloud.githubusercontent.com/assets/904007/24809499/b192a246-1b8d-11e7-9f3b-e85ae480fdd6.PNG" alt="Copay Bitcoin Wallet Platform"></td>
+</tr>
+<tr align="center">
+<!-- Please provide a title and, if possible, a link to your project. -->
+<td><a href="https://bitpay.com/wallet">BitPay – Secure Bitcoin Wallet</a></td>
+<td><a href="https://github.com/bitpay/copay">bitpay/copay</a></td>
+</tr>
+</table>
+
 ## Get Started
 
 ```bash
