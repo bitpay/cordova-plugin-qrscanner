@@ -1,8 +1,6 @@
-const videoCapture = require('./videoCapture');
 const preview = require('./preview');
-
 const barcodeReader = new QRReader.Reader();
-
+const VideoCapture = QRReader.VideoCapture;
 const Promise = WinJS.Promise;
 
 const errorTypes = {
@@ -52,6 +50,7 @@ function resetStatusFlags() {
 function reset() {
   document.body.removeEventListener('click', onPreviewClick);
   preview.destroy();
+  if (currentVideoCapture) currentVideoCapture.destroy();
   currentVideoCapture = null;
   availableCameras = null;
   resetStatusFlags();
@@ -68,7 +67,7 @@ function generateStatusResponse() {
 function init() {
   if (!statusFlags.prepared) {
     document.body.addEventListener('click', onPreviewClick);
-    return videoCapture.getCameras().then(function (cameras) {
+    return VideoCapture.getCamerasAsync().then(function (cameras) {
       if (cameras.back && cameras.front) {
         statusFlags.canChangeCamera = true;
       }
@@ -101,16 +100,15 @@ function initCamera(cameraType) {
     }
   }
   preview.setVideoUrl('');
-  return videoCapture.get(cameraType ? availableCameras.front.id : availableCameras.back.id).then(function (videoCapture) {
+  return VideoCapture.createAsync(cameraType ? availableCameras.front : availableCameras.back).then(function (videoCapture) {
     currentVideoCapture = videoCapture;
 
-    let videoUrl = currentVideoCapture.url;
+    let videoUrl = URL.createObjectURL(currentVideoCapture.capture);
 
     if (statusFlags.showing) {
       preview.pause();
     }
     preview.setVideoUrl(videoUrl);
-    preview.setMirroring(cameraType === cameraTypes.FRONT);
     if (statusFlags.showing) {
       preview.resume();
     }
@@ -119,7 +117,8 @@ function initCamera(cameraType) {
     statusFlags.currentCamera = cameraType;
 
   }, function (error) {
-    if (error.message.indexOf('Access is denied') > -1) {
+    const ACCESS_DENIED = -2147024891;
+    if (error.number === ACCESS_DENIED) {
       statusFlags.denied = true;
       return Promise.wrapError(errorTypes.CAMERA_ACESS_DENIED);
     }

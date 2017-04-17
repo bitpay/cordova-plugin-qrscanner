@@ -65,9 +65,6 @@
     <js-module src="src/windows/lib/qrScanner.js" name="qrScanner">
       <runs/>
     </js-module>
-    <js-module src="src/windows/lib/videoCapture.js" name="videoCapture">
-      <runs/>
-    </js-module>
     <js-module src="src/windows/lib/preview.js" name="preview">
       <runs/>
     </js-module>
