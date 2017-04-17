@@ -42,15 +42,6 @@ exports.setVideoUrl = function (videoUrl) {
   _.preview.capturePreview.src = videoUrl;
 }
 
-exports.setMirroring = function (isMirrored) {
-  ensurePreviewInitialized();
-  if (isMirrored) {
-    _.preview.capturePreviewFrame.style.transform = 'scaleY(-1)';
-  } else {
-    _.preview.capturePreviewFrame.style.transform = '';
-  }
-}
-
 exports.show = function () {
   ensurePreviewInitialized();
   if (!_.preview.capturePreviewFrame) {
