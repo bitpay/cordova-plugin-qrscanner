@@ -42,8 +42,10 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
         
         func removePreviewLayer() {
-            self.videoPreviewLayer!.removeFromSuperlayer()
-            self.videoPreviewLayer = nil
+            if self.videoPreviewLayer != nil {
+                self.videoPreviewLayer!.removeFromSuperlayer()
+                self.videoPreviewLayer = nil
+            }
         }
     }
 
