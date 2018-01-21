@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner-monya",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "an improvement one of bitpay",
   "cordova": {
     "id": "cordova-plugin-qrscanner-monya",

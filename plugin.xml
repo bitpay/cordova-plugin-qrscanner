@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="cordova-plugin-qrscanner"
-        version="2.5.1">
+        id="cordova-plugin-qrscanner-monya"
+        version="2.5.3">
 
   <name>QRScanner</name>
 
@@ -16,7 +16,7 @@
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="QRScanner">
-        <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
+        <param name="android-package" value="org.missmonacoin.cordova.qrscanner.QRScanner"/>
       </feature>
     </config-file>
     <config-file target="AndroidManifest.xml" parent="/*">
