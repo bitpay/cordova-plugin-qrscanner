@@ -4,8 +4,8 @@
     <description>
         A test application for the cordova-plugin-qrscanner package.
     </description>
-    <author email="satoshi@bitpay.com" href="https://bitpay.com">
-        BitPay
+    <author email="missmonacoin+monya@gmail.com" href="https://missmonacoin.github.io/monya">
+        missmonacoin
     </author>
     <content src="cdvtests/index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
