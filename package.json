@@ -1,6 +1,6 @@
 {
   "name": "@missmonacoin/cordova-plugin-qrscanner",
-  "version": "2.5.5",
+  "version": "2.5.7",
   "description": "a fork of bitpay's unmaintained qrscanner",
   "cordova": {
     "id": "cordova-plugin-qrscanner-monya",

@@ -328,6 +328,8 @@ module.exports = function(){
       // prepare DOM (sync)
       var videoPreview = document.createElement('video');
       videoPreview.setAttribute('autoplay', 'autoplay');
+      videoPreview.setAttribute('playsinline', 'playsinline');
+      videoPreview.setAttribute('muted', 'muted');
       videoPreview.setAttribute('id', ELEMENTS.preview);
       videoPreview.setAttribute('style', 'display:block;position:fixed;top:50%;left:50%;' +
       'width:auto;height:auto;min-width:100%;min-height:100%;z-index:' + ZINDEXES.preview +
