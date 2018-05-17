@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="cordova-plugin-qrscanner"
-        version="2.5.0">
-
+<plugin 
+  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="2.6.0">
   <name>QRScanner</name>
-
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
-
   <js-module src="www/www.min.js" name="QRScanner">
     <clobbers target="QRScanner" />
   </js-module>
-
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="QRScanner">
@@ -27,7 +22,6 @@
     <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
   </platform>
-
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
@@ -40,7 +34,6 @@
       <string>The camera is used to scan QR codes.</string>
     </config-file>
   </platform>
-
   <platform name="browser">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
@@ -51,7 +44,6 @@
       <runs />
     </js-module>
   </platform>
-
   <platform name="windows">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
@@ -72,5 +64,4 @@
     <hook src="hooks/windows/check-arch.js" type="before_compile" />
     <hook src="hooks/windows/check-arch.js" type="before_run" />
   </platform>
-
 </plugin>
