@@ -1,12 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="test.qrscanner.t{{TIMESTAMP}}" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="test.qrscanner.t{{TIMESTAMP}}" 
+    xmlns="http://www.w3.org/ns/widgets" 
+    xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>CvQRScnTst</name>
-    <description>
-        A test application for the cordova-plugin-qrscanner package.
-    </description>
-    <author email="satoshi@bitpay.com" href="https://bitpay.com">
-        BitPay
-    </author>
+    <description>A test application for the cordova-plugin-qrscanner package.</description>
+    <author email="satoshi@bitpay.com" href="https://bitpay.com">BitPay</author>
     <content src="cdvtests/index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
@@ -24,6 +22,9 @@
         <preference name="orientation" value="all" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <!-- using the new launch storyboard feature allows the app to use the full screen on iPhone X  -->
+        <splash src="resources/Default@2x~universal~anyany.png" />
+        <splash src="resources/Default@3x~universal~anyany.png" />
     </platform>
     <plugin name="cordova-plugin-qrscanner" spec="../../cordova-plugin-qrscanner" />
     <plugin name="cordova-plugin-qrscanner-tests" spec="../../cordova-plugin-qrscanner/tests" />
