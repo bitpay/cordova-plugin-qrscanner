@@ -9,11 +9,6 @@ module.exports = {
     path: path.join(__dirname, './dist'),
     filename: 'cordova-plugin-qrscanner-lib.min.js',
     library: 'QRScanner',
-    libraryTarget: 'var'
-  },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      comments: false
-    })
-  ]
+    libraryTarget: 'window'
+  }
 }
