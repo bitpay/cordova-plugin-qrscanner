@@ -285,9 +285,8 @@ module.exports = function(){
         try{
           video.src = URL.createObjectURL(mediaStream);
         }catch(e){
-          video.srcObject = mediaStream // for deprecated browser such as Safari
+          video.srcObject = mediaStream; // for deprecated browser
         }
-
         success(calcStatus());
       }, function(err){
         // something bad happened
@@ -329,12 +328,12 @@ module.exports = function(){
       // prepare DOM (sync)
       var videoPreview = document.createElement('video');
       videoPreview.setAttribute('autoplay', 'autoplay');
+      videoPreview.setAttribute('playsinline', 'playsinline');
+      videoPreview.setAttribute('muted', 'muted');
       videoPreview.setAttribute('id', ELEMENTS.preview);
-      videoPreview.setAttribute('style', 'display:block;position:fixed;top:50%;left:50%;' +
-      'width:auto;height:auto;min-width:100%;min-height:100%;z-index:' + ZINDEXES.preview +
-      ';-moz-transform: translateX(-50%) translateY(-50%);-webkit-transform: ' +
-      'translateX(-50%) translateY(-50%);transform:translateX(-50%) translateY(-50%);' +
-      'background-size:cover;background-position:50% 50%;background-color:#FFF;');
+      videoPreview.setAttribute('style', 'display:block;position:fixed;' +
+      'width:100%;height:100%;z-index:' + ZINDEXES.preview +
+      ';background-color:#000;');
       videoPreview.addEventListener('loadeddata', function(){
         bringPreviewToFront();
       });
