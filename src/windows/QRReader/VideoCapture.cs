@@ -33,9 +33,14 @@ namespace QRReader
                 throw new Exception("No cameras found");
             }
 
-            var backCamera = cameras.FirstOrDefault((camera) => camera.IsEnabled && camera.EnclosureLocation.Panel == Panel.Back);
-            var frontCamera = cameras.FirstOrDefault((camera) => camera.IsEnabled && camera.EnclosureLocation.Panel == Panel.Front);
+            var backCamera = cameras.FirstOrDefault((camera) => camera.IsEnabled && camera.EnclosureLocation?.Panel == Panel.Back);
+            var frontCamera = cameras.FirstOrDefault((camera) => camera.IsEnabled && camera.EnclosureLocation?.Panel == Panel.Front);
             
+						if (backCamera == null && frontCamera == null)
+						{
+							backCamera = cameras.FirstOrDefault(information => information.IsEnabled);
+						}
+
             return new CameraSet
             {
                 Back = backCamera?.Id ?? "",
