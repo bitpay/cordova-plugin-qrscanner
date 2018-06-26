@@ -233,9 +233,10 @@ qrScanner.enableLight = function () {
   return init().then(function () {
     if (statusFlags.lightEnabled) {
       return generateStatusResponse();
-    }
+		}
 
-    statusFlags.lightEnabled = currentVideoCapture.enableLight();
+		currentVideoCapture.enableLight();
+    statusFlags.lightEnabled = true;
 
     if (!statusFlags.lightEnabled) {
       return Promise.wrapError(errorTypes.LIGHT_UNAVAILABLE);
@@ -248,8 +249,10 @@ qrScanner.enableLight = function () {
 qrScanner.disableLight = function () {
 
   if (statusFlags.lightEnabled) {
-    currentVideoCapture.disableLight();
-  }
+		currentVideoCapture.disableLight();
+
+		statusFlags.lightEnabled = false;
+	}
 
   return generateStatusResponse();
 
