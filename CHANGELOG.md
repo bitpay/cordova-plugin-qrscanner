@@ -1,3 +1,25 @@
+<a name="2.6.0"></a>
+# [2.6.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.5.0...2.6.0) (2018-05-17)
+
+
+### Bug Fixes
+
+* **android:** Remove cordova-plugin-compat android dependency ([85e2396](https://github.com/bitpay/cordova-plugin-qrscanner/commit/85e2396))
+* **ios:** prevents iOS plugin from crashing when destroy is called without a callback ([610a004](https://github.com/bitpay/cordova-plugin-qrscanner/commit/610a004)), closes [#142](https://github.com/bitpay/cordova-plugin-qrscanner/issues/142)
+* **ios,android:** set background to transparent rather than white ([c9531b8](https://github.com/bitpay/cordova-plugin-qrscanner/commit/c9531b8)), closes [#135](https://github.com/bitpay/cordova-plugin-qrscanner/issues/135)
+* **package:** add `main` property to package ([955e375](https://github.com/bitpay/cordova-plugin-qrscanner/commit/955e375)), closes [#83](https://github.com/bitpay/cordova-plugin-qrscanner/issues/83)
+* **package:** Use upstream swift support plugin ([211597c](https://github.com/bitpay/cordova-plugin-qrscanner/commit/211597c))
+* **windows:** prevent memory leaks when destroying, add rd file ([1a4843a](https://github.com/bitpay/cordova-plugin-qrscanner/commit/1a4843a))
+
+
+### Features
+
+* **browser:** upgrade qrcode-reader to ^1.0.4 ([08cf523](https://github.com/bitpay/cordova-plugin-qrscanner/commit/08cf523)), closes [#92](https://github.com/bitpay/cordova-plugin-qrscanner/issues/92)
+* **ios:** Upgrade, convert syntax to Swift 3.1 ([27fdd92](https://github.com/bitpay/cordova-plugin-qrscanner/commit/27fdd92))
+* **windows:** target windows 10 universal ([691cdda](https://github.com/bitpay/cordova-plugin-qrscanner/commit/691cdda))
+
+
+
 <a name="2.5.0"></a>
 # [2.5.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.4.1...v2.5.0) (2017-02-15)
 

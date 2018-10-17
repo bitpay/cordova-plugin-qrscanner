@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="cordova-plugin-qrscanner2"
-        version="2.5.0">
-
+<plugin 
+  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner2" version="2.6.0">
   <name>QRScanner2</name>
-
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
     <engine name="cordova-android" version=">=6.3.0"/>
   </engines>
-
   <js-module src="www/www.min.js" name="QRScanner">
     <clobbers target="QRScanner" />
   </js-module>
-
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="QRScanner">
@@ -28,20 +23,18 @@
     <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
   </platform>
-
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
         <param name="ios-package" value="QRScanner"/>
       </feature>
     </config-file>
-    <dependency id="cordova-plugin-swift-support" spec="~3.1.1" />
+    <dependency id="cordova-plugin-add-swift-support" spec="~1.7.1" />
     <source-file src="src/ios/QRScanner.swift"/>
     <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
       <string>The camera is used to scan QR codes.</string>
     </config-file>
   </platform>
-
   <platform name="browser">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
@@ -52,7 +45,6 @@
       <runs />
     </js-module>
   </platform>
-
   <platform name="windows">
     <config-file target="config.xml" parent="/*">
       <feature name="QRScanner">
@@ -73,5 +65,4 @@
     <hook src="hooks/windows/check-arch.js" type="before_compile" />
     <hook src="hooks/windows/check-arch.js" type="before_run" />
   </platform>
-
 </plugin>
