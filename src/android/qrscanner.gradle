@@ -8,5 +8,5 @@ dependencies {
 }
 
 android {
-    buildToolsVersion '28.0.3' // Older versions may give compile errors
+    buildToolsVersion '27.0.1' // Older versions may give compile errors
 }
