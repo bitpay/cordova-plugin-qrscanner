@@ -4,9 +4,9 @@ repositories {
 
 dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.3.0'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:appcompat-v7:26'
 }
 
 android {
-    buildToolsVersion '23.0.2' // Older versions may give compile errors
+    buildToolsVersion '26' // Older versions may give compile errors
 }
