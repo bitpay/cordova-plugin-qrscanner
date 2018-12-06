@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "2.6.0",
+  "version": "2.6.1-tapget.1",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner"
+    "url": "https://github.com/MarcMenghin/cordova-plugin-qrscanner"
   },
   "keywords": [
     "cordova",
