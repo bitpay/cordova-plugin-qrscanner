@@ -61,11 +61,11 @@
   "devDependencies": {
     "conventional-changelog-cli": "^1.2.0",
     "cz-conventional-changelog": "^2.0.0",
-    "express": "^4.14.0",
+    "express": "^4.16.4",
     "gulp": "^3.9.1",
     "gulp-insert": "^0.5.0",
     "husky": "^0.13.1",
-    "jshint": "^2.9.2",
+    "jshint": "^2.9.7",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "raw-loader": "^0.5.1",
@@ -80,5 +80,10 @@
     "validate-commit-msg": {
       "helpMessage": "\nThis project uses commitizen to document changes. Please try:\nnpm install commitizen -g && git cz\n"
     }
-  }
+  },
+  "files": [
+    "dist",
+    "hooks",
+    "www"
+  ]
 }

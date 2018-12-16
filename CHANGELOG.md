@@ -1,3 +1,27 @@
+<a name="2.6.1"></a>
+## [2.6.1](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/compare/2.5.0...2.6.1) (2018-12-16)
+
+
+### Bug Fixes
+
+* **all:** upgrade cordova-plugin-compat to use 1.2.0 ([5c909b2](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/5c909b2))
+* **android:** Remove cordova-plugin-compat android dependency ([85e2396](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/85e2396))
+* **ios:** prevents iOS plugin from crashing when destroy is called without a callback ([610a004](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/610a004)), closes [#142](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/issues/142)
+* **ios,android:** set background to transparent rather than white ([c9531b8](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/c9531b8)), closes [#135](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/issues/135)
+* **package:** add `main` property to package ([955e375](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/955e375)), closes [#83](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/issues/83)
+* **package:** Use upstream swift support plugin ([211597c](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/211597c))
+* **windows:** prevent memory leaks when destroying, add rd file ([1a4843a](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/1a4843a))
+
+
+### Features
+
+* **android:** added support of barcode decoding ([30a64d8](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/30a64d8))
+* **browser:** upgrade qrcode-reader to ^1.0.4 ([08cf523](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/08cf523)), closes [#92](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/issues/92)
+* **ios:** Upgrade, convert syntax to Swift 3.1 ([27fdd92](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/27fdd92))
+* **windows:** target windows 10 universal ([691cdda](https://github.com/pubudu-ranasinghe/cordova-plugin-qrscanner2/commit/691cdda))
+
+
+
 <a name="2.6.0"></a>
 # [2.6.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.5.0...2.6.0) (2018-05-17)
 
