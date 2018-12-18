@@ -4,25 +4,27 @@ This is a fork of the original bitpay QR Scanner plugin. It has been modified to
 :warning: _Additional types are android only for now_
 
 Supported types are as follows
-```
-QRCODE
-AZTEC
-CODABAR
-CODE_128
-CODE_39
-CODE_93
-DATA_MATRIX
-EAN_13
-EAN_8
-ITF
-MAXICODE
-PDF_417
-RSS_14
-RSS_EXPANDED
-UPC_A
-UPC_E
-UPC_EAN_EXTENSION
-```
+
+Type                | Android | iOS |
+----                | ------- | --- |
+QRCODE              | :heavy_check_mark: | :warning: |
+AZTEC               | :heavy_check_mark: | :warning: |
+CODABAR             | :heavy_check_mark: | :warning: |
+CODE_128            | :heavy_check_mark: | :warning: |
+CODE_39             | :heavy_check_mark: | :warning: |
+CODE_93             | :heavy_check_mark: | :warning: |
+DATA_MATRIX         | :heavy_check_mark: | :warning: |
+EAN_13              | :heavy_check_mark: | :warning: |
+EAN_8               | :heavy_check_mark: | :warning: |
+ITF                 | :heavy_check_mark: | :warning: |
+MAXICODE            | :heavy_check_mark: | :warning: |
+PDF_417             | :heavy_check_mark: | :warning: |
+RSS_14              | :heavy_check_mark: | :warning: |
+RSS_EXPANDED        | :heavy_check_mark: | :warning: |
+UPC_A               | :heavy_check_mark: | :warning: |
+UPC_E               | :heavy_check_mark: | :warning: |
+UPC_EAN_EXTENSION   | :heavy_check_mark: | :warning: |
+
 
 # cordova-plugin-qrscanner
 A fast, energy efficient, highly-configurable QR code scanner for Cordova apps – available for the iOS, Android, Windows, and browser platforms.
