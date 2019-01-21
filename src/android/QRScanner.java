@@ -330,8 +330,10 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
                 this.cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
-                        cameraPreviewing = false;
+                        if(mBarcodeView != null){
+                            ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
+                            cameraPreviewing = false;
+                        }                        
                     }
                 });
             }
@@ -561,15 +563,19 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             this.cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mBarcodeView.pause();
+                    if(mBarcodeView != null){
+                        mBarcodeView.pause();
+                    }                    
                 }
             });
             if(cameraPreviewing) {
                 this.cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
-                        cameraPreviewing = false;
+                        if(mBarcodeView != null){
+                            ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
+                            cameraPreviewing = false;
+                        }                        
                     }
                 });
 
@@ -797,8 +803,10 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
             this.cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
-                    cameraPreviewing = false;
+                    if(mBarcodeView != null){
+                        ((ViewGroup) mBarcodeView.getParent()).removeView(mBarcodeView);
+                        cameraPreviewing = false;
+                    }                    
                 }
             });
         }
