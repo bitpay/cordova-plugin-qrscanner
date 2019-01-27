@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin 
-  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="2.6.0">
-  <name>QRScanner</name>
+  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner2" version="2.6.0">
+  <name>QRScanner2</name>
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
+    <engine name="cordova-android" version=">=6.3.0"/>
   </engines>
   <js-module src="www/www.min.js" name="QRScanner">
     <clobbers target="QRScanner" />
