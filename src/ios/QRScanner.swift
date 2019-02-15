@@ -87,7 +87,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     override func pluginInitialize() {
         super.pluginInitialize()
         NotificationCenter.default.addObserver(self, selector: #selector(pageDidLoad), name: NSNotification.Name.CDVPageDidLoad, object: nil)
-        self.cameraView = CameraView(frame: CGRect(x: 0, y: 50, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height-100))
+        self.cameraView = CameraView(frame: CGRect(x: 0, y: 180, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height-100))
         self.cameraView.autoresizingMask = [.flexibleWidth, .flexibleHeight];
     }
 
