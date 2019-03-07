@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-qrscanner",
-  "version": "2.6.0",
+  "name": "cordova-plugin-qrscanner-codaxy",
+  "version": "2.6.5",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
-    "id": "cordova-plugin-qrscanner",
+    "id": "cordova-plugin-qrscanner-codaxy",
     "platforms": [
       "ios"
     ]
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner"
+    "url": "https://github.com/codaxy/cordova-plugin-qrscanner"
   },
   "keywords": [
     "cordova",
