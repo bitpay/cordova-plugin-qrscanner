@@ -160,14 +160,14 @@ return {
   destroy: function(callback) {
     cordova.exec(doneCallback(callback, true), null, 'QRScanner', 'destroy', []);
   },
-  scan: function(callback) {
+  scan: function(callback, options) {
     if (!callback) {
       throw new Error('No callback provided to scan method.');
     }
     var success = function(result) {
       callback(null, result);
     };
-    cordova.exec(success, errorCallback(callback), 'QRScanner', 'scan', []);
+    cordova.exec(success, errorCallback(callback), 'QRScanner', 'scan', options ? [options] : []);
   },
   cancelScan: function(callback) {
     cordova.exec(doneCallback(callback), null, 'QRScanner', 'cancelScan', []);

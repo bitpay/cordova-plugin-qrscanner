@@ -10,3 +10,4 @@ node_modules/
 dist/
 src/browser/plugin.min.js
 www/www.min.js
+.idea
