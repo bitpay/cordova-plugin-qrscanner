@@ -154,8 +154,8 @@ function doneCallback(callback, clear) {
 }
 
 return {
-  prepare: function(callback) {
-    cordova.exec(successCallback(callback), errorCallback(callback), 'QRScanner', 'prepare', []);
+  prepare: function(callback, options) {
+    cordova.exec(successCallback(callback), errorCallback(callback), 'QRScanner', 'prepare', options ? [options] : []);
   },
   destroy: function(callback) {
     cordova.exec(doneCallback(callback, true), null, 'QRScanner', 'destroy', []);
