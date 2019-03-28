@@ -1,3 +1,9 @@
+<a name="2.6.2"></a>
+## [2.6.2](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.6.0...2.6.2) (2019-03-28)
+
+* **ios:** only compatible with XCode 10.1 or below
+
+
 <a name="2.6.0"></a>
 # [2.6.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.5.0...2.6.0) (2018-05-17)
 
