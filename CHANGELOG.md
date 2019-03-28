@@ -1,3 +1,14 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.6.0...3.0.0) (2019-03-28)
+
+
+### BREAKING CHANGES
+
+* **iOS:** only supported by XCode 10.2 or higher
+* **syntax:** Swift 5 ([692c126](https://github.com/bitpay/cordova-plugin-qrscanner/commit/692c126))
+
+
+
 <a name="2.6.1"></a>
 # [2.6.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.6.0...2.6.1) (2019-03-27)
 
