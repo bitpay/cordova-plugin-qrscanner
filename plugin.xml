@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin 
-  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="3.0.0">
+  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="3.0.1">
   <name>QRScanner</name>
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
@@ -29,7 +29,6 @@
       </feature>
     </config-file>
     <dependency id="cordova-plugin-add-swift-support" spec="~1.7.2" />
-    <preference name="UseSwiftLanguageVersion" value="5" />
     <source-file src="src/ios/QRScanner.swift"/>
     <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
       <string>The camera is used to scan QR codes.</string>
