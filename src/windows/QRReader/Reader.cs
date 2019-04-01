@@ -83,10 +83,17 @@ namespace QRReader
 
             var videoFrameConfig = new VideoFrame(BitmapPixelFormat.Bgra8, (int)previewProperties.Width, (int)previewProperties.Height);
 
-            var videoFrame = await capture.GetPreviewFrameAsync(videoFrameConfig);
-            
-            
-            var result =
+					VideoFrame videoFrame;
+					try
+					{
+						videoFrame = await capture.GetPreviewFrameAsync(videoFrameConfig);
+					}
+					catch (Exception ex)
+					{
+						return null; //device not ready
+					}
+
+					var result =
                 await
                     Task.Run(
                         () => barcodeReader.Decode(videoFrame.SoftwareBitmap),
