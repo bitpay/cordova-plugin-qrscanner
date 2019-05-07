@@ -3,10 +3,9 @@ import AVFoundation
 
 @objc(QRScanner)
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
-    
     class CameraView: UIView {
         var videoPreviewLayer:AVCaptureVideoPreviewLayer?
-        
+
         func interfaceOrientationToVideoOrientation(_ orientation : UIInterfaceOrientation) -> AVCaptureVideoOrientation {
             switch (orientation) {
             case UIInterfaceOrientation.portrait:
@@ -29,18 +28,18 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                     layer.frame = self.bounds;
                 }
             }
-            
+
             self.videoPreviewLayer?.connection?.videoOrientation = interfaceOrientationToVideoOrientation(UIApplication.shared.statusBarOrientation);
         }
-        
-        
+
+
         func addPreviewLayer(_ previewLayer:AVCaptureVideoPreviewLayer?) {
             previewLayer!.videoGravity = AVLayerVideoGravity.resizeAspectFill
             previewLayer!.frame = self.bounds
             self.layer.addSublayer(previewLayer!)
             self.videoPreviewLayer = previewLayer;
         }
-        
+
         func removePreviewLayer() {
             if self.videoPreviewLayer != nil {
                 self.videoPreviewLayer!.removeFromSuperlayer()
@@ -61,6 +60,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     var scanning: Bool = false
     var paused: Bool = false
     var nextScanningCommand: CDVInvokedUrlCommand?
+    var formatList: [AVMetadataObject.ObjectType] = [AVMetadataObject.ObjectType.qr];
 
     enum QRScannerError: Int32 {
         case unexpected_error = 0,
@@ -78,6 +78,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         case backCameraUnavailable
         case frontCameraUnavailable
         case couldNotCaptureInput(error: NSError)
+        case invalidFormat
     }
 
     enum LightError: Error {
@@ -120,7 +121,45 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
+    static var codemap: [String : AVMetadataObject.ObjectType] = [
+        "QR_CODE": AVMetadataObject.ObjectType.qr,
+        "DATA_MATRIX": AVMetadataObject.ObjectType.dataMatrix,
+        "UPC_E": AVMetadataObject.ObjectType.upce,
+        "EAN_8": AVMetadataObject.ObjectType.ean8,
+        "EAN_13": AVMetadataObject.ObjectType.ean13,
+        "CODE_39": AVMetadataObject.ObjectType.code39,
+        "CODE_93": AVMetadataObject.ObjectType.code93,
+        "CODE_128": AVMetadataObject.ObjectType.code128,
+        "ITF": AVMetadataObject.ObjectType.itf14,
+        "PDF_417": AVMetadataObject.ObjectType.pdf417,
+        "AZTEC": AVMetadataObject.ObjectType.aztec
+    ]
+
+    func setAcceptableFormatList(arg: Any) {
+        do {
+            if !(arg is [String : Any]) {
+                throw CaptureError.invalidFormat
+            }
+
+            let json = arg as! [String : Any]
+            if (json["formats"] == nil || !(json["formats"] is [String])) {
+                throw CaptureError.invalidFormat
+            }
+
+            let formats = json["formats"] as! [String];
+            formatList = formats
+                .filter { QRScanner.codemap[$0] != nil }
+                .map { QRScanner.codemap[$0]! }
+        } catch {
+            formatList = [AVMetadataObject.ObjectType.qr]
+        }
+    }
+
     @objc func prepScanner(command: CDVInvokedUrlCommand) -> Bool{
+        if (command.arguments.count > 0) {
+            setAcceptableFormatList(arg: command.argument(at: 0)!)
+        } // Otherwise, use previously set format list
+
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.restricted) {
             self.sendErrorCode(command: command, error: QRScannerError.camera_access_restricted)
@@ -153,7 +192,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 metaOutput = AVCaptureMetadataOutput()
                 captureSession!.addOutput(metaOutput!)
                 metaOutput!.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-                metaOutput!.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
+                metaOutput!.metadataObjectTypes = QRScanner.codemap.map { $1 };
                 captureVideoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession!)
                 cameraView.addPreviewLayer(captureVideoPreviewLayer)
                 captureSession!.startRunning()
@@ -238,7 +277,8 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             return
         }
         let found = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-        if found.type == AVMetadataObject.ObjectType.qr && found.stringValue != nil {
+        if (formatList.contains { $0 == found.type }  &&
+            found.stringValue != nil) {
             scanning = false
             let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: found.stringValue)
             commandDelegate!.send(pluginResult, callbackId: nextScanningCommand?.callbackId!)
