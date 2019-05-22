@@ -1,12 +1,13 @@
+import Cordova
 import Foundation
 import AVFoundation
 
 @objc(QRScanner)
 class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
-    
+
     class CameraView: UIView {
         var videoPreviewLayer:AVCaptureVideoPreviewLayer?
-        
+
         func interfaceOrientationToVideoOrientation(_ orientation : UIInterfaceOrientation) -> AVCaptureVideoOrientation {
             switch (orientation) {
             case UIInterfaceOrientation.portrait:
@@ -29,18 +30,18 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                     layer.frame = self.bounds;
                 }
             }
-            
+
             self.videoPreviewLayer?.connection?.videoOrientation = interfaceOrientationToVideoOrientation(UIApplication.shared.statusBarOrientation);
         }
-        
-        
+
+
         func addPreviewLayer(_ previewLayer:AVCaptureVideoPreviewLayer?) {
             previewLayer!.videoGravity = AVLayerVideoGravity.resizeAspectFill
             previewLayer!.frame = self.bounds
             self.layer.addSublayer(previewLayer!)
             self.videoPreviewLayer = previewLayer;
         }
-        
+
         func removePreviewLayer() {
             if self.videoPreviewLayer != nil {
                 self.videoPreviewLayer!.removeFromSuperlayer()
@@ -468,20 +469,20 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     @objc func openSettings(_ command: CDVInvokedUrlCommand) {
         if #available(iOS 10.0, *) {
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-            return
-        }
-        if UIApplication.shared.canOpenURL(settingsUrl) {
-            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                self.getStatus(command)
-            })
-        } else {
-            self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
+            guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    self.getStatus(command)
+                })
+            } else {
+                self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
             }
         } else {
             // pre iOS 10.0
             if #available(iOS 8.0, *) {
-                UIApplication.shared.openURL(NSURL(string: UIApplication.openSettingsURLString)! as URL)
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
                 self.getStatus(command)
             } else {
                 self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
