@@ -3,7 +3,7 @@
     xmlns="http://www.w3.org/ns/widgets" 
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>CvQRScnTst</name>
-    <description>A test application for the cordova-plugin-qrscanner package.</description>
+    <description>A test application for the cordova-plugin-qrscanner-next package.</description>
     <author email="satoshi@bitpay.com" href="https://bitpay.com">BitPay</author>
     <content src="cdvtests/index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
@@ -26,8 +26,8 @@
         <splash src="resources/Default@2x~universal~anyany.png" />
         <splash src="resources/Default@3x~universal~anyany.png" />
     </platform>
-    <plugin name="cordova-plugin-qrscanner" spec="../../cordova-plugin-qrscanner" />
-    <plugin name="cordova-plugin-qrscanner-tests" spec="../../cordova-plugin-qrscanner/tests" />
+    <plugin name="cordova-plugin-qrscanner-next" spec="../../cordova-plugin-qrscanner-next" />
+    <plugin name="cordova-plugin-qrscanner-next-tests" spec="../../cordova-plugin-qrscanner-next/tests" />
     <plugin name="cordova-plugin-test-framework" spec="~1.1.2" />
     <plugin name="cordova-plugin-screen-orientation" spec="~1.4.2" />
     <plugin name="cordova-plugin-vibration" spec="~2.1.1" />

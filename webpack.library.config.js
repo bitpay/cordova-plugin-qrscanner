@@ -8,7 +8,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, './dist'),
-    filename: 'cordova-plugin-qrscanner-lib.min.js',
+    filename: 'cordova-plugin-qrscanner-next-lib.min.js',
     library: 'QRScanner',
     libraryTarget: 'umd',
     umdNamedDefine: true

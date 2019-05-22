@@ -1,6 +1,6 @@
 {
-  "name": "cordova-plugin-qrscanner-tests",
-  "description": "Cordova tests for the cordova-plugin-qrscanner package",
+  "name": "cordova-plugin-qrscanner-next-tests",
+  "description": "Cordova tests for the cordova-plugin-qrscanner-next package",
   "scripts": {
     "clean": "rm -rf node_modules && rm -rf platforms && rm -rf plugins",
     "postinstall": "node scripts/timestamp.js && cordova prepare",
