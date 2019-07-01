@@ -30,7 +30,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
                 }
             }
             
-            self.videoPreviewLayer?.connection?.videoOrientation = interfaceOrientationToVideoOrientation(UIApplication.shared.statusBarOrientation);
+            self.videoPreviewLayer?.connection!.videoOrientation = interfaceOrientationToVideoOrientation(UIApplication.shared.statusBarOrientation);
         }
         
         
@@ -97,7 +97,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     // utility method
-    @objc func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+    func backgroundThread(delay: Double = 0.0, background: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
         if #available(iOS 8.0, *) {
             DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).async {
                 if (background != nil) {
@@ -120,7 +120,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func prepScanner(command: CDVInvokedUrlCommand) -> Bool{
+    func prepScanner(command: CDVInvokedUrlCommand) -> Bool{
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.restricted) {
             self.sendErrorCode(command: command, error: QRScannerError.camera_access_restricted)
@@ -133,7 +133,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             if (captureSession?.isRunning != true){
                 cameraView.backgroundColor = UIColor.clear
                 self.webView!.superview!.insertSubview(cameraView, belowSubview: self.webView!)
-                let availableVideoDevices =  AVCaptureDevice.devices(for: AVMediaType.video)
+                let availableVideoDevices = AVCaptureDevice.devices(for: AVMediaType.video)
                 for device in availableVideoDevices {
                     if device.position == AVCaptureDevice.Position.back {
                         backCamera = device
@@ -172,7 +172,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         return false
     }
 
-    @objc func createCaptureDeviceInput() throws -> AVCaptureDeviceInput {
+    func createCaptureDeviceInput() throws -> AVCaptureDeviceInput {
         var captureDevice: AVCaptureDevice
         if(currentCamera == 0){
             if(backCamera != nil){
@@ -196,12 +196,12 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         return captureDeviceInput
     }
 
-    @objc func makeOpaque(){
+    func makeOpaque(){
         self.webView?.isOpaque = false
         self.webView?.backgroundColor = UIColor.clear
     }
 
-    @objc func boolToNumberString(bool: Bool) -> String{
+    func boolToNumberString(bool: Bool) -> String{
         if(bool) {
             return "1"
         } else {
@@ -209,7 +209,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func configureLight(command: CDVInvokedUrlCommand, state: Bool){
+    func configureLight(command: CDVInvokedUrlCommand, state: Bool){
         var useMode = AVCaptureDevice.TorchMode.on
         if(state == false){
             useMode = AVCaptureDevice.TorchMode.off
@@ -232,8 +232,8 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     // This method processes metadataObjects captured by iOS.
-    func metadataOutput(_ captureOutput: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        if metadataObjects.count == 0 || scanning == false {
+    func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
+        if metadataObjects == nil || metadataObjects.count == 0 || scanning == false {
             // while nothing is detected, or if scanning is false, do nothing.
             return
         }
@@ -247,13 +247,13 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     @objc func pageDidLoad() {
-        self.webView?.isOpaque = false
-        self.webView?.backgroundColor = UIColor.clear
+      self.webView?.isOpaque = false
+      self.webView?.backgroundColor = UIColor.clear
     }
 
     // ---- BEGIN EXTERNAL API ----
 
-    @objc func prepare(_ command: CDVInvokedUrlCommand){
+    func prepare(_ command: CDVInvokedUrlCommand){
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.notDetermined) {
             // Request permission before preparing scanner
@@ -272,14 +272,14 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func scan(_ command: CDVInvokedUrlCommand){
+    func scan(_ command: CDVInvokedUrlCommand){
         if(self.prepScanner(command: command)){
             nextScanningCommand = command
             scanning = true
         }
     }
 
-    @objc func cancelScan(_ command: CDVInvokedUrlCommand){
+    func cancelScan(_ command: CDVInvokedUrlCommand){
         if(self.prepScanner(command: command)){
             scanning = false
             if(nextScanningCommand != nil){
@@ -289,38 +289,38 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func show(_ command: CDVInvokedUrlCommand) {
+    func show(_ command: CDVInvokedUrlCommand) {
         self.webView?.isOpaque = false
         self.webView?.backgroundColor = UIColor.clear
         self.getStatus(command)
     }
 
-    @objc func hide(_ command: CDVInvokedUrlCommand) {
+    func hide(_ command: CDVInvokedUrlCommand) {
         self.makeOpaque()
         self.getStatus(command)
     }
 
-    @objc func pausePreview(_ command: CDVInvokedUrlCommand) {
+    func pausePreview(_ command: CDVInvokedUrlCommand) {
         if(scanning){
             paused = true;
             scanning = false;
         }
-        captureVideoPreviewLayer?.connection?.isEnabled = false
+        captureVideoPreviewLayer?.connection!.isEnabled = false
         self.getStatus(command)
     }
 
-    @objc func resumePreview(_ command: CDVInvokedUrlCommand) {
+    func resumePreview(_ command: CDVInvokedUrlCommand) {
         if(paused){
             paused = false;
             scanning = true;
         }
-        captureVideoPreviewLayer?.connection?.isEnabled = true
+        captureVideoPreviewLayer?.connection!.isEnabled = true
         self.getStatus(command)
     }
 
     // backCamera is 0, frontCamera is 1
 
-    @objc func useCamera(_ command: CDVInvokedUrlCommand){
+    func useCamera(_ command: CDVInvokedUrlCommand){
         let index = command.arguments[0] as! Int
         if(currentCamera != index){
             // camera change only available if both backCamera and frontCamera exist
@@ -361,30 +361,30 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func enableLight(_ command: CDVInvokedUrlCommand) {
+    func enableLight(_ command: CDVInvokedUrlCommand) {
         if(self.prepScanner(command: command)){
             self.configureLight(command: command, state: true)
         }
     }
 
-    @objc func disableLight(_ command: CDVInvokedUrlCommand) {
+    func disableLight(_ command: CDVInvokedUrlCommand) {
         if(self.prepScanner(command: command)){
             self.configureLight(command: command, state: false)
         }
     }
 
-    @objc func destroy(_ command: CDVInvokedUrlCommand) {
+    func destroy(_ command: CDVInvokedUrlCommand) {
         self.makeOpaque()
         if(self.captureSession != nil){
-            backgroundThread(delay: 0, background: {
-                self.captureSession!.stopRunning()
-                self.cameraView.removePreviewLayer()
-                self.captureVideoPreviewLayer = nil
-                self.metaOutput = nil
-                self.captureSession = nil
-                self.currentCamera = 0
-                self.frontCamera = nil
-                self.backCamera = nil
+        backgroundThread(delay: 0, background: {
+            self.captureSession!.stopRunning()
+            self.cameraView.removePreviewLayer()
+            self.captureVideoPreviewLayer = nil
+            self.metaOutput = nil
+            self.captureSession = nil
+            self.currentCamera = 0
+            self.frontCamera = nil
+            self.backCamera = nil
             }, completion: {
                 self.getStatus(command)
             })
@@ -393,7 +393,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 
-    @objc func getStatus(_ command: CDVInvokedUrlCommand){
+    func getStatus(_ command: CDVInvokedUrlCommand){
 
         let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video);
 
@@ -466,9 +466,9 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         commandDelegate!.send(pluginResult, callbackId:command.callbackId)
     }
 
-    @objc func openSettings(_ command: CDVInvokedUrlCommand) {
+    func openSettings(_ command: CDVInvokedUrlCommand) {
         if #available(iOS 10.0, *) {
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+        guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
             return
         }
         if UIApplication.shared.canOpenURL(settingsUrl) {
@@ -479,9 +479,9 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
             }
         } else {
-            // pre iOS 10.0
+        // pre iOS 10.0
             if #available(iOS 8.0, *) {
-                UIApplication.shared.openURL(NSURL(string: UIApplication.openSettingsURLString)! as URL)
+                UIApplication.shared.openURL(NSURL(string: UIApplicationOpenSettingsURLString)! as URL)
                 self.getStatus(command)
             } else {
                 self.sendErrorCode(command: command, error: QRScannerError.open_settings_unavailable)
