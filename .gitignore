@@ -9,7 +9,6 @@ log.txt
 *.sublime-project
 *.sublime-workspace
 npm-debug.log*
-
 # Logs
 logs
 *.log
