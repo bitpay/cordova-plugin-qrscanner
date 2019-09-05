@@ -254,6 +254,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     // ---- BEGIN EXTERNAL API ----
 
     @objc func prepare(_ command: CDVInvokedUrlCommand){
+        self.makeOpaque()
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.notDetermined) {
             // Request permission before preparing scanner
