@@ -14,11 +14,11 @@
         <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
       </feature>
     </config-file>
-    <config-file target="AndroidManifest.xml" parent="/*">
-      <uses-permission android:name="android.permission.CAMERA" android:required="false" />
-      <uses-feature android:name="android.hardware.camera" android:required="false" />
-      <uses-feature android:name="android.hardware.camera.front" android:required="false" />
-    </config-file>
+    <edit-file mode="merge" target="AndroidManifest.xml" parent="/*">
+      <uses-permission android:name="android.permission.CAMERA" />
+      <uses-feature android:name="android.hardware.camera" />
+      <uses-feature android:name="android.hardware.camera.front" />
+    </edit-file>
     <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
     <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
   </platform>
