@@ -19,6 +19,6 @@ npm-debug.log*
 node_modules/
 
 # generated files
-dist/
-src/browser/plugin.min.js
-www/www.min.js
+#dist/
+#src/browser/plugin.min.js
+#www/www.min.js
