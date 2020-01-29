@@ -2,8 +2,8 @@ module.exports = function(ctx) {
     if (ctx.opts && ctx.opts.platforms && ctx.opts.platforms.indexOf('windows') > -1
         && ctx.opts.options) {
         var path = require('path');
-        var shell = ctx.requireCordovaModule('shelljs');
-        var nopt = ctx.requireCordovaModule('nopt');
+        var shell = require('shelljs');
+        var nopt = require('nopt');
 
         // parse and validate args
         var args = nopt({
