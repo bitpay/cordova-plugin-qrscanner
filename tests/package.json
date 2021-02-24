@@ -1,0 +1,11 @@
+{
+  "name": "cordova-plugin-qrscanner-tests-plugin",
+  "version": "1.0.0",
+  "description": "Package.json needed for running tests",
+  "main": "tests.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
