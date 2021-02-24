@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "conventional-changelog-cli": "^1.2.0",
-    "cz-conventional-changelog": "^2.0.0",
+    "cz-conventional-changelog": "3.3.0",
     "express": "^4.14.0",
     "gulp": "^3.9.1",
     "gulp-insert": "^0.5.0",
