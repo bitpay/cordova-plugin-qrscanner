@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
     "id": "cordova-plugin-qrscanner",
@@ -22,6 +22,7 @@
     "jshint": "jshint src/browser/src && jshint src/common/src && jshint tests",
     "mkdirp-platform-tests": "mkdirp ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
     "prerelease": "git clean -dfx && yarn install && yarn run build",
+    "release": "standard-version",
     "test": "yarn run jshint",
     "test:android": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && yarn run test:android",
     "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && yarn run test:browser",
