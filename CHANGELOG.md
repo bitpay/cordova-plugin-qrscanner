@@ -1,3 +1,37 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [4.0.1](https://github.com/nosoloforks/cordova-plugin-qrscanner/compare/v4.0.0...v4.0.1) (2021-02-26)
+
+
+### Bug Fixes
+
+* **ios:** update UIApplication calling ([c33c74e](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/c33c74e9fd053f167e328f05046c45e149c27a1a))
+* include js entrypoint in git ([31c6e43](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/31c6e43a0f5cc2c64469235a86b09c75015727b0))
+
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/nosoloforks/cordova-plugin-qrscanner/compare/2.6.0...4.0.0) (2021-02-24)
+
+
+### Bug Fixes
+
+* use new URLApplicationSetting calling in iOS plugin ([bf0419a](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/bf0419a))
+* **syntax:** Swift 5 ([692c126](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/692c126))
+* **tag:** removes invalid tag UseSwiftLanguageVersion ([3c368fe](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/3c368fe))
+
+
+### Tests
+
+* **deps:** upgrade cordova platforms to latest versions ([4252e3d](https://github.com/nosoloforks/cordova-plugin-qrscanner/commit/4252e3d))
+
+
+### BREAKING CHANGES
+
+* **deps:** Dropped support for iOS<11 and other older versions
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/bitpay/cordova-plugin-qrscanner/compare/2.6.0...3.0.1) (2019-03-29)
 
