@@ -21,7 +21,7 @@
     "install-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && yarn install",
     "jshint": "jshint src/browser/src && jshint src/common/src && jshint tests",
     "mkdirp-platform-tests": "mkdirp ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
-    "prep-release": "git clean -dfx && yarn install && yarn run build && yarn run changelog",
+    "prerelease": "git clean -dfx && yarn install && yarn run build",
     "test": "yarn run jshint",
     "test:android": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && yarn run test:android",
     "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && yarn run test:browser",
@@ -70,6 +70,7 @@
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "raw-loader": "^0.5.1",
+    "standard-version": "^9.1.1",
     "trash-cli": "^1.3.0",
     "validate-commit-msg": "^2.6.1",
     "webpack": "^2.7.0"
