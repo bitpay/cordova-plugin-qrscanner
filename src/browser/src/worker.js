@@ -1,12 +1,11 @@
 /*global module:true, postMessage:false, onmessage:true*/
 
 module = {};
-var QrCode = require('qrcode-reader').default;
-var qr = new QrCode();
-qr.callback = function(err, result) {
-  postMessage({ result: result, err: err });
-};
+const jsqr = require('jsqr');
 onmessage = function(event) {
-  var imageData = event.data;
-  qr.decode(imageData);
+  const imageData = event.data;
+  const code = jsqr(imageData.data, imageData.width, imageData.height);
+  if (code) {
+    postMessage({ result: code.data });
+  }
 };

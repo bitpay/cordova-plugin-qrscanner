@@ -1,0 +1,4 @@
+iOS >= 11
+# Supporting Android version 5.1+ with its factory Chrome version.
+ChromeAndroid >= 39
+Chrome >= 39

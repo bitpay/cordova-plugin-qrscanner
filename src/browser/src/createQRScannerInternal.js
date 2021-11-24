@@ -1,5 +1,4 @@
 require('webrtc-adapter');
-var workerScript = require("raw-loader!../worker.min.js");
 
 module.exports = function(){
 
@@ -282,7 +281,13 @@ module.exports = function(){
       }).then(function(mediaStream){
         activeMediaStream = mediaStream;
         var video = getVideoPreview();
-        video.src = URL.createObjectURL(mediaStream);
+        // Older browsers may not have srcObject
+        if ("srcObject" in video) {
+          video.srcObject = mediaStream;
+        } else {
+          // Avoid using this in new browsers, as it is going away.
+          video.src = URL.createObjectURL(mediaStream);
+        }
         success(calcStatus());
       }, function(err){
         // something bad happened
@@ -317,8 +322,19 @@ module.exports = function(){
 
   function initialize(success, error){
     if(scanWorker === null){
-      var workerBlob = new Blob([workerScript],{type: "text/javascript"});
-      scanWorker = new Worker(URL.createObjectURL(workerBlob));
+      // Automatic public path doesn't work here with the complicated build and cordova magic.
+      // We derive our own public path based on injected environment variable.
+      // After instantiating the url, we set it back to its original value.
+      // https://mmazzarolo.com/blog/2021-09-03-loading-web-workers-using-webpack-5/
+      const original__webpack_public_path__ = __webpack_public_path__
+
+      if (process.env.WORKER_PUBLIC_PATH !== null) {
+        __webpack_public_path__ = process.env.WORKER_PUBLIC_PATH
+      }
+
+      scanWorker = new Worker(new URL(/* webpackChunkName: 'worker' */ './worker.js', import.meta.url));
+
+      __webpack_public_path__ = original__webpack_public_path__
     }
     if(!getVideoPreview()){
       // prepare DOM (sync)

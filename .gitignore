@@ -21,4 +21,5 @@ node_modules/
 # generated files
 dist/
 src/browser/plugin.min.js
+src/browser/worker.min.js
 www/www.min.js
