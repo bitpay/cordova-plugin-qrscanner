@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: ["error", { "args": "none" }]*/
+
 const fs = require("fs");
 const path = require('path');
 

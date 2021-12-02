@@ -1,6 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { Compilation, DefinePlugin, sources } = require("webpack")
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 // We need to prepend cordova-remap.js to the scripts that will be loaded by cordova.
 // https://stackoverflow.com/a/65529189/1237919
@@ -103,6 +104,7 @@ module.exports = [
         // See comment in createQRScannerInternal.js:initialize why we do this.
         'process.env.WORKER_PUBLIC_PATH': JSON.stringify('/plugins/cordova-plugin-qrscanner/src/')
       }),
+      new ESLintPlugin({}),
       new PrependCordovaRemap()
     ],
     performance: {
@@ -143,7 +145,8 @@ module.exports = [
       new DefinePlugin({
         // Public path does not need to be overwritten for the simpler library test.
         'process.env.WORKER_PUBLIC_PATH': 'null'
-      })
+      }),
+      new ESLintPlugin({})
     ],
     performance: {
       // Silence warning about worker.min.js being too big.

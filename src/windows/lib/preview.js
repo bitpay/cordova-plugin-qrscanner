@@ -34,7 +34,7 @@ function initialize() {
 }
 
 function ensurePreviewInitialized() {
-  if (!_.preview) initialize();
+  if (!_.preview) { initialize(); }
 }
 
 exports.setVideoUrl = function (videoUrl) {
@@ -73,7 +73,7 @@ exports.resume = function () {
 }
 
 exports.isPlaying = function () {
-  if (!_.preview) return false;
+  if (!_.preview) { return false; }
   return !_.preview.capturePreview.paused;
 }
 

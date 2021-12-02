@@ -1,6 +1,3 @@
-/*global module:true, postMessage:false, onmessage:true*/
-
-module = {};
 const jsqr = require('jsqr');
 onmessage = function(event) {
   const imageData = event.data;
