@@ -90,12 +90,12 @@ module.exports = [
     optimization: {
       mangleExports: false,
       minimize: false,
+      // Disable all chunk splitting.
+      // Note that worker module will always be split, but its dependencies will be inline.
       splitChunks: {
         cacheGroups: {
-          defaultVendors: {
-            // Embed jsqr directly into worker module.
-            test: /[\\/]node_modules[\\/](?!jsqr[\\/])/
-          }
+          default: false,
+          defaultVendors: false
         }
       }
     },
@@ -132,12 +132,12 @@ module.exports = [
     optimization: {
       mangleExports: false,
       minimize: false,
+      // Disable all chunk splitting.
+      // Note that worker module will always be split, but its dependencies will be inline.
       splitChunks: {
         cacheGroups: {
-          defaultVendors: {
-            // Embed jsqr directly into worker module.
-            test: /[\\/]node_modules[\\/](?!jsqr[\\/])/
-          }
+          default: false,
+          defaultVendors: false
         }
       }
     },
