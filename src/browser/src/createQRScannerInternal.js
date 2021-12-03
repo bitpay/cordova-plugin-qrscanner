@@ -498,33 +498,45 @@ module.exports = function () {
       var video = getVideoPreview();
       var returned = false;
       scanning = true;
+      // processing boolean prevents sampling new images when we're in the middle of processing.
+      let processing = false
       scanWorker.onmessage = function (event) {
+        processing = false
         var obj = event.data;
-        if (obj.result && !returned) {
-          returned = true;
-          thisScanCycle = null;
-          success(obj.result);
+        if (obj.result) {
+          if (!returned) {
+            returned = true;
+            thisScanCycle = null;
+            success(obj.result);
+          }
+        } else {
+          // Schedule next scan.
+          if (cancelNextScan !== null) {
+            // avoid race conditions, always clear before starting a cycle
+            cancelNextScan();
+          }
+          if (!scanning) {
+            return
+          }
+          // interval in milliseconds at which to try decoding the QR code
+          var SCAN_INTERVAL = window.QRScanner_SCAN_INTERVAL || 130;
+          // this value can be adjusted on-the-fly (while a scan is active) to
+          // balance scan speed vs. CPU/power usage
+          nextScan = window.setTimeout(thisScanCycle, SCAN_INTERVAL);
+          cancelNextScan = function (sendError) {
+            window.clearTimeout(nextScan);
+            nextScan = null;
+            cancelNextScan = null;
+            if (sendError) {
+              error(6); // SCAN_CANCELED
+            }
+          };
         }
       };
       thisScanCycle = function () {
+        if (processing) { return }
+        processing = true
         scanWorker.postMessage(getCurrentImageData(video));
-        if (cancelNextScan !== null) {
-          // avoid race conditions, always clear before starting a cycle
-          cancelNextScan();
-        }
-        // interval in milliseconds at which to try decoding the QR code
-        var SCAN_INTERVAL = window.QRScanner_SCAN_INTERVAL || 130;
-        // this value can be adjusted on-the-fly (while a scan is active) to
-        // balance scan speed vs. CPU/power usage
-        nextScan = window.setTimeout(thisScanCycle, SCAN_INTERVAL);
-        cancelNextScan = function (sendError) {
-          window.clearTimeout(nextScan);
-          nextScan = null;
-          cancelNextScan = null;
-          if (sendError) {
-            error(6); // SCAN_CANCELED
-          }
-        };
       };
       thisScanCycle();
     }, error);
