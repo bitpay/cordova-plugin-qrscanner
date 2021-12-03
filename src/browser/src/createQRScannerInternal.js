@@ -368,13 +368,17 @@ module.exports = function () {
   function initialize(success, error) {
     if (scanWorker === null) {
       // Automatic public path doesn't work here with the complicated build and cordova magic.
-      // We derive our own public path based on injected environment variable.
+      // We derive our own public path based on injected environment variable, or a runtime
+      // global variable. The environment variable is used by cordova test framework.
+      // The global variable is used when using the internal implementation directly in
+      // another application without using cordova.
       // After instantiating the url, we set it back to its original value.
       // https://mmazzarolo.com/blog/2021-09-03-loading-web-workers-using-webpack-5/
       const original__webpack_public_path__ = __webpack_public_path__;
 
-      if (process.env.WORKER_PUBLIC_PATH !== null) {
-        __webpack_public_path__ = process.env.WORKER_PUBLIC_PATH;
+      const worker_public_path = window.QRSCANNER_WORKER_PUBLIC_PATH || process.env.WORKER_PUBLIC_PATH
+      if (worker_public_path !== null) {
+        __webpack_public_path__ = worker_public_path;
       }
 
       scanWorker = new Worker(
