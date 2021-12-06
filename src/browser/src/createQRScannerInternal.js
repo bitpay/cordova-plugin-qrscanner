@@ -540,7 +540,8 @@ module.exports = function () {
       thisScanCycle = function () {
         if (processing) { return }
         processing = true
-        scanWorker.postMessage(getCurrentImageData(video));
+        const imageData = getCurrentImageData(video)
+        scanWorker.postMessage(imageData, [imageData.data.buffer]);
       };
       thisScanCycle();
     }, error);
