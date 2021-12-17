@@ -314,6 +314,12 @@ module.exports = function () {
         function (mediaStream) {
           activeMediaStream = mediaStream;
           var video = getVideoPreview();
+          if (!video) {
+            // video not ready yet
+            const code = currentCameraIndex ? 4 : 3
+            error(code) // FRONT_CAMERA_UNAVAILABLE : BACK_CAMERA_UNAVAILABLE
+            return
+          }
           // Older browsers may not have srcObject
           if ("srcObject" in video) {
             video.srcObject = mediaStream;
@@ -337,6 +343,9 @@ module.exports = function () {
     tempCanvas.height = camera.height;
     tempCanvas.width = camera.width;
     var tempCanvasContext = tempCanvas.getContext("2d");
+    // Mirror horizontally: https://stackoverflow.com/a/3129152/1237919
+    tempCanvasContext.translate(tempCanvas.width, 0)
+    tempCanvasContext.scale(-1, 1)
     tempCanvasContext.drawImage(
       videoElement,
       0,
@@ -397,14 +406,14 @@ module.exports = function () {
         "display:block;position:fixed;top:50%;left:50%;" +
           "width:auto;height:auto;min-width:100%;min-height:100%;z-index:" +
           ZINDEXES.preview +
-          ";-moz-transform: translateX(-50%) translateY(-50%);-webkit-transform: " +
-          "translateX(-50%) translateY(-50%);transform:translateX(-50%) translateY(-50%);" +
+          ";transform:translateX(-50%) translateY(-50%) rotateY(180deg);" +
           "background-size:cover;background-position:50% 50%;background-color:#FFF;"
       );
       videoPreview.addEventListener("loadeddata", function () {
         bringPreviewToFront();
       });
 
+      // Still image is displayed when preview is paused.
       var stillImg = document.createElement("div");
       stillImg.setAttribute("id", ELEMENTS.still);
       stillImg.setAttribute(
@@ -412,8 +421,7 @@ module.exports = function () {
         "display:block;position:fixed;top:50%;left:50%;visibility: hidden;" +
           "width:auto;height:auto;min-width:100%;min-height:100%;z-index:" +
           ZINDEXES.still +
-          ";-moz-transform: translateX(-50%) translateY(-50%);-webkit-transform: " +
-          "translateX(-50%) translateY(-50%);transform:translateX(-50%) translateY(-50%);" +
+          ";transform:translateX(-50%) translateY(-50%);" +
           "background-size:cover;background-position:50% 50%;background-color:#FFF;"
       );
 
