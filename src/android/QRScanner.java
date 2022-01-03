@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.hardware.Camera;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
