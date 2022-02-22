@@ -165,6 +165,7 @@ return {
       throw new Error('No callback provided to scan method.');
     }
     var success = function(result) {
+      // TODO: If there's an error code, then add message.
       callback(null, result);
     };
     cordova.exec(success, errorCallback(callback), 'QRScanner', 'scan', []);
