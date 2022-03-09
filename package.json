@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-qrscanner",
-  "version": "3.0.1",
+  "name": "cordova-plugin-qrscanner-11",
+  "version": "3.0.2",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
-    "id": "cordova-plugin-qrscanner",
+    "id": "cordova-plugin-qrscanner-11",
     "platforms": [
       "ios"
     ]
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner"
+    "url": "https://github.com/v1934/cordova-plugin-qrscanner-11"
   },
   "keywords": [
     "cordova",
@@ -49,9 +49,9 @@
   "author": "Jason Dreyzehner",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner/issues"
+    "url": "https://github.com/v1934/cordova-plugin-qrscanner-11/issues"
   },
-  "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
+  "homepage": "https://github.com/v1934/cordova-plugin-qrscanner-11",
   "main": "dist/cordova-plugin-qrscanner-lib.min.js",
   "dependencies": {
     "qrcode-reader": "^1.0.4",
