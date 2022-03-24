@@ -292,6 +292,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     @objc func show(_ command: CDVInvokedUrlCommand) {
         self.webView?.isOpaque = false
         self.webView?.backgroundColor = UIColor.clear
+        self.webView?.scrollView.backgroundColor = UIColor.clear
         self.getStatus(command)
     }
 
