@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.hardware.Camera;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -619,7 +619,7 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                webView.getView().setBackgroundColor(Color.argb(1, 0, 0, 0));
+                webView.getView().setBackgroundColor(Color.TRANSPARENT);
                 showing = true;
                 getStatus(callbackContext);
             }
