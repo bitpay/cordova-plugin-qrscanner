@@ -1,5 +1,5 @@
 {
-  "name": "cordova-plugin-qrscanner-11",
+  "name": "cordova-plugin-qrscanner-11-androidx",
   "version": "3.0.3",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
