@@ -133,13 +133,18 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
             if (captureSession?.isRunning != true){
                 cameraView.backgroundColor = UIColor.clear
                 self.webView!.superview!.insertSubview(cameraView, belowSubview: self.webView!)
-                let availableVideoDevices =  AVCaptureDevice.devices(for: AVMediaType.video)
-                for device in availableVideoDevices {
-                    if device.position == AVCaptureDevice.Position.back {
-                        backCamera = device
+                let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: AVMediaType.video, position: .unspecified)
+                let cameras = session.devices.compactMap { $0 }
+                for camera in cameras {
+                    if camera.position == .front {
+                        self.frontCamera = camera
+                        
                     }
-                    else if device.position == AVCaptureDevice.Position.front {
-                        frontCamera = device
+                    if camera.position == .back {
+                        self.backCamera = camera
+                        try camera.lockForConfiguration()
+                        camera.focusMode = .continuousAutoFocus
+                        camera.unlockForConfiguration()
                     }
                 }
                 // older iPods have no back camera
@@ -197,8 +202,9 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     @objc func makeOpaque(){
-        self.webView?.isOpaque = false
-        self.webView?.backgroundColor = UIColor.clear
+        self.webView?.isOpaque = true
+        self.webView?.backgroundColor = UIColor.white
+        self.webView?.scrollView.backgroundColor = UIColor.white
     }
 
     @objc func boolToNumberString(bool: Bool) -> String{
@@ -292,6 +298,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     @objc func show(_ command: CDVInvokedUrlCommand) {
         self.webView?.isOpaque = false
         self.webView?.backgroundColor = UIColor.clear
+        self.webView?.scrollView.backgroundColor = UIColor.clear
         self.getStatus(command)
     }
 
