@@ -1,3 +1,5 @@
+/* global describe, expect, it */
+
 exports.defineAutoTests = function() {
   describe('QRScanner (window.QRScanner)', function() {
 
