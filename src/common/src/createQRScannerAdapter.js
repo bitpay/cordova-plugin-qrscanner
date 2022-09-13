@@ -1,4 +1,8 @@
 module.exports = function createQRScanner(cordova){
+var initialStyles = { ...document.body.style };
+var backgroundTransparent = true;
+var backgroundTimeouts = [];
+
 // The native implementations should return their status as ['string':'string']
 // dictionaries. Boolean values are encoded to '0' and '1', respectively.
 function stringToBool(string) {
@@ -30,6 +34,21 @@ function convertStatus(statusDictionary) {
   };
 }
 
+// Reset body style attribute and clear pending timeouts for omit unexpected style changes.
+function resetBodyStyles() {
+  setTimeout(function() {
+    backgroundTransparent = false;
+    for (var backgroundTimeout of backgroundTimeouts) {
+      if (backgroundTimeout) {
+        clearTimeout(backgroundTimeout);
+      }
+    }
+    for (var key of Object.keys(document.body.style)) {
+      document.body.style[key] = initialStyles[key] ? initialStyles[key] : '';
+    }
+  }, 100);
+}
+
 // Simple utility method to ensure the background is transparent. Used by the
 // plugin to force re-rendering immediately after the native webview background
 // is made transparent.
@@ -38,9 +57,11 @@ function clearBackground() {
   if (body.style) {
     body.style.backgroundColor = 'rgba(0,0,0,0.01)';
     body.style.backgroundImage = '';
-    setTimeout(function() {
-      body.style.backgroundColor = 'transparent';
-    }, 1);
+    if (backgroundTransparent) {
+      backgroundTimeouts.push(setTimeout(function () {
+        body.style.backgroundColor = 'transparent';
+      }, 1));
+    }
     if (body.parentNode && body.parentNode.style) {
       body.parentNode.style.backgroundColor = 'transparent';
       body.parentNode.style.backgroundImage = '';
@@ -155,10 +176,12 @@ function doneCallback(callback, clear) {
 
 return {
   prepare: function(callback) {
+    backgroundTransparent = true;
     cordova.exec(successCallback(callback), errorCallback(callback), 'QRScanner', 'prepare', []);
   },
   destroy: function(callback) {
     cordova.exec(doneCallback(callback, true), null, 'QRScanner', 'destroy', []);
+    resetBodyStyles();
   },
   scan: function(callback) {
     if (!callback) {
