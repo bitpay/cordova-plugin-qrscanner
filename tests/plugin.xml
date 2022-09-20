@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    id="cordova-plugin-qrscanner-tests">
-    <name>QRScanner Tests</name>
-    <license>MIT</license>
-
-    <js-module src="tests.js" name="tests">
-    </js-module>
-</plugin>

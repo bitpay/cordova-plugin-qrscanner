@@ -1,83 +1,30 @@
 {
   "name": "cordova-plugin-qrscanner",
-  "version": "3.0.1",
+  "version": "3.0.1-dev-1.0",
   "description": "Fast, energy-efficient, highly-configurable QR code scanner.",
   "cordova": {
-    "id": "cordova-plugin-qrscanner",
-    "platforms": [
-      "ios"
-    ]
+	"id": "cordova-plugin-qrscanner",
+	"platforms": [
+	  "ios",
+	  "android"
+	]
   },
-  "scripts": {
-    "build": "gulp && npm run clean-build",
-    "clean-build": "trash dist/plugin.min.js && trash dist/www.min.js && trash src/browser/worker.min.js",
-    "test": "npm run jshint",
-    "jshint": "jshint src/browser/src && jshint src/common/src && jshint tests",
-    "gen-tests": "npm run build && npm run clean-platform-tests && npm run mkdirp-platform-tests && npm run copy-platform-tests && npm run install-platform-tests",
-    "clean-platform-tests": "trash ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
-    "mkdirp-platform-tests": "mkdirp ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
-    "copy-platform-tests": "ncp tests/project ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests",
-    "install-platform-tests": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm install",
-    "test:ios": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:ios",
-    "test:android": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:android",
-    "test:browser": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:browser",
-    "test:windows": "cd ../cordova-plugin-test-projects/cordova-plugin-qrscanner-tests && npm run test:windows",
-    "test:library": "npm run build && node tests/library/test.js",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "commitmsg": "validate-commit-msg",
-    "prep-release": "git clean -dfx && npm install && npm run build && npm run changelog"
-  },
+  "main": "www/QRScanner.js",
+  "types": "types/index.d.ts",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner"
+	"type": "git",
+	"url": "https://github.com/expcapitaldev/cordova-plugin-qrscanner"
   },
   "keywords": [
-    "cordova",
-    "qr",
-    "qr code",
-    "scanner",
-    "reader",
-    "ecosystem:cordova",
-    "cordova-ios",
-    "cordova-android",
-    "cordova-browser",
-    "UMD",
-    "library",
-    "electron",
-    "NW.js"
+	"cordova",
+	"qr",
+	"qr code",
+	"scanner",
+	"reader",
+	"cordova-ios",
+	"cordova-android"
   ],
   "author": "Jason Dreyzehner",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bitpay/cordova-plugin-qrscanner/issues"
-  },
-  "homepage": "https://github.com/bitpay/cordova-plugin-qrscanner",
-  "main": "dist/cordova-plugin-qrscanner-lib.min.js",
-  "dependencies": {
-    "qrcode-reader": "^1.0.4",
-    "webrtc-adapter": "^3.1.4"
-  },
-  "devDependencies": {
-    "conventional-changelog-cli": "^1.2.0",
-    "cz-conventional-changelog": "^2.0.0",
-    "express": "^4.14.0",
-    "gulp": "^3.9.1",
-    "gulp-insert": "^0.5.0",
-    "husky": "^0.13.1",
-    "jshint": "^2.9.2",
-    "mkdirp": "^0.5.1",
-    "ncp": "^2.0.0",
-    "raw-loader": "^0.5.1",
-    "trash-cli": "^1.3.0",
-    "validate-commit-msg": "^2.6.1",
-    "webpack": "^2.7.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    },
-    "validate-commit-msg": {
-      "helpMessage": "\nThis project uses commitizen to document changes. Please try:\nnpm install commitizen -g && git cz\n"
-    }
-  }
+  "homepage": "https://github.com/expcapitaldev/cordova-plugin-qrscanner"
 }

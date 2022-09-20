@@ -1,67 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<plugin 
-  xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="3.0.1">
-  <name>QRScanner</name>
-  <engines>
-    <engine name="cordova" version=">=3.4.0"/>
-  </engines>
-  <js-module src="www/www.min.js" name="QRScanner">
-    <clobbers target="QRScanner" />
-  </js-module>
-  <platform name="android">
-    <config-file target="res/xml/config.xml" parent="/*">
-      <feature name="QRScanner">
-        <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
-      </feature>
-    </config-file>
-    <config-file target="AndroidManifest.xml" parent="/*">
-      <uses-permission android:name="android.permission.CAMERA" android:required="false" />
-      <uses-feature android:name="android.hardware.camera" android:required="false" />
-      <uses-feature android:name="android.hardware.camera.front" android:required="false" />
-    </config-file>
-    <source-file src="src/android/QRScanner.java" target-dir="src/com/bitpay/cordova/qrscanner"/>
-    <framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
-  </platform>
-  <platform name="ios">
-    <config-file target="config.xml" parent="/*">
-      <feature name="QRScanner">
-        <param name="ios-package" value="QRScanner"/>
-      </feature>
-    </config-file>
-    <dependency id="cordova-plugin-add-swift-support" spec="~1.7.2" />
-    <source-file src="src/ios/QRScanner.swift"/>
-    <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-      <string>The camera is used to scan QR codes.</string>
-    </config-file>
-  </platform>
-  <platform name="browser">
-    <config-file target="config.xml" parent="/*">
-      <feature name="QRScanner">
-        <param name="browser-package" value="QRScanner" />
-      </feature>
-    </config-file>
-    <js-module src="src/browser/plugin.min.js" name="QRScannerProxy">
-      <runs />
-    </js-module>
-  </platform>
-  <platform name="windows">
-    <config-file target="config.xml" parent="/*">
-      <feature name="QRScanner">
-        <param name="windows-package" value="QRScanner" />
-      </feature>
-    </config-file>
-    <config-file target="package.appxmanifest" parent="/Package/Capabilities">
-      <DeviceCapability Name="webcam" />
-    </config-file>
-    <js-module src="src/windows/lib/qrScanner.js" name="qrScanner">
-      <runs/>
-    </js-module>
-    <js-module src="src/windows/lib/preview.js" name="preview">
-      <runs/>
-    </js-module>
-    <framework src="src/windows/QRReader/QRReader.csproj" custom="true" type="projectReference"/>
-    <asset src="src/windows/lib/preview.css" target="css/plugin-qrscanner-preview.css" />
-    <hook src="hooks/windows/check-arch.js" type="before_compile" />
-    <hook src="hooks/windows/check-arch.js" type="before_run" />
-  </platform>
+<plugin
+		xmlns="http://www.phonegap.com/ns/plugins/1.0" id="cordova-plugin-qrscanner" version="3.0.1-dev-1.0">
+	<name>QRScanner</name>
+	<engines>
+		<engine name="cordova" version=">=3.4.0"/>
+	</engines>
+
+	<js-module src="www/QRScanner.js" name="QRScanner">
+		<clobbers target="QRScanner"/>
+	</js-module>
+
+	<platform name="android">
+
+		<config-file target="res/xml/config.xml" parent="/*">
+			<feature name="QRScanner">
+				<param name="android-package" value="com.expcapital.qrscanner.QRScanner"/>
+			</feature>
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/*">
+			<uses-permission android:name="android.permission.CAMERA"/>
+			<uses-feature android:name="android.hardware.camera" android:required="false"/>
+			<uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+		</config-file>
+
+		<source-file src="src/android/QRScanner.java" target-dir="src/com/expcapital/qrscanner"/>
+		<framework src="src/android/qrscanner.gradle" custom="true" type="gradleReference"/>
+	</platform>
+
+	<platform name="ios">
+
+		<config-file target="config.xml" parent="/*">
+			<feature name="QRScanner">
+				<param name="ios-package" value="QRScanner"/>
+			</feature>
+		</config-file>
+
+		<!--<dependency id="cordova-plugin-add-swift-support" url="https://github.com/expcapitaldev/cordova-plugin-add-swift-support" />-->
+
+		<source-file src="src/ios/QRScanner.swift"/>
+
+		<config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+			<string>The camera is used to scan QR codes.</string>
+		</config-file>
+
+	</platform>
 </plugin>
