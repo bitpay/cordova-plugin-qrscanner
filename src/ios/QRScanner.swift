@@ -131,7 +131,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
         }
         do {
             if (captureSession?.isRunning != true){
-                cameraView.backgroundColor = UIColor.clear
+                cameraView.backgroundColor = UIColor.white
                 self.webView!.superview!.insertSubview(cameraView, belowSubview: self.webView!)
                 let availableVideoDevices =  AVCaptureDevice.devices(for: AVMediaType.video)
                 for device in availableVideoDevices {
@@ -197,8 +197,8 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     }
 
     @objc func makeOpaque(){
-        self.webView?.isOpaque = false
-        self.webView?.backgroundColor = UIColor.clear
+        self.webView?.isOpaque = true
+        self.webView?.backgroundColor = UIColor.white
     }
 
     @objc func boolToNumberString(bool: Bool) -> String{
@@ -254,6 +254,7 @@ class QRScanner : CDVPlugin, AVCaptureMetadataOutputObjectsDelegate {
     // ---- BEGIN EXTERNAL API ----
 
     @objc func prepare(_ command: CDVInvokedUrlCommand){
+        self.makeOpaque()
         let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if (status == AVAuthorizationStatus.notDetermined) {
             // Request permission before preparing scanner
