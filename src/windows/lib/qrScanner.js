@@ -1,7 +1,11 @@
+/* global cordova, QRReader, WinJS */
+/*eslint no-unused-vars: ["error", { "args": "none" }]*/
+
 const preview = require('./preview');
 const barcodeReader = new QRReader.Reader();
 const VideoCapture = QRReader.VideoCapture;
 const Promise = WinJS.Promise;
+let availableCameras
 
 const errorTypes = {
   UNEXPECTED_ERROR: 0,
@@ -50,7 +54,7 @@ function resetStatusFlags() {
 function reset() {
   document.body.removeEventListener('click', onPreviewClick);
   preview.destroy();
-  if (currentVideoCapture) currentVideoCapture.destroy();
+  if (currentVideoCapture) { currentVideoCapture.destroy(); }
   currentVideoCapture = null;
   availableCameras = null;
   resetStatusFlags();
@@ -210,7 +214,7 @@ qrScanner.scan = function () {
 }
 
 qrScanner.cancelScan = function () {
-  if (!statusFlags.scanning) return generateStatusResponse();
+  if (!statusFlags.scanning) { return generateStatusResponse(); }
   statusFlags.scanning = false;
   barcodeReader.stop();
   return generateStatusResponse();

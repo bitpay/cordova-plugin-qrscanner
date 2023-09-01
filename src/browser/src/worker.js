@@ -1,12 +1,8 @@
-/*global module:true, postMessage:false, onmessage:true*/
-
-module = {};
-var QrCode = require('qrcode-reader').default;
-var qr = new QrCode();
-qr.callback = function(err, result) {
-  postMessage({ result: result, err: err });
-};
+const jsqr = require('jsqr');
 onmessage = function(event) {
-  var imageData = event.data;
-  qr.decode(imageData);
+  const imageData = event.data;
+  const code = jsqr(imageData.data, imageData.width, imageData.height);
+  // Even if a code was not detected, we'll post a message back in order
+  // to start a new scan cycle.
+  postMessage({ result: code ? code.data : null })
 };
