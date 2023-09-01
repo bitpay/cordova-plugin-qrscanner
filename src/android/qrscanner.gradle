@@ -4,6 +4,7 @@ repositories {
 
 dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.3.0'
+    implementation 'com.android.support:appcompat-v7:23.1.0'
 }
 
 android {
